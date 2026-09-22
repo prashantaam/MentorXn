@@ -1,0 +1,114 @@
+<?php
+
+namespace App\Http\Controllers\Api\Teacher;
+
+use App\Http\Controllers\Controller;
+use App\Models\Course;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+class LessonController extends Controller
+{
+    /**
+     * Return lessons for a teacher's course.
+     */
+    public function index(
+        Request $request,
+        Course $course
+    ): JsonResponse {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json([
+                'message' => 'Teacher access required.',
+            ], 403);
+        }
+
+        if ($course->teacher_id !== $user->id) {
+            return response()->json([
+                'message' => 'Course not found.',
+            ], 404);
+        }
+
+        $lessons = $course->lessons()
+            ->orderBy('position')
+            ->get();
+
+        return response()->json([
+            'lessons' => $lessons,
+        ]);
+    }
+
+    /**
+     * Create a lesson inside a course.
+     */
+    public function store(
+        Request $request,
+        Course $course
+    ): JsonResponse {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json([
+                'message' => 'Teacher access required.',
+            ], 403);
+        }
+
+        if ($course->teacher_id !== $user->id) {
+            return response()->json([
+                'message' => 'Course not found.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'title' => [
+                'required',
+                'string',
+                'max:150',
+            ],
+
+            'icon' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000',
+            ],
+
+            'status' => [
+                'required',
+                Rule::in([
+                    'draft',
+                    'published',
+                ]),
+            ],
+        ]);
+
+        $nextPosition =
+            ($course->lessons()->max('position') ?? 0) + 1;
+
+        $lesson = $course->lessons()->create([
+            'title' => $validated['title'],
+
+            'icon' =>
+                $validated['icon'] ?? '📖',
+
+            'description' =>
+                $validated['description'] ?? null,
+
+            'position' => $nextPosition,
+
+            'status' => $validated['status'],
+        ]);
+
+        return response()->json([
+            'message' => 'Lesson created successfully.',
+            'lesson' => $lesson,
+        ], 201);
+    }
+}
