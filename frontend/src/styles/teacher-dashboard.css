@@ -1,0 +1,392 @@
+/* =========================================
+   MentorXn Teacher Dashboard
+   Teacher Theme
+========================================= */
+
+.teacher-dashboard-page {
+  width: min(1120px, calc(100% - 40px));
+
+  margin: 0 auto;
+  padding: 48px 0 70px;
+
+  color: #302e2c;
+
+  font-family:
+    "Nunito",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+/* =========================================
+   Welcome
+========================================= */
+
+.teacher-dashboard-welcome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+
+  margin-bottom: 45px;
+}
+
+.teacher-dashboard-eyebrow,
+.teacher-section-heading > div > span,
+.teacher-get-started-content > span {
+  color: #c85f52;
+
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+}
+
+.teacher-dashboard-welcome h1 {
+  margin: 7px 0 8px;
+
+  color: #302e2c;
+
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+}
+
+.teacher-dashboard-welcome h1 span {
+  color: #c85f52;
+}
+
+.teacher-dashboard-welcome p {
+  max-width: 650px;
+
+  margin: 0;
+
+  color: #706b67;
+
+  line-height: 1.7;
+}
+
+/* =========================================
+   Teacher Badge
+========================================= */
+
+.teacher-dashboard-badge {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 13px 17px;
+
+  background: #fff0ed;
+
+  border: 1px solid #ffd0c9;
+  border-radius: 14px;
+}
+
+.teacher-dashboard-badge-icon {
+  width: 44px;
+  height: 44px;
+
+  display: grid;
+  place-items: center;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  font-size: 1.6rem;
+}
+
+.teacher-dashboard-badge strong,
+.teacher-dashboard-badge span {
+  display: block;
+}
+
+.teacher-dashboard-badge strong {
+  color: #c85f52;
+}
+
+.teacher-dashboard-badge span {
+  margin-top: 2px;
+
+  color: #8f7772;
+
+  font-size: 0.8rem;
+}
+
+/* =========================================
+   Section
+========================================= */
+
+.teacher-dashboard-section {
+  margin-top: 45px;
+}
+
+.teacher-section-heading {
+  margin-bottom: 19px;
+}
+
+.teacher-section-heading h2 {
+  margin: 4px 0 0;
+
+  color: #302e2c;
+
+  font-size: 1.55rem;
+}
+
+/* =========================================
+   Stats
+========================================= */
+
+.teacher-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.teacher-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+
+  min-width: 0;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #d9d6d1;
+  border-radius: 18px;
+
+  box-shadow:
+    0 7px 22px rgba(58, 52, 48, 0.05);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.teacher-stat-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #ffc2b9;
+
+  box-shadow:
+    0 10px 25px rgba(58, 52, 48, 0.08);
+}
+
+.teacher-stat-icon {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  font-size: 1.4rem;
+}
+
+/* Keep some playful MentorXn colours
+   while coral remains the primary brand */
+
+.teacher-stat-icon.courses {
+  background: #fff0ed;
+}
+
+.teacher-stat-icon.students {
+  background: #edf8f2;
+}
+
+.teacher-stat-icon.lessons {
+  background: #fff7d9;
+}
+
+.teacher-stat-icon.published {
+  background: #f1edff;
+}
+
+.teacher-stat-card strong,
+.teacher-stat-card span {
+  display: block;
+}
+
+.teacher-stat-card strong {
+  color: #302e2c;
+
+  font-size: 1.35rem;
+}
+
+.teacher-stat-card span {
+  margin-top: 2px;
+
+  color: #827c77;
+
+  font-size: 0.78rem;
+}
+
+/* =========================================
+   Get Started
+========================================= */
+
+.teacher-get-started {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 22px;
+
+  margin-top: 48px;
+  padding: 30px;
+
+  background:
+    linear-gradient(
+      120deg,
+      #fff5f2 0%,
+      #ffe8e3 100%
+    );
+
+  border: 1px solid #ffc9c0;
+  border-radius: 22px;
+
+  box-shadow:
+    0 10px 28px rgba(200, 95, 82, 0.07);
+}
+
+.teacher-get-started-icon {
+  width: 70px;
+  height: 70px;
+
+  display: grid;
+  place-items: center;
+
+  background: #ffffff;
+
+  border: 1px solid #ffd1ca;
+  border-radius: 20px;
+
+  box-shadow:
+    0 5px 14px rgba(200, 95, 82, 0.07);
+
+  font-size: 2rem;
+}
+
+.teacher-get-started-content h2 {
+  margin: 5px 0;
+
+  color: #302e2c;
+
+  font-size: 1.3rem;
+}
+
+.teacher-get-started-content p {
+  max-width: 650px;
+
+  margin: 0;
+
+  color: #706b67;
+
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+/* =========================================
+   Create Course Button
+========================================= */
+
+.teacher-create-course-button {
+  padding: 12px 18px;
+
+  border: 1px solid #ef8879;
+  border-radius: 12px;
+
+  background: #ff9a8b;
+  color: #302e2c;
+
+  box-shadow:
+    0 7px 16px rgba(200, 95, 82, 0.16);
+
+  cursor: pointer;
+
+  font-weight: 900;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.teacher-create-course-button:hover {
+  background: #e78374;
+  border-color: #dc7768;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 9px 19px rgba(200, 95, 82, 0.2);
+}
+
+.teacher-create-course-button:active {
+  transform: translateY(0);
+}
+
+/* =========================================
+   Responsive
+========================================= */
+
+@media (max-width: 900px) {
+  .teacher-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .teacher-get-started {
+    grid-template-columns: auto 1fr;
+  }
+
+  .teacher-create-course-button {
+    grid-column: 1 / -1;
+
+    justify-self: start;
+  }
+}
+
+@media (max-width: 650px) {
+  .teacher-dashboard-page {
+    width: calc(100% - 28px);
+
+    padding-top: 32px;
+  }
+
+  .teacher-dashboard-welcome {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .teacher-dashboard-badge {
+    width: 100%;
+  }
+
+  .teacher-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-get-started {
+    grid-template-columns: 1fr;
+
+    padding: 23px;
+  }
+
+  .teacher-get-started-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .teacher-create-course-button {
+    grid-column: auto;
+
+    width: 100%;
+  }
+}

@@ -1,0 +1,48 @@
+:root {
+  /* Brand */
+  --color-primary: #35a86b;
+  --color-primary-dark: #278454;
+  --color-primary-hover: #2b925b;
+  --color-primary-soft: #edf8f2;
+  --color-primary-light: #e8f7ef;
+
+  /* Course colours */
+  --color-dotnet: #7257c8;
+  --color-blue: #3c8dbf;
+  --color-yellow: #e8b92e;
+  --color-orange: #e98b45;
+
+  /* Text */
+  --color-text: #263238;
+  --color-heading: #25372e;
+  --color-text-muted: #6a776f;
+  --color-text-light: #829087;
+
+  /* Surfaces */
+  --color-background: #f8fbf9;
+  --color-surface: #ffffff;
+  --color-border: #e2ebe6;
+
+  /* Status */
+  --color-error: #c0392b;
+  --color-success: #278454;
+
+  /* Radius */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+
+  /* Shadows */
+  --shadow-sm: 0 7px 22px rgba(44, 77, 58, 0.04);
+  --shadow-md: 0 10px 28px rgba(40, 71, 53, 0.08);
+  --shadow-lg: 0 18px 45px rgba(39, 132, 84, 0.1);
+
+  /* Layout */
+  --student-max-width: 1120px;
+  --header-height: 74px;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+}
