@@ -1,0 +1,22 @@
+# Laravel
+backend/vendor/
+backend/.env
+backend/storage/logs/*
+backend/bootstrap/cache/*.php
+
+# React
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
