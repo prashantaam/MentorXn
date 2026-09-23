@@ -1,5 +1,6 @@
 import ContentBlock from "./ContentBlock";
 import QuizBlock from "./QuizBlock";
+import PracticeTerminalBlock from "./PracticeTerminalBlock";
 
 function LearningBlockRenderer({
   block,
@@ -23,11 +24,18 @@ function LearningBlockRenderer({
         />
       );
 
+    case "practice_terminal":
+      return (
+        <PracticeTerminalBlock
+          block={block}
+        />
+      );
+
     default:
       return (
         <div className="learning-block-unsupported">
-          Unsupported learning block:
-          {" "}
+          Unsupported learning
+          block:{" "}
           <strong>
             {block.type}
           </strong>

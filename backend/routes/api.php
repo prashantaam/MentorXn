@@ -135,5 +135,45 @@ Route::middleware('auth:sanctum')->group(function () {
             '/topics/{topic}/learning-blocks',
             [LearningBlockController::class, 'store']
         );
+
+        Route::get(
+            '/lblock-templates',
+            [
+                LBlockTemplateController::class,
+                'index',
+            ]
+        );
+
+        Route::post(
+            '/lblock-templates',
+            [
+                LBlockTemplateController::class,
+                'store',
+            ]
+        );
+
+        Route::get(
+            '/lblock-templates/{lblockTemplate}',
+            [
+                LBlockTemplateController::class,
+                'show',
+            ]
+        );
+
+        Route::put(
+            '/lblock-templates/{lblockTemplate}',
+            [
+                LBlockTemplateController::class,
+                'update',
+            ]
+        );
+
+        Route::delete(
+            '/lblock-templates/{lblockTemplate}',
+            [
+                LBlockTemplateController::class,
+                'destroy',
+            ]
+        );
     });
 });

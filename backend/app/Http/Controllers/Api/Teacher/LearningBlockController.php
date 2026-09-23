@@ -25,14 +25,6 @@ class LearningBlockController extends Controller
             ], 403);
         }
 
-        /*
-         * Ownership chain:
-         *
-         * Topic
-         *   -> Lesson
-         *   -> Course
-         *   -> Teacher
-         */
         if (
             $topic->lesson->course->teacher_id
             !== $user->id
@@ -44,6 +36,7 @@ class LearningBlockController extends Controller
 
         $learningBlocks = $topic
             ->learningBlocks()
+            ->orderBy('position')
             ->get();
 
         return response()->json([
@@ -77,7 +70,7 @@ class LearningBlockController extends Controller
         }
 
         /*
-         * Validate common Learning Block fields.
+         * Common Learning Block validation.
          */
         $validated = $request->validate([
             'type' => [
@@ -85,6 +78,7 @@ class LearningBlockController extends Controller
                 Rule::in([
                     'content',
                     'quiz',
+                    'practice_terminal',
                 ]),
             ],
 
@@ -115,12 +109,9 @@ class LearningBlockController extends Controller
         ]);
 
         /*
-         * Validate block-specific data.
+         * Content block.
          */
-        if (
-            $validated['type']
-            === 'content'
-        ) {
+        if ($validated['type'] === 'content') {
             $request->validate([
                 'data.content' => [
                     'required',
@@ -129,11 +120,29 @@ class LearningBlockController extends Controller
             ]);
         }
 
-        if (
-            $validated['type']
-            === 'quiz'
-        ) {
+        /*
+         * Quiz block.
+         */
+        if ($validated['type'] === 'quiz') {
             $request->validate([
+                'data.instructions' => [
+                    'nullable',
+                    'string',
+                    'max:2000',
+                ],
+
+                'data.passing_score' => [
+                    'nullable',
+                    'integer',
+                    'min:0',
+                    'max:100',
+                ],
+
+                'data.allow_retry' => [
+                    'nullable',
+                    'boolean',
+                ],
+
                 'data.questions' => [
                     'required',
                     'array',
@@ -164,22 +173,14 @@ class LearningBlockController extends Controller
                     'string',
                     'max:500',
                 ],
-                'data.instructions' => [
-                    'nullable',
-                    'string',
-                    'max:2000',
-                ],
 
-                'data.passing_score' => [
-                    'nullable',
+                /*
+                 * This was missing previously.
+                 */
+                'data.questions.*.correct_answer' => [
+                    'required',
                     'integer',
                     'min:0',
-                    'max:100',
-                ],
-
-                'data.allow_retry' => [
-                    'nullable',
-                    'boolean',
                 ],
 
                 'data.questions.*.correct_message' => [
@@ -202,8 +203,8 @@ class LearningBlockController extends Controller
             ]);
 
             /*
-             * Validate that correct_answer points
-             * to an actual option.
+             * Make sure correct_answer references
+             * an existing option.
              */
             foreach (
                 $validated['data']['questions']
@@ -232,15 +233,58 @@ class LearningBlockController extends Controller
             }
         }
 
+                /*
+        * Practice Terminal block.
+        */
+        if ($validated['type'] === 'practice_terminal') {
+            $request->validate([
+                'data.welcome' => [
+                    'nullable',
+                    'string',
+                    'max:2000',
+                ],
+
+                'data.tip' => [
+                    'nullable',
+                    'string',
+                    'max:1000',
+                ],
+
+                'data.command_prefix' => [
+                    'nullable',
+                    'string',
+                    'max:100',
+                ],
+
+                'data.commands' => [
+                    'required',
+                    'array',
+                    'min:1',
+                ],
+
+                'data.commands.*.command' => [
+                    'required',
+                    'string',
+                    'max:500',
+                ],
+
+                'data.commands.*.output' => [
+                    'required',
+                    'string',
+                    'max:5000',
+                ],
+            ]);
+        }
         /*
-         * Automatically add the block after
-         * the current final block.
+         * Automatically append the block.
          */
         $nextPosition =
-            ($topic
-                ->learningBlocks()
-                ->max('position') ?? 0)
-            + 1;
+            (
+                $topic
+                    ->learningBlocks()
+                    ->max('position')
+                ?? 0
+            ) + 1;
 
         $learningBlock =
             $topic

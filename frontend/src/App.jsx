@@ -1,4 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import {
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
 
@@ -11,13 +14,11 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import TeacherLoginPage from "./pages/teacher/auth/TeacherLoginPage";
 import TeacherRegisterPage from "./pages/teacher/auth/TeacherRegisterPage";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
-import CourseBuilderPage from "./pages/teacher/courses/CourseBuilderPage";
+
 import TeacherCoursePage from "./pages/teacher/courses/TeacherCoursePage";
 import CreateCoursePage from "./pages/teacher/courses/CreateCoursePage";
-import CreateLessonPage from "./pages/teacher/lessons/CreateLessonPage";
-import LessonBuilderPage from "./pages/teacher/lessons/LessonBuilderPage";
-import CreateTopicPage from "./pages/teacher/topics/CreateTopicPage";
-import TopicBuilderPage from "./pages/teacher/topics/TopicBuilderPage";
+import CoursePlaygroundPage from "./pages/teacher/courses/CoursePlaygroundPage";
+
 /* Layouts */
 import StudentLayout from "./layouts/StudentLayout";
 import TeacherLayout from "./layouts/TeacherLayout";
@@ -28,14 +29,18 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 function App() {
   return (
     <Routes>
-      {/* Public */}
+      {/* ========================================
+          Public
+      ======================================== */}
 
       <Route
         path="/"
         element={<HomePage />}
       />
 
-      {/* Student Authentication */}
+      {/* ========================================
+          Student Authentication
+      ======================================== */}
 
       <Route
         path="/login"
@@ -47,7 +52,9 @@ function App() {
         element={<StudentRegisterPage />}
       />
 
-      {/* Student Application */}
+      {/* ========================================
+          Student Application
+      ======================================== */}
 
       <Route
         element={
@@ -62,7 +69,9 @@ function App() {
         </Route>
       </Route>
 
-      {/* Teacher Authentication */}
+      {/* ========================================
+          Teacher Authentication
+      ======================================== */}
 
       <Route
         path="/teacher/login"
@@ -74,7 +83,9 @@ function App() {
         element={<TeacherRegisterPage />}
       />
 
-      {/* Teacher Application */}
+      {/* ========================================
+          Teacher Application
+      ======================================== */}
 
       <Route
         element={
@@ -96,26 +107,10 @@ function App() {
             path="/teacher/courses/create"
             element={<CreateCoursePage />}
           />
-          <Route
-            path="/teacher/courses/:courseId"
-            element={<CourseBuilderPage />}
-          />
-          <Route
-            path="/teacher/courses/:courseId/lessons/create"
-            element={<CreateLessonPage />}
-          />
 
           <Route
-            path="/teacher/courses/:courseId/lessons/:lessonId"
-            element={<LessonBuilderPage />}
-          />
-          <Route
-            path="/teacher/courses/:courseId/lessons/:lessonId/topics/create"
-            element={<CreateTopicPage />}
-          />
-          <Route
-            path="/teacher/courses/:courseId/lessons/:lessonId/topics/:topicId"
-            element={<TopicBuilderPage />}
+            path="/teacher/courses/:courseId/playground"
+            element={<CoursePlaygroundPage />}
           />
         </Route>
       </Route>

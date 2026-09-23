@@ -3,7 +3,7 @@ function TeacherFooter() {
     <footer className="teacher-footer">
       <div className="teacher-footer-inner">
         <div className="teacher-footer-brand">
-          🎓 MentorXn Teacher Portal
+          MentorX<sup>n</sup> Teacher Portal
         </div>
 
         <p>
@@ -11,7 +11,7 @@ function TeacherFooter() {
         </p>
 
         <p className="teacher-footer-copy">
-          © {new Date().getFullYear()} MentorXn
+          © {new Date().getFullYear()} MentorX<sup>n</sup>
         </p>
       </div>
     </footer>

@@ -15,10 +15,12 @@ function TeacherTopNav() {
   } = useAuth();
 
   const firstName =
-    user?.name?.split(" ")[0] || "Teacher";
+    user?.name?.split(" ")[0] ||
+    "Teacher";
 
   const firstInitial =
-    firstName.charAt(0).toUpperCase() || "T";
+    firstName.charAt(0).toUpperCase() ||
+    "T";
 
   const handleLogout = async () => {
     await logout();
@@ -31,25 +33,27 @@ function TeacherTopNav() {
   return (
     <header className="teacher-top-nav">
       <div className="teacher-top-nav-inner">
+        {/* Brand - far left */}
         <Link
-          to="/teacher/dashboard"
-          className="teacher-brand"
+        to="/teacher/dashboard"
+        className="teacher-brand"
         >
-          <span className="teacher-brand-icon">
-            🎓
-          </span>
-
-          <div className="teacher-brand-text">
-            <span className="teacher-brand-name">
-              Mentor<span>Xn</span>
+            
+            <div className="teacher-brand-text">
+                <span className="teacher-brand-name">
+                Mentor
+                
+                </span>
+            </div>
+            <span className="teacher-brand-icon">
+                <span className="teacher-logo-x">
+                X<sup>n</sup>
+                </span>
             </span>
 
-            <span className="teacher-brand-portal">
-              Teacher Portal
-            </span>
-          </div>
         </Link>
 
+        {/* Main navigation - centre */}
         <nav
           className="teacher-navigation"
           aria-label="Teacher navigation"
@@ -82,6 +86,7 @@ function TeacherTopNav() {
           </NavLink>
         </nav>
 
+        {/* Profile - far right */}
         <div className="teacher-nav-actions">
           <div className="teacher-profile">
             <div className="teacher-avatar">

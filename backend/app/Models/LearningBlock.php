@@ -41,4 +41,12 @@ class LearningBlock extends Model
     {
         return $this->type === 'quiz';
     }
+
+    public function template(): BelongsTo
+{
+    return $this->belongsTo(
+        LBlockTemplate::class,
+        'lblock_template_id'
+    );
+}
 }

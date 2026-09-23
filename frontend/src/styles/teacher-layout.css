@@ -1,16 +1,14 @@
+
 /* =========================================
    MentorXn Teacher Application Layout
 ========================================= */
 
 .teacher-app {
   min-height: 100vh;
-
   display: flex;
   flex-direction: column;
-
   background: #e5e4e0;
   color: #263238;
-
   font-family:
     "Nunito",
     "Segoe UI",
@@ -23,6 +21,7 @@
   width: 100%;
 }
 
+
 /* =========================================
    Top Navigation
 ========================================= */
@@ -34,27 +33,32 @@
 
   width: 100%;
 
-  background: rgba(255, 255, 255, 0.94);
+  background: #d9d9d6;
 
-  border-bottom: 1px solid #d6d4cf;
-
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 2px solid #c4c3bf;
 
   box-shadow:
-    0 4px 18px rgba(55, 51, 47, 0.05);
+    0 3px 10px rgba(55, 51, 47, 0.08);
 }
 
 .teacher-top-nav-inner {
-  width: min(1120px, calc(100% - 40px));
+  width: 100%;
   min-height: 74px;
 
-  margin: 0 auto;
+  padding: 0 28px;
 
-  display: flex;
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 1fr)
+    auto
+    minmax(220px, 1fr);
+
   align-items: center;
-  justify-content: space-between;
-  gap: 28px;
+
+  gap: 24px;
+
+  box-sizing: border-box;
 }
 
 /* =========================================
@@ -62,33 +66,87 @@
 ========================================= */
 
 .teacher-brand {
-  flex-shrink: 0;
+  justify-self: start;
 
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+
+  gap: 11px;
 
   color: #25372e;
+
   text-decoration: none;
 }
 
+
+/* =========================================
+   Yellow Xn Logo Box
+========================================= */
+
 .teacher-brand-icon {
-  width: 42px;
-  height: 42px;
+  position: relative;
 
-  display: grid;
-  place-items: center;
+  width: 44px;
+  height: 44px;
 
-  background: #fff0ed;
+  flex-shrink: 0;
 
-  border: 1px solid #ffd1ca;
-  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffd84d;
+
+  border: 2px solid #2f2f2f;
+
+  border-radius: 12px;
 
   box-shadow:
-    0 4px 0 #f2d5cf;
+    3px 3px 0 #2f2f2f;
 
-  font-size: 1.3rem;
+  color: #2f2f2f;
+
+  transform-origin: center;
+
+  animation:
+    teacherLogoFloat 2.6s ease-in-out infinite;
 }
+
+
+/* Large X inside yellow box */
+
+.teacher-logo-x {
+  position: relative;
+
+  display: inline-block;
+
+  font-family:
+    "Fredoka",
+    "Nunito",
+    sans-serif;
+
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+
+/* Small n on upper-right corner of X */
+
+.teacher-logo-n {
+  position: absolute;
+
+  top: -6px;
+  right: -8px;
+
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+
+/* =========================================
+   MentorXn Text
+========================================= */
 
 .teacher-brand-text {
   display: flex;
@@ -96,6 +154,9 @@
 }
 
 .teacher-brand-name {
+  display: flex;
+  align-items: baseline;
+
   color: #25372e;
 
   font-family:
@@ -105,23 +166,106 @@
 
   font-size: 1.25rem;
   font-weight: 700;
-
   line-height: 1.05;
 }
 
-.teacher-brand-name > span {
-  color: #ff9a8b;
+
+/* Xn after Mentor */
+
+.teacher-brand-xn {
+  position: relative;
+
+  display: inline-block;
+
+  margin-left: 2px;
+
+  color: #c58d00;
+
+  font-size: 1.08em;
+  font-weight: 900;
+
+  animation:
+    teacherBrandXnFloat 2.6s ease-in-out infinite;
 }
+
+
+/* Small raised n */
+
+.teacher-brand-n {
+  position: absolute;
+
+  top: -4px;
+  right: -7px;
+
+  font-size: 0.48em;
+  font-weight: 900;
+}
+
+
+/* Make room for raised n */
+
+.teacher-brand-xn {
+  margin-right: 7px;
+}
+
 
 .teacher-brand-portal {
   margin-top: 3px;
 
-  color: #857d79;
+  color: #696762;
 
   font-size: 0.62rem;
   font-weight: 800;
-
   letter-spacing: 0.04em;
+}
+
+
+/* =========================================
+   Logo Animation
+========================================= */
+
+@keyframes teacherLogoFloat {
+
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  50% {
+    transform:
+      translateY(-4px)
+      rotate(2deg);
+  }
+}
+
+
+@keyframes teacherBrandXnFloat {
+
+  0%,
+  100% {
+    transform:
+      translateY(1px)
+      rotate(-2deg);
+  }
+
+  50% {
+    transform:
+      translateY(-3px)
+      rotate(2deg);
+  }
+}
+
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .teacher-brand-icon,
+  .teacher-brand-xn {
+    animation: none;
+  }
 }
 
 /* =========================================
@@ -129,73 +273,84 @@
 ========================================= */
 
 .teacher-navigation {
-  flex: 1;
+  justify-self: center;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+
+  gap: 10px;
 }
 
 .teacher-navigation a {
   position: relative;
 
-  padding: 10px 14px;
+  padding: 9px 16px;
+
+  background: #ffd84d;
+
+  color: #2f2f2f;
+
+  border: 2px solid #2f2f2f;
 
   border-radius: 10px;
 
-  color: #6f6965;
+  box-shadow:
+    2px 2px 0 #2f2f2f;
+
   text-decoration: none;
 
   font-size: 0.87rem;
-  font-weight: 800;
+  font-weight: 900;
 
   transition:
-    color 0.2s ease,
-    background 0.2s ease;
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .teacher-navigation a:hover {
-  color: #d96f61;
-  background: #fff0ed;
+  background: #ffe77f;
+
+  transform: translate(-1px, -1px);
+
+  box-shadow:
+    3px 3px 0 #2f2f2f;
 }
 
 .teacher-navigation a.active {
-  color: #c85f52;
-  background: #ffe9e5;
+  background: #ffc928;
+
+  transform: translate(1px, 1px);
+
+  box-shadow:
+    1px 1px 0 #2f2f2f;
 }
 
+
+/* Remove previous active underline */
 .teacher-navigation a.active::after {
-  content: "";
-
-  position: absolute;
-
-  left: 14px;
-  right: 14px;
-  bottom: 4px;
-
-  height: 2px;
-
-  background: #ff9a8b;
-
-  border-radius: 999px;
+  display: none;
 }
+
 
 /* =========================================
-   Profile
+   Profile / Right Side
 ========================================= */
 
 .teacher-nav-actions {
-  flex-shrink: 0;
+  justify-self: end;
 
   display: flex;
   align-items: center;
-  gap: 12px;
+
+  gap: 14px;
 }
 
 .teacher-profile {
   display: flex;
   align-items: center;
+
   gap: 9px;
 }
 
@@ -208,13 +363,16 @@
   display: grid;
   place-items: center;
 
-  background: #ff9a8b;
-  color: #ffffff;
+  background: #ffd84d;
+
+  color: #2f2f2f;
+
+  border: 2px solid #2f2f2f;
 
   border-radius: 50%;
 
   box-shadow:
-    0 4px 10px rgba(255, 154, 139, 0.28);
+    2px 2px 0 #2f2f2f;
 
   font-size: 0.9rem;
   font-weight: 900;
@@ -230,33 +388,38 @@
 
   font-size: 0.83rem;
   font-weight: 900;
-
   line-height: 1.2;
 }
 
 .teacher-profile-role {
   margin-top: 2px;
 
-  color: #8b817d;
+  color: #696762;
 
   font-size: 0.67rem;
   font-weight: 700;
 }
+
 
 /* =========================================
    Logout
 ========================================= */
 
 .teacher-logout-button {
-  min-height: 36px;
+  min-height: 38px;
 
-  padding: 7px 12px;
+  padding: 7px 14px;
 
-  background: #ffffff;
-  color: #6f6965;
+  background: #ffd84d;
 
-  border: 1px solid #d8d5d0;
+  color: #2f2f2f;
+
+  border: 2px solid #2f2f2f;
+
   border-radius: 10px;
+
+  box-shadow:
+    2px 2px 0 #2f2f2f;
 
   cursor: pointer;
 
@@ -264,19 +427,20 @@
   font-weight: 900;
 
   transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .teacher-logout-button:hover {
-  background: #fff0ed;
-  border-color: #ffb7ac;
-  color: #c85f52;
+  background: #ffe77f;
 
-  transform: translateY(-1px);
+  transform: translate(-1px, -1px);
+
+  box-shadow:
+    3px 3px 0 #2f2f2f;
 }
+
 
 /* =========================================
    Footer
@@ -294,11 +458,13 @@
   width: min(1120px, calc(100% - 40px));
 
   margin: 0 auto;
+
   padding: 25px 0;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 25px;
 
   color: #857d79;
@@ -312,7 +478,7 @@
 }
 
 .teacher-footer-brand {
-  color: #c85f52;
+  color: #d6a900;;
 
   font-family:
     "Fredoka",
@@ -320,28 +486,49 @@
     sans-serif;
 
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.teacher-footer-brand sup {
+  position: relative;
+  top: -0.3em;
+
+  margin-left: 1px;
+
+  font-size: 0.5em;
+  font-weight: 900;
 }
 
 .teacher-footer-copy {
   color: #99918d;
 }
 
+
 /* =========================================
-   Responsive
+   Responsive - Tablet
 ========================================= */
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
+
   .teacher-top-nav-inner {
-    gap: 15px;
+    grid-template-columns:
+      auto
+      1fr
+      auto;
+
+    padding: 0 20px;
+
+    gap: 16px;
   }
 
   .teacher-navigation {
-    justify-content: flex-start;
+    gap: 6px;
   }
 
   .teacher-navigation a {
-    padding: 9px 10px;
+    padding: 8px 10px;
+
+    font-size: 0.8rem;
   }
 
   .teacher-profile-info {
@@ -349,10 +536,23 @@
   }
 }
 
+
+/* =========================================
+   Responsive - Mobile
+========================================= */
+
 @media (max-width: 650px) {
+
   .teacher-top-nav-inner {
-    width: calc(100% - 28px);
     min-height: 66px;
+
+    grid-template-columns:
+      1fr
+      auto;
+
+    padding: 0 14px;
+
+    gap: 12px;
   }
 
   .teacher-brand-name {
@@ -375,6 +575,8 @@
   }
 
   .teacher-nav-actions {
+    justify-self: end;
+
     gap: 7px;
   }
 
@@ -383,13 +585,14 @@
   }
 
   .teacher-logout-button {
-    padding: 7px 9px;
+    padding: 7px 10px;
   }
 
   .teacher-footer-inner {
     width: calc(100% - 28px);
 
     flex-direction: column;
+
     gap: 7px;
 
     text-align: center;

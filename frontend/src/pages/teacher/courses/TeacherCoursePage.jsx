@@ -417,10 +417,10 @@ function TeacherCoursePage() {
 
                     <div className="teacher-course-card-footer">
                       <Link
-                        to={`/teacher/courses/${course.id}`}
+                        to={`/teacher/courses/${course.id}/playground`}
                         className="teacher-course-manage-button"
                       >
-                        Manage Course
+                        Open Playground
                         <span>→</span>
                       </Link>
                     </div>
