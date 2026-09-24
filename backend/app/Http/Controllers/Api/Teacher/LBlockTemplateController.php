@@ -50,14 +50,6 @@ class LBlockTemplateController extends Controller
                 'max:100',
             ],
 
-            'type' => [
-                'required',
-                'string',
-                'max:50',
-                'alpha_dash',
-                'unique:lblock_templates,type',
-            ],
-
             'icon' => [
                 'nullable',
                 'string',
@@ -70,6 +62,13 @@ class LBlockTemplateController extends Controller
                 'max:2000',
             ],
 
+            /*
+             * The React component must be one of
+             * MentorXn's trusted components.
+             *
+             * Teachers cannot provide arbitrary
+             * component names or JavaScript.
+             */
             'component' => [
                 'required',
                 'string',
@@ -78,16 +77,48 @@ class LBlockTemplateController extends Controller
                 Rule::in([
                     'ContentBlock',
                     'QuizBlock',
+                    'InteractiveBlock',
                     'PracticeTerminalBlock',
                 ]),
             ],
 
+            /*
+             * Tags are only metadata used for
+             * searching, filtering and organising
+             * templates.
+             */
+            'tags' => [
+                'nullable',
+                'array',
+                'max:20',
+            ],
+
+            'tags.*' => [
+                'required',
+                'string',
+                'max:50',
+            ],
+
+            /*
+             * Defines which fields can be edited
+             * when the template is used.
+             *
+             * Every template can include standard
+             * student-facing title and icon fields,
+             * plus template-specific fields.
+             */
             'configuration_schema' => [
                 'nullable',
                 'array',
             ],
 
-            'default_data' => [
+            /*
+             * Example content used for template
+             * preview and demonstration.
+             *
+             * This is not the real course content.
+             */
+            'example_data' => [
                 'nullable',
                 'array',
             ],
@@ -112,9 +143,6 @@ class LBlockTemplateController extends Controller
             'name' =>
                 $validated['name'],
 
-            'type' =>
-                $validated['type'],
-
             'icon' =>
                 $validated['icon'] ?? null,
 
@@ -124,12 +152,17 @@ class LBlockTemplateController extends Controller
             'component' =>
                 $validated['component'],
 
+            'tags' =>
+                $this->normaliseTags(
+                    $validated['tags'] ?? []
+                ),
+
             'configuration_schema' =>
                 $validated['configuration_schema']
                 ?? null,
 
-            'default_data' =>
-                $validated['default_data']
+            'example_data' =>
+                $validated['example_data']
                 ?? null,
 
             'status' =>
@@ -165,21 +198,6 @@ class LBlockTemplateController extends Controller
                 'max:100',
             ],
 
-            'type' => [
-                'sometimes',
-                'required',
-                'string',
-                'max:50',
-                'alpha_dash',
-
-                Rule::unique(
-                    'lblock_templates',
-                    'type'
-                )->ignore(
-                    $lblockTemplate->id
-                ),
-            ],
-
             'icon' => [
                 'nullable',
                 'string',
@@ -201,8 +219,21 @@ class LBlockTemplateController extends Controller
                 Rule::in([
                     'ContentBlock',
                     'QuizBlock',
+                    'InteractiveBlock',
                     'PracticeTerminalBlock',
                 ]),
+            ],
+
+            'tags' => [
+                'nullable',
+                'array',
+                'max:20',
+            ],
+
+            'tags.*' => [
+                'required',
+                'string',
+                'max:50',
             ],
 
             'configuration_schema' => [
@@ -210,7 +241,7 @@ class LBlockTemplateController extends Controller
                 'array',
             ],
 
-            'default_data' => [
+            'example_data' => [
                 'nullable',
                 'array',
             ],
@@ -230,6 +261,22 @@ class LBlockTemplateController extends Controller
                 'min:0',
             ],
         ]);
+
+        /*
+         * Normalise tags only when they were
+         * included in the update request.
+         */
+        if (
+            array_key_exists(
+                'tags',
+                $validated
+            )
+        ) {
+            $validated['tags'] =
+                $this->normaliseTags(
+                    $validated['tags'] ?? []
+                );
+        }
 
         $lblockTemplate->update(
             $validated
@@ -259,5 +306,53 @@ class LBlockTemplateController extends Controller
             'message' =>
                 'Learning block template deleted successfully.',
         ]);
+    }
+
+    /**
+     * Clean template tags before storing them.
+     *
+     * Example:
+     *
+     * [" Content ", "Code", "content"]
+     *
+     * becomes:
+     *
+     * ["Content", "Code"]
+     */
+    private function normaliseTags(
+        array $tags
+    ): array {
+        $normalised = [];
+
+        foreach ($tags as $tag) {
+            $tag = trim($tag);
+
+            if ($tag === '') {
+                continue;
+            }
+
+            $alreadyExists = false;
+
+            foreach (
+                $normalised as $existingTag
+            ) {
+                if (
+                    strtolower($existingTag)
+                    === strtolower($tag)
+                ) {
+                    $alreadyExists = true;
+
+                    break;
+                }
+            }
+
+            if (!$alreadyExists) {
+                $normalised[] = $tag;
+            }
+        }
+
+        return array_values(
+            $normalised
+        );
     }
 }

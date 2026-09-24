@@ -10,32 +10,42 @@ import {
 
 import { useAuth } from "../../../context/AuthContext";
 
-import LearningBlockRenderer from "../../../components/learning/LearnngBlockRenderer";
+import LearningBlockRenderer from "../../../components/learning/LearningBlockRenderer";
 
-import "../../../styles/course-playground.css";
+import "../../../styles/teachers/course-playground.css";
 import "../../../styles/adventure-land.css";
 
-const createEmptyQuestion = () => ({
-  question: "",
-  type: "multiple_choice",
+const LESSON_ACCENT_COLORS = [
+  "#8fd9a8", // Mint Green
+  "#ffd84d", // Sunny Yellow
+  "#7cd4ff", // Sky Blue
+  "#ff9a8b", // Coral
+  "#6ee7b7", // Aqua Green
+  "#ffb3e1", // Soft Pink
+  "#c4b5fd", // Lavender
+  "#fdba8c", // Peach
+  "#fde68a", // Lemon
+  "#a5f3fc", // Soft Cyan
+  "#fda4af", // Light Rose
+  "#bef264", // Light Lime
+];
 
-  options: [
-    "",
-    "",
-    "",
-    "",
-  ],
+const getLessonAccentColor = (lessons, selectedLesson) => {
+  if (!selectedLesson) {
+    return LESSON_ACCENT_COLORS[0];
+  }
 
-  correct_answer: 0,
+  const lessonIndex = lessons.findIndex(
+    (lesson) => lesson.id === selectedLesson.id
+  );
 
-  correct_message:
-    "Correct! 🎉",
+  const safeIndex = lessonIndex >= 0 ? lessonIndex : 0;
 
-  wrong_message:
-    "Not quite right. Try again.",
+  return LESSON_ACCENT_COLORS[
+    safeIndex % LESSON_ACCENT_COLORS.length
+  ];
+};
 
-  explanation: "",
-});
 
 function CoursePlaygroundPage() {
   const { courseId } =
@@ -71,6 +81,26 @@ function CoursePlaygroundPage() {
     learningBlocks,
     setLearningBlocks,
   ] = useState([]);
+
+  const [
+    blockTemplates,
+    setBlockTemplates,
+  ] = useState([]);
+
+  const [
+    selectedBlockTemplate,
+    setSelectedBlockTemplate,
+  ] = useState(null);
+
+  const [
+    templateForm,
+    setTemplateForm,
+  ] = useState({});
+
+  const [
+    isLoadingTemplates,
+    setIsLoadingTemplates,
+  ] = useState(false);
 
   const [
     editorMode,
@@ -118,50 +148,6 @@ function CoursePlaygroundPage() {
     title: "",
     icon: "📑",
     description: "",
-  });
-
-  const [
-    contentForm,
-    setContentForm,
-  ] = useState({
-    title: "",
-    icon: "📖",
-    content: "",
-  });
-
-  const [
-    quizForm,
-    setQuizForm,
-  ] = useState({
-    title: "Quick Check",
-    icon: "🧠",
-
-    instructions:
-      "Choose the best answer.",
-
-    passing_score: 100,
-    allow_retry: true,
-
-    questions: [
-      createEmptyQuestion(),
-    ],
-  });
-
-  const [
-    terminalForm,
-    setTerminalForm,
-  ] = useState({
-    title: "Practice Terminal",
-    icon: "🪄",
-    welcome: "Welcome! Try a command.",
-    tip: "",
-    commandPrefix: "",
-    commands: [
-      {
-        command: "",
-        output: "",
-      },
-    ],
   });
 
   /*
@@ -752,7 +738,7 @@ function CoursePlaygroundPage() {
    */
 
   const handleOpenBlockLibrary =
-    () => {
+    async () => {
       if (!selectedTopic) {
         setFormError(
           "Select a topic first."
@@ -762,89 +748,19 @@ function CoursePlaygroundPage() {
       }
 
       setFormError("");
+      setIsLoadingTemplates(true);
 
       setEditorMode(
         "block-library"
       );
-    };
-
-  /*
-   * =========================================
-   * Content Block
-   * =========================================
-   */
-
-  const handleOpenContentBlock =
-    () => {
-      setContentForm({
-        title: "",
-        icon: "📖",
-        content: "",
-      });
-
-      setFormError("");
-
-      setEditorMode(
-        "add-content"
-      );
-    };
-
-  const handleCreateContentBlock =
-    async (event) => {
-      event.preventDefault();
-
-      if (!selectedTopic) {
-        setFormError(
-          "Select a topic first."
-        );
-
-        return;
-      }
-
-      const content =
-        contentForm.content.trim();
-
-      if (!content) {
-        setFormError(
-          "Content is required."
-        );
-
-        return;
-      }
-
-      setIsSaving(true);
-      setFormError("");
 
       try {
         const response =
           await fetch(
-            `http://127.0.0.1:8000/api/teacher/topics/${selectedTopic.id}/learning-blocks`,
+            "http://127.0.0.1:8000/api/teacher/lblock-templates",
             {
-              method: "POST",
-
               headers:
-                getHeaders(true),
-
-              body:
-                JSON.stringify({
-                  type:
-                    "content",
-
-                  title:
-                    contentForm.title.trim() ||
-                    null,
-
-                  icon:
-                    contentForm.icon.trim() ||
-                    null,
-
-                  data: {
-                    content,
-                  },
-
-                  status:
-                    "draft",
-                }),
+                getHeaders(),
             }
           );
 
@@ -854,369 +770,164 @@ function CoursePlaygroundPage() {
         if (!response.ok) {
           throw new Error(
             data.message ||
-              "Unable to create content block."
+              "Unable to load learning block templates."
           );
         }
 
-        setLearningBlocks(
-          (current) => [
-            ...current,
-            data.learning_block,
-          ]
-        );
-
-        setEditorMode(
-          "topic"
+        setBlockTemplates(
+          data.lblock_templates ||
+            []
         );
       } catch (
         requestError
       ) {
         console.error(
-          "Create content block error:",
+          "Load block templates error:",
           requestError
         );
 
         setFormError(
           requestError.message ||
-            "Unable to create content block."
+            "Unable to load learning block templates."
         );
+
+        setBlockTemplates([]);
       } finally {
-        setIsSaving(false);
+        setIsLoadingTemplates(
+          false
+        );
       }
     };
 
-  /*
-   * =========================================
-   * Quiz Block
-   * =========================================
-   */
+  const handleSelectBlockTemplate =
+    (template) => {
+      const exampleData =
+        template.example_data ||
+        {};
 
-  const handleOpenQuizBlock =
-    () => {
-      setQuizForm({
-        title:
-          "Quick Check",
+      const fields =
+        template
+          .configuration_schema
+          ?.fields ||
+        [];
 
-        icon: "🧠",
+      const initialForm = {};
 
-        instructions:
-          "Choose the best answer.",
+      fields.forEach(
+        (field) => {
+          const fieldName =
+            field.name;
 
-        passing_score:
-          100,
+          if (!fieldName) {
+            return;
+          }
 
-        allow_retry:
-          true,
-
-        questions: [
-          createEmptyQuestion(),
-        ],
-      });
-
-      setFormError("");
-
-      setEditorMode(
-        "add-quiz"
-      );
-    };
-
-  const handleQuizFieldChange = (
-    field,
-    value
-  ) => {
-    setQuizForm(
-      (current) => ({
-        ...current,
-        [field]: value,
-      })
-    );
-  };
-
-  const handleQuestionChange = (
-    questionIndex,
-    field,
-    value
-  ) => {
-    setQuizForm(
-      (current) => ({
-        ...current,
-
-        questions:
-          current.questions.map(
-            (
-              question,
-              index
-            ) =>
-              index ===
-              questionIndex
-                ? {
-                    ...question,
-                    [field]:
-                      value,
-                  }
-                : question
-          ),
-      })
-    );
-  };
-
-  const handleOptionChange = (
-    questionIndex,
-    optionIndex,
-    value
-  ) => {
-    setQuizForm(
-      (current) => ({
-        ...current,
-
-        questions:
-          current.questions.map(
-            (
-              question,
-              index
-            ) => {
-              if (
-                index !==
-                questionIndex
-              ) {
-                return question;
-              }
-
-              return {
-                ...question,
-
-                options:
-                  question.options.map(
-                    (
-                      option,
-                      currentOptionIndex
-                    ) =>
-                      currentOptionIndex ===
-                      optionIndex
-                        ? value
-                        : option
-                  ),
-              };
-            }
-          ),
-      })
-    );
-  };
-
-  const handleAddOption = (
-    questionIndex
-  ) => {
-    setQuizForm(
-      (current) => ({
-        ...current,
-
-        questions:
-          current.questions.map(
-            (
-              question,
-              index
-            ) =>
-              index ===
-              questionIndex
-                ? {
-                    ...question,
-
-                    options: [
-                      ...question.options,
-                      "",
-                    ],
-                  }
-                : question
-          ),
-      })
-    );
-  };
-
-  const handleRemoveOption = (
-    questionIndex,
-    optionIndex
-  ) => {
-    setQuizForm(
-      (current) => ({
-        ...current,
-
-        questions:
-          current.questions.map(
-            (
-              question,
-              index
-            ) => {
-              if (
-                index !==
-                questionIndex
-              ) {
-                return question;
-              }
-
-              if (
-                question.options
-                  .length <= 2
-              ) {
-                return question;
-              }
-
-              const newOptions =
-                question.options.filter(
-                  (
-                    _,
-                    currentOptionIndex
-                  ) =>
-                    currentOptionIndex !==
-                    optionIndex
-                );
-
-              let newCorrectAnswer =
-                question.correct_answer;
-
-              if (
-                optionIndex ===
-                question.correct_answer
-              ) {
-                newCorrectAnswer =
-                  0;
-              } else if (
-                optionIndex <
-                question.correct_answer
-              ) {
-                newCorrectAnswer =
-                  question.correct_answer -
-                  1;
-              }
-
-              return {
-                ...question,
-
-                options:
-                  newOptions,
-
-                correct_answer:
-                  newCorrectAnswer,
-              };
-            }
-          ),
-      })
-    );
-  };
-
-  const handleAddQuestion =
-    () => {
-      setQuizForm(
-        (current) => ({
-          ...current,
-
-          questions: [
-            ...current.questions,
-            createEmptyQuestion(),
-          ],
-        })
-      );
-    };
-
-  const handleRemoveQuestion = (
-    questionIndex
-  ) => {
-    setQuizForm(
-      (current) => {
-        if (
-          current.questions
-            .length <= 1
-        ) {
-          return current;
-        }
-
-        return {
-          ...current,
-
-          questions:
-            current.questions.filter(
-              (
-                _,
-                index
-              ) =>
-                index !==
-                questionIndex
-            ),
-        };
-      }
-    );
-  };
-
-  const validateQuizForm =
-    () => {
-      if (
-        !quizForm.questions.length
-      ) {
-        return "Add at least one question.";
-      }
-
-      for (
-        let questionIndex = 0;
-        questionIndex <
-        quizForm.questions.length;
-        questionIndex += 1
-      ) {
-        const question =
-          quizForm.questions[
-            questionIndex
-          ];
-
-        if (
-          !question.question.trim()
-        ) {
-          return `Question ${
-            questionIndex + 1
-          } is required.`;
-        }
-
-        if (
-          question.options.length <
-          2
-        ) {
-          return `Question ${
-            questionIndex + 1
-          } needs at least two options.`;
-        }
-
-        for (
-          let optionIndex = 0;
-          optionIndex <
-          question.options.length;
-          optionIndex += 1
-        ) {
           if (
-            !question.options[
-              optionIndex
-            ].trim()
+            Object.prototype.hasOwnProperty.call(
+              exampleData,
+              fieldName
+            )
           ) {
-            return `Option ${
-              optionIndex + 1
-            } in question ${
-              questionIndex + 1
-            } is required.`;
+            initialForm[fieldName] =
+              exampleData[fieldName];
+
+            return;
+          }
+
+          switch (field.type) {
+            case "boolean":
+              initialForm[fieldName] =
+                false;
+              break;
+
+            default:
+              initialForm[fieldName] =
+                "";
+              break;
           }
         }
+      );
 
-        if (
-          question.correct_answer <
-            0 ||
-          question.correct_answer >=
-            question.options.length
-        ) {
-          return `Choose a valid correct answer for question ${
-            questionIndex + 1
-          }.`;
-        }
-      }
+      setSelectedBlockTemplate(
+        template
+      );
 
-      return null;
+      setTemplateForm(
+        initialForm
+      );
+
+      setFormError("");
+
+      setEditorMode(
+        "add-template-block"
+      );
     };
 
-  const handleCreateQuizBlock =
+  const handleTemplateFieldChange =
+    (
+      fieldName,
+      value
+    ) => {
+      setTemplateForm(
+        (current) => ({
+          ...current,
+
+          [fieldName]:
+            value,
+        })
+      );
+    };
+
+  const handleTemplateRepeaterItemChange = (
+    fieldName,
+    itemIndex,
+    itemFieldName,
+    value
+  ) => {
+    setTemplateForm((current) => ({
+      ...current,
+      [fieldName]: (current[fieldName] || []).map(
+        (item, index) =>
+          index === itemIndex
+            ? {
+                ...item,
+                [itemFieldName]: value,
+              }
+            : item
+      ),
+    }));
+  };
+
+  const handleAddTemplateRepeaterItem = (field) => {
+    const newItem = {};
+
+    (field.fields || []).forEach((itemField) => {
+      newItem[itemField.name] =
+        itemField.default ?? "";
+    });
+
+    setTemplateForm((current) => ({
+      ...current,
+      [field.name]: [
+        ...(current[field.name] || []),
+        newItem,
+      ],
+    }));
+  };
+
+  const handleRemoveTemplateRepeaterItem = (
+    fieldName,
+    itemIndex
+  ) => {
+    setTemplateForm((current) => ({
+      ...current,
+      [fieldName]: (current[fieldName] || []).filter(
+        (_, index) => index !== itemIndex
+      ),
+    }));
+  };
+
+  const handleCreateTemplateBlock =
     async (event) => {
       event.preventDefault();
 
@@ -1228,93 +939,114 @@ function CoursePlaygroundPage() {
         return;
       }
 
-      const validationError =
-        validateQuizForm();
-
-      if (validationError) {
+      if (!selectedBlockTemplate) {
         setFormError(
-          validationError
+          "Select a learning block template."
         );
 
         return;
       }
 
+      const fields =
+        selectedBlockTemplate
+          .configuration_schema
+          ?.fields ||
+        [];
+
+      for (const field of fields) {
+        if (!field.required) {
+          continue;
+        }
+
+        const value =
+          templateForm[
+            field.name
+          ];
+
+        if (
+          value === undefined ||
+          value === null ||
+          (
+            typeof value ===
+              "string" &&
+            !value.trim()
+          )
+        ) {
+          setFormError(
+            `${field.label || field.name} is required.`
+          );
+
+          return;
+        }
+      }
+
+      const blockData = {};
+
+      fields.forEach(
+        (field) => {
+          if (
+            field.name ===
+              "title" ||
+            field.name ===
+              "icon"
+          ) {
+            return;
+          }
+
+          let value =
+            templateForm[
+              field.name
+            ];
+
+          if (
+            typeof value ===
+            "string"
+          ) {
+            value =
+              value.trim();
+          }
+
+          blockData[
+            field.name
+          ] = value;
+        }
+      );
+
       setIsSaving(true);
       setFormError("");
-
-      const questions =
-        quizForm.questions.map(
-          (question) => ({
-            question:
-              question.question.trim(),
-
-            type:
-              "multiple_choice",
-
-            options:
-              question.options.map(
-                (option) =>
-                  option.trim()
-              ),
-
-            correct_answer:
-              Number(
-                question.correct_answer
-              ),
-
-            correct_message:
-              question.correct_message.trim() ||
-              "Correct! 🎉",
-
-            wrong_message:
-              question.wrong_message.trim() ||
-              "Not quite right. Try again.",
-
-            explanation:
-              question.explanation.trim() ||
-              null,
-          })
-        );
 
       try {
         const response =
           await fetch(
             `http://127.0.0.1:8000/api/teacher/topics/${selectedTopic.id}/learning-blocks`,
             {
-              method: "POST",
+              method:
+                "POST",
 
               headers:
                 getHeaders(true),
 
               body:
                 JSON.stringify({
-                  type: "quiz",
+                  lblock_template_id:
+                    selectedBlockTemplate.id,
 
                   title:
-                    quizForm.title.trim() ||
-                    null,
+                    typeof templateForm.title ===
+                      "string"
+                      ? templateForm.title.trim() ||
+                        null
+                      : null,
 
                   icon:
-                    quizForm.icon.trim() ||
-                    "🧠",
+                    typeof templateForm.icon ===
+                      "string"
+                      ? templateForm.icon.trim() ||
+                        null
+                      : null,
 
-                  data: {
-                    instructions:
-                      quizForm.instructions.trim() ||
-                      null,
-
-                    passing_score:
-                      Number(
-                        quizForm.passing_score
-                      ),
-
-                    allow_retry:
-                      Boolean(
-                        quizForm.allow_retry
-                      ),
-
-                    questions,
-                  },
+                  data:
+                    blockData,
 
                   status:
                     "draft",
@@ -1336,7 +1068,7 @@ function CoursePlaygroundPage() {
           throw new Error(
             firstError ||
               data.message ||
-              "Unable to create quiz."
+              "Unable to create learning block."
           );
         }
 
@@ -1347,6 +1079,12 @@ function CoursePlaygroundPage() {
           ]
         );
 
+        setSelectedBlockTemplate(
+          null
+        );
+
+        setTemplateForm({});
+
         setEditorMode(
           "topic"
         );
@@ -1354,13 +1092,13 @@ function CoursePlaygroundPage() {
         requestError
       ) {
         console.error(
-          "Create quiz error:",
+          "Create template block error:",
           requestError
         );
 
         setFormError(
           requestError.message ||
-            "Unable to create quiz."
+            "Unable to create learning block."
         );
       } finally {
         setIsSaving(false);
@@ -1369,267 +1107,30 @@ function CoursePlaygroundPage() {
 
   /*
    * =========================================
-   * Practice Terminal Block
+   * Learning Block Drawers
    * =========================================
    */
 
-  const handleOpenTerminalBlock =
-    () => {
-      setTerminalForm({
-        title: "Practice Terminal",
-        icon: "🪄",
-        welcome:
-          "Welcome! Try a command.",
-        tip: "",
-        commandPrefix: "",
-        commands: [
-          {
-            command: "",
-            output: "",
-          },
-        ],
-      });
+  const handleCloseBlockLibrary = () => {
+    setSelectedBlockTemplate(null);
+    setTemplateForm({});
+    setFormError("");
 
-      setFormError("");
-
-      setEditorMode(
-        "add-terminal"
-      );
-    };
-
-  const handleTerminalFieldChange = (
-    field,
-    value
-  ) => {
-    setTerminalForm(
-      (current) => ({
-        ...current,
-        [field]: value,
-      })
+    setEditorMode(
+      selectedTopic
+        ? "topic"
+        : selectedLesson
+        ? "lesson"
+        : "course"
     );
   };
 
-  const handleTerminalCommandChange = (
-    commandIndex,
-    field,
-    value
-  ) => {
-    setTerminalForm(
-      (current) => ({
-        ...current,
-        commands:
-          current.commands.map(
-            (command, index) =>
-              index === commandIndex
-                ? {
-                    ...command,
-                    [field]: value,
-                  }
-                : command
-          ),
-      })
-    );
+  const handleCloseTemplateDrawer = () => {
+    setSelectedBlockTemplate(null);
+    setTemplateForm({});
+    setFormError("");
+    setEditorMode("block-library");
   };
-
-  const handleAddTerminalCommand =
-    () => {
-      setTerminalForm(
-        (current) => ({
-          ...current,
-          commands: [
-            ...current.commands,
-            {
-              command: "",
-              output: "",
-            },
-          ],
-        })
-      );
-    };
-
-  const handleRemoveTerminalCommand = (
-    commandIndex
-  ) => {
-    setTerminalForm(
-      (current) => {
-        if (
-          current.commands.length <= 1
-        ) {
-          return current;
-        }
-
-        return {
-          ...current,
-          commands:
-            current.commands.filter(
-              (_, index) =>
-                index !== commandIndex
-            ),
-        };
-      }
-    );
-  };
-
-  const validateTerminalForm =
-    () => {
-      if (
-        !terminalForm.commands.length
-      ) {
-        return "Add at least one command.";
-      }
-
-      for (
-        let commandIndex = 0;
-        commandIndex <
-        terminalForm.commands.length;
-        commandIndex += 1
-      ) {
-        const command =
-          terminalForm.commands[
-            commandIndex
-          ];
-
-        if (!command.command.trim()) {
-          return `Command ${
-            commandIndex + 1
-          } is required.`;
-        }
-
-        if (!command.output.trim()) {
-          return `Output for command ${
-            commandIndex + 1
-          } is required.`;
-        }
-      }
-
-      return null;
-    };
-
-  const handleCreateTerminalBlock =
-    async (event) => {
-      event.preventDefault();
-
-      if (!selectedTopic) {
-        setFormError(
-          "Select a topic first."
-        );
-
-        return;
-      }
-
-      const validationError =
-        validateTerminalForm();
-
-      if (validationError) {
-        setFormError(
-          validationError
-        );
-
-        return;
-      }
-
-      setIsSaving(true);
-      setFormError("");
-
-      const commands =
-        terminalForm.commands.map(
-          (command) => ({
-            command:
-              command.command.trim(),
-            output:
-              command.output.trim(),
-          })
-        );
-
-      try {
-        const response =
-          await fetch(
-            `http://127.0.0.1:8000/api/teacher/topics/${selectedTopic.id}/learning-blocks`,
-            {
-              method: "POST",
-
-              headers:
-                getHeaders(true),
-
-              body:
-                JSON.stringify({
-                  type:
-                    "practice_terminal",
-
-                  title:
-                    terminalForm.title.trim() ||
-                    null,
-
-                  icon:
-                    terminalForm.icon.trim() ||
-                    "🪄",
-
-                  data: {
-                    welcome:
-                      terminalForm.welcome.trim() ||
-                      null,
-
-                    tip:
-                      terminalForm.tip.trim() ||
-                      null,
-
-                    command_prefix:
-                      terminalForm.commandPrefix.trim() ||
-                      null,
-
-                    commands,
-                  },
-
-                  status:
-                    "draft",
-                }),
-            }
-          );
-
-        const data =
-          await response.json();
-
-        if (!response.ok) {
-          const firstError =
-            data.errors
-              ? Object.values(
-                  data.errors
-                )?.[0]?.[0]
-              : null;
-
-          throw new Error(
-            firstError ||
-              data.message ||
-              "Unable to create Practice Terminal."
-          );
-        }
-
-        setLearningBlocks(
-          (current) => [
-            ...current,
-            data.learning_block,
-          ]
-        );
-
-        setEditorMode(
-          "topic"
-        );
-      } catch (
-        requestError
-      ) {
-        console.error(
-          "Create Practice Terminal error:",
-          requestError
-        );
-
-        setFormError(
-          requestError.message ||
-            "Unable to create Practice Terminal."
-        );
-      } finally {
-        setIsSaving(false);
-      }
-    };
 
   /*
    * =========================================
@@ -1691,86 +1192,36 @@ function CoursePlaygroundPage() {
 
   return (
     <div className="course-playground">
-      {/* Header */}
-
-      <header className="course-playground-header">
-        <div className="course-playground-heading">
-          <button
-            type="button"
-            className="course-playground-back"
-            onClick={() =>
-              navigate(
-                "/teacher/courses"
-              )
-            }
-          >
-            ←
-          </button>
-
-          <div className="course-playground-course-icon">
-            {course.icon ||
-              "🚀"}
-          </div>
-
-          <div>
-            <span className="course-playground-label">
-              COURSE PLAYGROUND
-            </span>
-
-            <h1>
-              {course.title}
-            </h1>
-          </div>
-        </div>
-
-        <div className="course-playground-actions">
-          <span
-            className={`course-playground-status ${course.status}`}
-          >
-            {course.status ===
-            "published"
-              ? "Published"
-              : "Draft"}
-          </span>
-
-          <button
-            type="button"
-            className="course-playground-preview-button"
-          >
-            Preview Course
-          </button>
-        </div>
-      </header>
-
       <div className="course-playground-grid">
         {/* ===========================
             LEFT - Course Index
         ============================ */}
 
         <aside className="course-playground-index">
-          <div className="course-playground-panel-heading course-playground-index-toolbar">
+          <div className="course-playground-panel-heading">
             <button
               type="button"
-              className="course-playground-add-button compact"
-              onClick={
-                handleOpenAddLesson
-              }
+              className="course-playground-back"
+              onClick={() => navigate("/teacher/courses")}
             >
-              + Add Lesson
+              ← Back
             </button>
+           <div className="course-playground-course-heading">
+  <h1>{course?.title || "Course"}</h1>
 
-            <button
-              type="button"
-              className="course-playground-add-button secondary compact"
-              onClick={
-                handleOpenAddTopic
-              }
-              disabled={
-                !selectedLesson
-              }
-            >
-              + Add Topic
-            </button>
+  <span
+    className={`course-playground-course-status ${
+      course?.status === "published"
+        ? "published"
+        : "draft"
+    }`}
+  >
+    {course?.status === "published"
+      ? "Published"
+      : "Draft"}
+  </span>
+</div>
+           
           </div>
 
           {lessons.length ===
@@ -1794,12 +1245,29 @@ function CoursePlaygroundPage() {
           ) : (
             <div className="course-playground-lessons">
               {lessons.map(
-                (lesson) => (
+                (lesson, lessonIndex) => (
                   <section
                     key={
                       lesson.id
                     }
                     className="course-playground-lesson"
+                    style={{
+                      "--lesson-color":
+                        LESSON_ACCENT_COLORS[
+                          lessonIndex %
+                            LESSON_ACCENT_COLORS.length
+                        ],
+                      "--lesson-accent":
+                        LESSON_ACCENT_COLORS[
+                          lessonIndex %
+                            LESSON_ACCENT_COLORS.length
+                        ],
+                      "--w":
+                        LESSON_ACCENT_COLORS[
+                          lessonIndex %
+                            LESSON_ACCENT_COLORS.length
+                        ],
+                    }}
                   >
                     <button
                       type="button"
@@ -1874,6 +1342,30 @@ function CoursePlaygroundPage() {
             </div>
           )}
 
+          <div className="course-playground-index-actions">
+            <button
+              type="button"
+              className="course-playground-add-button"
+              onClick={
+                handleOpenAddLesson
+              }
+            >
+              + Add Lesson
+            </button>
+
+            <button
+              type="button"
+              className="course-playground-add-button secondary"
+              onClick={
+                handleOpenAddTopic
+              }
+              disabled={
+                !selectedLesson
+              }
+            >
+              + Add Topic
+            </button>
+          </div>
         </aside>
 
         {/* ===========================
@@ -1904,7 +1396,21 @@ function CoursePlaygroundPage() {
                 </p>
               </div>
             ) : (
-              <article className="lesson">
+              <article
+                className="lesson"
+                style={{
+                  "--lesson-accent":
+                    getLessonAccentColor(
+                      lessons,
+                      selectedLesson
+                    ),
+                  "--w":
+                    getLessonAccentColor(
+                      lessons,
+                      selectedLesson
+                    ),
+                }}
+              >
                 <div className="crumb">
                   {course.title}
 
@@ -2005,316 +1511,39 @@ function CoursePlaygroundPage() {
             RIGHT - Editor
         ============================ */}
 
-        <aside className="course-playground-editor">
-          <div className="course-playground-panel-heading">
-            <div>
-              <span>
-                EDIT
-              </span>
+        {/* ===========================
+            SLIDE-OVER - Block Library
+        ============================ */}
 
-              <h2>
-                {editorMode ===
-                "add-lesson"
-                  ? "Add Lesson"
-                  : editorMode ===
-                    "add-topic"
-                  ? "Add Topic"
-                  : editorMode ===
-                    "block-library"
-                  ? "Add Block"
-                  : editorMode ===
-                    "add-content"
-                  ? "Content Block"
-                  : editorMode ===
-                    "add-quiz"
-                  ? "Quiz Block"
-                  : editorMode ===
-                    "add-terminal"
-                  ? "Practice Terminal"
-                  : editorMode ===
-                    "lesson"
-                  ? "Lesson"
-                  : editorMode ===
-                    "topic"
-                  ? "Topic"
-                  : "Course"}
-              </h2>
+        <aside
+          className={`course-playground-drawer course-playground-library-drawer ${
+            editorMode === "block-library" ||
+            editorMode === "add-template-block"
+              ? "open"
+              : ""
+          }`}
+        >
+          <div className="course-playground-drawer-header">
+            <div>
+              <span>LEARNING BLOCKS</span>
+              <h2>Add Learning Block</h2>
             </div>
+
+            <button
+              type="button"
+              className="course-playground-drawer-close"
+              aria-label="Close learning block library"
+              onClick={handleCloseBlockLibrary}
+            >
+              ×
+            </button>
           </div>
 
-          {formError && (
-            <div className="course-playground-form-error">
-              ⚠️{" "}
-              {formError}
-            </div>
-          )}
-
-          {/* Add Lesson */}
-
-          {editorMode ===
-            "add-lesson" && (
-            <form
-              className="course-playground-form"
-              onSubmit={
-                handleCreateLesson
-              }
-            >
-              <label htmlFor="lesson-title">
-                Lesson title
-              </label>
-
-              <input
-                id="lesson-title"
-                type="text"
-                value={
-                  lessonForm.title
-                }
-                placeholder="e.g. Meet PHP"
-                onChange={(
-                  event
-                ) =>
-                  setLessonForm(
-                    (current) => ({
-                      ...current,
-
-                      title:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
-
-              <label htmlFor="lesson-icon">
-                Icon
-              </label>
-
-              <input
-                id="lesson-icon"
-                type="text"
-                value={
-                  lessonForm.icon
-                }
-                onChange={(
-                  event
-                ) =>
-                  setLessonForm(
-                    (current) => ({
-                      ...current,
-
-                      icon:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
-
-              <label htmlFor="lesson-description">
-                Description
-              </label>
-
-              <textarea
-                id="lesson-description"
-                rows="4"
-                value={
-                  lessonForm.description
-                }
-                onChange={(
-                  event
-                ) =>
-                  setLessonForm(
-                    (current) => ({
-                      ...current,
-
-                      description:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
-
-              <div className="course-playground-form-actions">
-                <button
-                  type="button"
-                  className="course-playground-cancel-button"
-                  onClick={() =>
-                    setEditorMode(
-                      selectedTopic
-                        ? "topic"
-                        : selectedLesson
-                        ? "lesson"
-                        : "course"
-                    )
-                  }
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="course-playground-save-button"
-                  disabled={
-                    isSaving
-                  }
-                >
-                  {isSaving
-                    ? "Creating..."
-                    : "Create Lesson"}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Add Topic */}
-
-          {editorMode ===
-            "add-topic" && (
-            <form
-              className="course-playground-form"
-              onSubmit={
-                handleCreateTopic
-              }
-            >
-              <div className="course-playground-parent-info">
-                <span>
-                  Adding topic to
-                </span>
-
-                <strong>
-                  {selectedLesson
-                    ?.icon ||
-                    "📖"}{" "}
-
-                  {
-                    selectedLesson
-                      ?.title
-                  }
-                </strong>
-              </div>
-
-              <label htmlFor="topic-title">
-                Topic title
-              </label>
-
-              <input
-                id="topic-title"
-                type="text"
-                value={
-                  topicForm.title
-                }
-                placeholder="e.g. What is PHP?"
-                onChange={(
-                  event
-                ) =>
-                  setTopicForm(
-                    (current) => ({
-                      ...current,
-
-                      title:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
-
-              <label htmlFor="topic-icon">
-                Icon
-              </label>
-
-              <input
-                id="topic-icon"
-                type="text"
-                value={
-                  topicForm.icon
-                }
-                onChange={(
-                  event
-                ) =>
-                  setTopicForm(
-                    (current) => ({
-                      ...current,
-
-                      icon:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
-
-              <label htmlFor="topic-description">
-                Description
-              </label>
-
-              <textarea
-                id="topic-description"
-                rows="4"
-                value={
-                  topicForm.description
-                }
-                onChange={(
-                  event
-                ) =>
-                  setTopicForm(
-                    (current) => ({
-                      ...current,
-
-                      description:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
-
-              <div className="course-playground-form-actions">
-                <button
-                  type="button"
-                  className="course-playground-cancel-button"
-                  onClick={() =>
-                    setEditorMode(
-                      selectedTopic
-                        ? "topic"
-                        : "lesson"
-                    )
-                  }
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="course-playground-save-button"
-                  disabled={
-                    isSaving
-                  }
-                >
-                  {isSaving
-                    ? "Creating..."
-                    : "Create Topic"}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Block Library */}
-
-          {editorMode ===
-            "block-library" && (
+          <div className="course-playground-drawer-scroll">
             <div className="course-playground-block-library">
               <p className="course-playground-library-intro">
-                Choose a learning
-                component to add
-                to:
+                Choose a developer-managed
+                learning block to add to:
               </p>
 
               <strong className="course-playground-library-topic">
@@ -2328,108 +1557,132 @@ function CoursePlaygroundPage() {
                 }
               </strong>
 
-              <button
-                type="button"
-                className="course-playground-block-option"
-                onClick={
-                  handleOpenContentBlock
-                }
-              >
-                <span className="course-playground-block-option-icon">
-                  📖
-                </span>
+              {isLoadingTemplates ? (
+                <div className="course-playground-library-loading">
+                  Loading learning blocks...
+                </div>
+              ) : blockTemplates.length > 0 ? (
+                <>
+                  <div className="course-playground-library-section-title">
+                    Available Learning Blocks
+                  </div>
 
-                <span>
-                  <strong>
-                    Content
-                  </strong>
+                  {blockTemplates.map(
+                    (template) => (
+                      <button
+                        key={
+                          template.id
+                        }
+                        type="button"
+                        className="course-playground-block-option"
+                        onClick={() =>
+                          handleSelectBlockTemplate(
+                            template
+                          )
+                        }
+                      >
+                        <span className="course-playground-block-option-icon">
+                          {template.icon ||
+                            "🧩"}
+                        </span>
 
-                  <small>
-                    Text,
-                    explanations
-                    and learning
-                    material.
-                  </small>
-                </span>
-              </button>
+                        <span>
+                          <strong>
+                            {
+                              template.name
+                            }
+                          </strong>
 
-              <button
-                type="button"
-                className="course-playground-block-option"
-                onClick={
-                  handleOpenQuizBlock
-                }
-              >
-                <span className="course-playground-block-option-icon">
-                  🧠
-                </span>
+                          <small>
+                            {template.description ||
+                              "Reusable MentorXn learning block."}
+                          </small>
 
-                <span>
-                  <strong>
-                    Quiz
-                  </strong>
-
-                  <small>
-                    Multiple-choice
-                    questions with
-                    feedback and
-                    explanations.
-                  </small>
-                </span>
-              </button>
-
-              <button
-                type="button"
-                className="course-playground-block-option"
-                onClick={
-                  handleOpenTerminalBlock
-                }
-              >
-                <span className="course-playground-block-option-icon">
-                  🪄
-                </span>
-
-                <span>
-                  <strong>
-                    Practice
-                    Terminal
-                  </strong>
-
-                  <small>
-                    Simulated command-line
-                    practice with teacher-defined
-                    commands and outputs.
-                  </small>
-                </span>
-              </button>
-
-              <button
-                type="button"
-                className="course-playground-cancel-button full-width"
-                onClick={() =>
-                  setEditorMode(
-                    "topic"
-                  )
-                }
-              >
-                Cancel
-              </button>
+                          {Array.isArray(
+                            template.tags
+                          ) &&
+                            template.tags
+                              .length >
+                              0 && (
+                              <span className="course-playground-template-tags">
+                                {template.tags.map(
+                                  (
+                                    tag
+                                  ) => (
+                                    <span
+                                      key={
+                                        tag
+                                      }
+                                      className="course-playground-template-tag"
+                                    >
+                                      {
+                                        tag
+                                      }
+                                    </span>
+                                  )
+                                )}
+                              </span>
+                            )}
+                        </span>
+                      </button>
+                    )
+                  )}
+                </>
+              ) : (
+                <div className="course-playground-library-loading">
+                  No active learning block
+                  templates found.
+                </div>
+              )}
             </div>
-          )}
+          </div>
+        </aside>
 
-          {/* Add Content */}
+        {/* ===========================
+            SLIDE-OVER - Block Configuration
+        ============================ */}
 
-          {editorMode ===
-            "add-content" && (
-            <form
-              className="course-playground-form"
+        <aside
+          className={`course-playground-drawer course-playground-config-drawer ${
+            editorMode === "add-template-block" &&
+            selectedBlockTemplate
+              ? "open"
+              : ""
+          }`}
+        >
+          {selectedBlockTemplate && (
+            <>
+              <div className="course-playground-drawer-header">
+                <div>
+                  <span>CONFIGURE BLOCK</span>
+                  <h2>
+                    {selectedBlockTemplate.icon || "🧩"}{" "}
+                    {selectedBlockTemplate.name}
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  className="course-playground-drawer-close"
+                  aria-label="Close learning block configuration"
+                  onClick={handleCloseTemplateDrawer}
+                >
+                  ×
+                </button>
+              </div>
+
+              <form
+              className="course-playground-form course-playground-drawer-form"
               onSubmit={
-                handleCreateContentBlock
+                handleCreateTemplateBlock
               }
             >
               <div className="course-playground-parent-info">
                 <span>
-                  Adding Content
+                  Adding{" "}
+                  {
+                    selectedBlockTemplate.name
+                  }{" "}
                   to
                 </span>
 
@@ -2445,105 +1698,234 @@ function CoursePlaygroundPage() {
                 </strong>
               </div>
 
-              <label htmlFor="content-title">
-                Block title
-              </label>
+              {(
+                selectedBlockTemplate
+                  .configuration_schema
+                  ?.fields || []
+              ).map((field) => {
+                const fieldValue =
+                  templateForm[
+                    field.name
+                  ];
 
-              <input
-                id="content-title"
-                type="text"
-                value={
-                  contentForm.title
-                }
-                placeholder="e.g. What is PHP?"
-                onChange={(
-                  event
-                ) =>
-                  setContentForm(
-                    (current) => ({
-                      ...current,
+                return (
+                  <div
+                    key={
+                      field.name
+                    }
+                    className="course-playground-template-field"
+                  >
+                    <label
+                      htmlFor={`template-${field.name}`}
+                    >
+                      {field.label ||
+                        field.name}
 
-                      title:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
+                      {field.required &&
+                        " *"}
+                    </label>
 
-              <label htmlFor="content-icon">
-                Icon
-              </label>
+                    {field.type ===
+                    "repeater" ? (
+                      <div className="course-playground-repeater">
+                        {(Array.isArray(fieldValue)
+                          ? fieldValue
+                          : []
+                        ).map((item, itemIndex) => (
+                          <section
+                            key={itemIndex}
+                            className="course-playground-question-editor"
+                          >
+                            <div className="course-playground-question-header">
+                              <strong>
+                                {field.item_label || "Item"}{" "}
+                                {itemIndex + 1}
+                              </strong>
 
-              <input
-                id="content-icon"
-                type="text"
-                value={
-                  contentForm.icon
-                }
-                onChange={(
-                  event
-                ) =>
-                  setContentForm(
-                    (current) => ({
-                      ...current,
+                              {(fieldValue?.length || 0) >
+                                (field.min_items || 1) && (
+                                <button
+                                  type="button"
+                                  className="course-playground-question-remove"
+                                  onClick={() =>
+                                    handleRemoveTemplateRepeaterItem(
+                                      field.name,
+                                      itemIndex
+                                    )
+                                  }
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
 
-                      icon:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
+                            {(field.fields || []).map(
+                              (itemField) => (
+                                <div
+                                  key={itemField.name}
+                                  className="course-playground-template-field"
+                                >
+                                  <label>
+                                    {itemField.label ||
+                                      itemField.name}
+                                  </label>
 
-              <label htmlFor="content-body">
-                Content
-              </label>
+                                  {itemField.type ===
+                                  "textarea" ? (
+                                    <textarea
+                                      rows={itemField.rows || 4}
+                                      value={
+                                        item?.[itemField.name] ??
+                                        ""
+                                      }
+                                      onChange={(event) =>
+                                        handleTemplateRepeaterItemChange(
+                                          field.name,
+                                          itemIndex,
+                                          itemField.name,
+                                          event.target.value
+                                        )
+                                      }
+                                    />
+                                  ) : (
+                                    <input
+                                      type="text"
+                                      value={
+                                        item?.[itemField.name] ??
+                                        ""
+                                      }
+                                      onChange={(event) =>
+                                        handleTemplateRepeaterItemChange(
+                                          field.name,
+                                          itemIndex,
+                                          itemField.name,
+                                          event.target.value
+                                        )
+                                      }
+                                    />
+                                  )}
+                                </div>
+                              )
+                            )}
+                          </section>
+                        ))}
 
-              <textarea
-                id="content-body"
-                className="course-playground-content-editor"
-                rows="12"
-                value={
-                  contentForm.content
-                }
-                placeholder={`PHP is a server-side programming language.
+                        <button
+                          type="button"
+                          className="course-playground-small-add-button"
+                          onClick={() =>
+                            handleAddTemplateRepeaterItem(field)
+                          }
+                        >
+                          + Add {field.item_label || "Item"}
+                        </button>
+                      </div>
+                    ) : field.type ===
+                    "textarea" ? (
+                      <textarea
+                        id={`template-${field.name}`}
+                        rows="6"
+                        value={
+                          fieldValue ??
+                          ""
+                        }
+                        onChange={(
+                          event
+                        ) =>
+                          handleTemplateFieldChange(
+                            field.name,
+                            event
+                              .target
+                              .value
+                          )
+                        }
+                      />
+                    ) : field.type ===
+                      "code" ? (
+                      <textarea
+                        id={`template-${field.name}`}
+                        className="course-playground-content-editor"
+                        rows="10"
+                        spellCheck="false"
+                        value={
+                          fieldValue ??
+                          ""
+                        }
+                        onChange={(
+                          event
+                        ) =>
+                          handleTemplateFieldChange(
+                            field.name,
+                            event
+                              .target
+                              .value
+                          )
+                        }
+                      />
+                    ) : field.type ===
+                      "boolean" ? (
+                      <label className="course-playground-checkbox">
+                        <input
+                          id={`template-${field.name}`}
+                          type="checkbox"
+                          checked={
+                            Boolean(
+                              fieldValue
+                            )
+                          }
+                          onChange={(
+                            event
+                          ) =>
+                            handleTemplateFieldChange(
+                              field.name,
+                              event
+                                .target
+                                .checked
+                            )
+                          }
+                        />
 
-It is commonly used to build dynamic websites and APIs.
+                        <span>
+                          Enabled
+                        </span>
+                      </label>
+                    ) : (
+                      <input
+                        id={`template-${field.name}`}
+                        type={
+                          field.type ===
+                          "number"
+                            ? "number"
+                            : "text"
+                        }
+                        value={
+                          fieldValue ??
+                          ""
+                        }
+                        onChange={(
+                          event
+                        ) =>
+                          handleTemplateFieldChange(
+                            field.name,
+                            event
+                              .target
+                              .value
+                          )
+                        }
+                      />
+                    )}
+                  </div>
+                );
+              })}
 
-Your first useful command is:
-
-php -v`}
-                onChange={(
-                  event
-                ) =>
-                  setContentForm(
-                    (current) => ({
-                      ...current,
-
-                      content:
-                        event
-                          .target
-                          .value,
-                    })
-                  )
-                }
-              />
-
-              <div className="course-playground-form-actions">
+              <div className="course-playground-form-actions course-playground-drawer-footer">
                 <button
                   type="button"
                   className="course-playground-cancel-button"
                   disabled={
                     isSaving
                   }
-                  onClick={() =>
-                    setEditorMode(
-                      "block-library"
-                    )
-                  }
+                  onClick={handleCloseTemplateDrawer}
                 >
                   Cancel
                 </button>
@@ -2557,851 +1939,12 @@ php -v`}
                 >
                   {isSaving
                     ? "Saving..."
-                    : "Add Content"}
+                    : "Add Learning Block"}
                 </button>
               </div>
             </form>
+            </>
           )}
-
-          {/* ===========================
-              Add Quiz
-          ============================ */}
-
-          {editorMode ===
-            "add-quiz" && (
-            <form
-              className="course-playground-form course-playground-quiz-form"
-              onSubmit={
-                handleCreateQuizBlock
-              }
-            >
-              <div className="course-playground-parent-info">
-                <span>
-                  Adding Quiz to
-                </span>
-
-                <strong>
-                  {selectedTopic
-                    ?.icon ||
-                    "📑"}{" "}
-
-                  {
-                    selectedTopic
-                      ?.title
-                  }
-                </strong>
-              </div>
-
-              <label htmlFor="quiz-title">
-                Block title
-              </label>
-
-              <input
-                id="quiz-title"
-                type="text"
-                value={
-                  quizForm.title
-                }
-                placeholder="Quick Check"
-                onChange={(
-                  event
-                ) =>
-                  handleQuizFieldChange(
-                    "title",
-                    event.target
-                      .value
-                  )
-                }
-              />
-
-              <label htmlFor="quiz-icon">
-                Icon
-              </label>
-
-              <input
-                id="quiz-icon"
-                type="text"
-                value={
-                  quizForm.icon
-                }
-                onChange={(
-                  event
-                ) =>
-                  handleQuizFieldChange(
-                    "icon",
-                    event.target
-                      .value
-                  )
-                }
-              />
-
-              <label htmlFor="quiz-instructions">
-                Instructions
-              </label>
-
-              <textarea
-                id="quiz-instructions"
-                rows="3"
-                value={
-                  quizForm.instructions
-                }
-                onChange={(
-                  event
-                ) =>
-                  handleQuizFieldChange(
-                    "instructions",
-                    event.target
-                      .value
-                  )
-                }
-              />
-
-              <div className="course-playground-quiz-settings">
-                <div>
-                  <label htmlFor="quiz-passing-score">
-                    Passing score
-                  </label>
-
-                  <div className="course-playground-score-input">
-                    <input
-                      id="quiz-passing-score"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={
-                        quizForm.passing_score
-                      }
-                      onChange={(
-                        event
-                      ) =>
-                        handleQuizFieldChange(
-                          "passing_score",
-                          event
-                            .target
-                            .value
-                        )
-                      }
-                    />
-
-                    <span>
-                      %
-                    </span>
-                  </div>
-                </div>
-
-                <label className="course-playground-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={
-                      quizForm.allow_retry
-                    }
-                    onChange={(
-                      event
-                    ) =>
-                      handleQuizFieldChange(
-                        "allow_retry",
-                        event
-                          .target
-                          .checked
-                      )
-                    }
-                  />
-
-                  <span>
-                    Allow retry
-                  </span>
-                </label>
-              </div>
-
-              <div className="course-playground-quiz-divider">
-                Questions
-              </div>
-
-              {quizForm.questions.map(
-                (
-                  question,
-                  questionIndex
-                ) => (
-                  <section
-                    key={
-                      questionIndex
-                    }
-                    className="course-playground-question-editor"
-                  >
-                    <div className="course-playground-question-header">
-                      <strong>
-                        Question{" "}
-                        {questionIndex +
-                          1}
-                      </strong>
-
-                      {quizForm
-                        .questions
-                        .length >
-                        1 && (
-                        <button
-                          type="button"
-                          className="course-playground-question-remove"
-                          onClick={() =>
-                            handleRemoveQuestion(
-                              questionIndex
-                            )
-                          }
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-
-                    <label>
-                      Question
-                    </label>
-
-                    <textarea
-                      rows="3"
-                      value={
-                        question.question
-                      }
-                      placeholder="e.g. What is PHP?"
-                      onChange={(
-                        event
-                      ) =>
-                        handleQuestionChange(
-                          questionIndex,
-                          "question",
-                          event
-                            .target
-                            .value
-                        )
-                      }
-                    />
-
-                    <label>
-                      Answer
-                      options
-                    </label>
-
-                    <div className="course-playground-option-editor-list">
-                      {question.options.map(
-                        (
-                          option,
-                          optionIndex
-                        ) => (
-                          <div
-                            key={
-                              optionIndex
-                            }
-                            className="course-playground-option-editor"
-                          >
-                            <span className="course-playground-option-number">
-                              {optionIndex +
-                                1}
-                            </span>
-
-                            <input
-                              type="text"
-                              value={
-                                option
-                              }
-                              placeholder={`Option ${
-                                optionIndex +
-                                1
-                              }`}
-                              onChange={(
-                                event
-                              ) =>
-                                handleOptionChange(
-                                  questionIndex,
-                                  optionIndex,
-                                  event
-                                    .target
-                                    .value
-                                )
-                              }
-                            />
-
-                            {question
-                              .options
-                              .length >
-                              2 && (
-                              <button
-                                type="button"
-                                className="course-playground-option-remove"
-                                title="Remove option"
-                                onClick={() =>
-                                  handleRemoveOption(
-                                    questionIndex,
-                                    optionIndex
-                                  )
-                                }
-                              >
-                                ×
-                              </button>
-                            )}
-                          </div>
-                        )
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      className="course-playground-small-add-button"
-                      onClick={() =>
-                        handleAddOption(
-                          questionIndex
-                        )
-                      }
-                    >
-                      + Add Option
-                    </button>
-
-                    <label>
-                      Correct answer
-                    </label>
-
-                    <select
-                      value={
-                        question.correct_answer
-                      }
-                      onChange={(
-                        event
-                      ) =>
-                        handleQuestionChange(
-                          questionIndex,
-                          "correct_answer",
-                          Number(
-                            event
-                              .target
-                              .value
-                          )
-                        )
-                      }
-                    >
-                      {question.options.map(
-                        (
-                          option,
-                          optionIndex
-                        ) => (
-                          <option
-                            key={
-                              optionIndex
-                            }
-                            value={
-                              optionIndex
-                            }
-                          >
-                            {optionIndex +
-                              1}
-                            .{" "}
-                            {option.trim() ||
-                              `Option ${
-                                optionIndex +
-                                1
-                              }`}
-                          </option>
-                        )
-                      )}
-                    </select>
-
-                    <label>
-                      Correct
-                      message
-                    </label>
-
-                    <input
-                      type="text"
-                      value={
-                        question.correct_message
-                      }
-                      onChange={(
-                        event
-                      ) =>
-                        handleQuestionChange(
-                          questionIndex,
-                          "correct_message",
-                          event
-                            .target
-                            .value
-                        )
-                      }
-                    />
-
-                    <label>
-                      Wrong
-                      message
-                    </label>
-
-                    <input
-                      type="text"
-                      value={
-                        question.wrong_message
-                      }
-                      onChange={(
-                        event
-                      ) =>
-                        handleQuestionChange(
-                          questionIndex,
-                          "wrong_message",
-                          event
-                            .target
-                            .value
-                        )
-                      }
-                    />
-
-                    <label>
-                      Explanation
-                    </label>
-
-                    <textarea
-                      rows="4"
-                      value={
-                        question.explanation
-                      }
-                      placeholder="Explain why the correct answer is right."
-                      onChange={(
-                        event
-                      ) =>
-                        handleQuestionChange(
-                          questionIndex,
-                          "explanation",
-                          event
-                            .target
-                            .value
-                        )
-                      }
-                    />
-                  </section>
-                )
-              )}
-
-              <button
-                type="button"
-                className="course-playground-add-question-button"
-                onClick={
-                  handleAddQuestion
-                }
-              >
-                + Add Question
-              </button>
-
-              <div className="course-playground-form-actions">
-                <button
-                  type="button"
-                  className="course-playground-cancel-button"
-                  disabled={
-                    isSaving
-                  }
-                  onClick={() =>
-                    setEditorMode(
-                      "block-library"
-                    )
-                  }
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="course-playground-save-button"
-                  disabled={
-                    isSaving
-                  }
-                >
-                  {isSaving
-                    ? "Saving Quiz..."
-                    : "Save Quiz"}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* ===========================
-              Add Practice Terminal
-          ============================ */}
-
-          {editorMode ===
-            "add-terminal" && (
-            <form
-              className="course-playground-form course-playground-terminal-form"
-              onSubmit={
-                handleCreateTerminalBlock
-              }
-            >
-              <div className="course-playground-parent-info">
-                <span>
-                  Adding Practice Terminal to
-                </span>
-
-                <strong>
-                  {selectedTopic
-                    ?.icon ||
-                    "📑"}{" "}
-
-                  {
-                    selectedTopic
-                      ?.title
-                  }
-                </strong>
-              </div>
-
-              <label htmlFor="terminal-title">
-                Block title
-              </label>
-
-              <input
-                id="terminal-title"
-                type="text"
-                value={
-                  terminalForm.title
-                }
-                placeholder="Practice Terminal"
-                onChange={(
-                  event
-                ) =>
-                  handleTerminalFieldChange(
-                    "title",
-                    event.target.value
-                  )
-                }
-              />
-
-              <label htmlFor="terminal-icon">
-                Icon
-              </label>
-
-              <input
-                id="terminal-icon"
-                type="text"
-                value={
-                  terminalForm.icon
-                }
-                onChange={(
-                  event
-                ) =>
-                  handleTerminalFieldChange(
-                    "icon",
-                    event.target.value
-                  )
-                }
-              />
-
-              <label htmlFor="terminal-welcome">
-                Welcome message
-              </label>
-
-              <textarea
-                id="terminal-welcome"
-                rows="3"
-                value={
-                  terminalForm.welcome
-                }
-                placeholder="Welcome! Try a PHP command."
-                onChange={(
-                  event
-                ) =>
-                  handleTerminalFieldChange(
-                    "welcome",
-                    event.target.value
-                  )
-                }
-              />
-
-              <label htmlFor="terminal-tip">
-                Tip
-              </label>
-
-              <input
-                id="terminal-tip"
-                type="text"
-                value={
-                  terminalForm.tip
-                }
-                placeholder="e.g. Start with php -v"
-                onChange={(
-                  event
-                ) =>
-                  handleTerminalFieldChange(
-                    "tip",
-                    event.target.value
-                  )
-                }
-              />
-
-              <label htmlFor="terminal-prefix">
-                Command prefix
-              </label>
-
-              <input
-                id="terminal-prefix"
-                type="text"
-                value={
-                  terminalForm.commandPrefix
-                }
-                placeholder="e.g. php"
-                onChange={(
-                  event
-                ) =>
-                  handleTerminalFieldChange(
-                    "commandPrefix",
-                    event.target.value
-                  )
-                }
-              />
-
-              <div className="course-playground-quiz-divider">
-                Commands
-              </div>
-
-              {terminalForm.commands.map(
-                (
-                  command,
-                  commandIndex
-                ) => (
-                  <section
-                    key={commandIndex}
-                    className="course-playground-question-editor"
-                  >
-                    <div className="course-playground-question-header">
-                      <strong>
-                        Command {commandIndex + 1}
-                      </strong>
-
-                      {terminalForm
-                        .commands
-                        .length > 1 && (
-                        <button
-                          type="button"
-                          className="course-playground-question-remove"
-                          onClick={() =>
-                            handleRemoveTerminalCommand(
-                              commandIndex
-                            )
-                          }
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-
-                    <label>
-                      Command
-                    </label>
-
-                    <input
-                      type="text"
-                      value={
-                        command.command
-                      }
-                      placeholder="e.g. php -v"
-                      onChange={(
-                        event
-                      ) =>
-                        handleTerminalCommandChange(
-                          commandIndex,
-                          "command",
-                          event.target.value
-                        )
-                      }
-                    />
-
-                    <label>
-                      Output
-                    </label>
-
-                    <textarea
-                      rows="5"
-                      value={
-                        command.output
-                      }
-                      placeholder={`e.g. PHP 8.4.x (cli)
-Copyright (c) The PHP Group`}
-                      onChange={(
-                        event
-                      ) =>
-                        handleTerminalCommandChange(
-                          commandIndex,
-                          "output",
-                          event.target.value
-                        )
-                      }
-                    />
-                  </section>
-                )
-              )}
-
-              <button
-                type="button"
-                className="course-playground-add-question-button"
-                onClick={
-                  handleAddTerminalCommand
-                }
-              >
-                + Add Command
-              </button>
-
-              <div className="course-playground-editor-note">
-                <strong>
-                  Safe simulation
-                </strong>
-
-                <p>
-                  Students can only run the
-                  commands you configure here.
-                  MentorXn displays the saved
-                  output and does not execute a
-                  real operating-system command.
-                </p>
-              </div>
-
-              <div className="course-playground-form-actions">
-                <button
-                  type="button"
-                  className="course-playground-cancel-button"
-                  disabled={
-                    isSaving
-                  }
-                  onClick={() =>
-                    setEditorMode(
-                      "block-library"
-                    )
-                  }
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="course-playground-save-button"
-                  disabled={
-                    isSaving
-                  }
-                >
-                  {isSaving
-                    ? "Saving Terminal..."
-                    : "Save Terminal"}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Lesson */}
-
-          {editorMode ===
-            "lesson" &&
-            selectedLesson && (
-              <div className="course-playground-editor-content">
-                <label>
-                  Lesson
-                </label>
-
-                <div className="course-playground-readonly-field">
-                  {selectedLesson
-                    .icon ||
-                    "📖"}{" "}
-
-                  {
-                    selectedLesson
-                      .title
-                  }
-                </div>
-
-                <button
-                  type="button"
-                  className="course-playground-save-button full-width"
-                  onClick={
-                    handleOpenAddTopic
-                  }
-                >
-                  + Add Topic
-                </button>
-              </div>
-            )}
-
-          {/* Topic */}
-
-          {editorMode ===
-            "topic" &&
-            selectedTopic && (
-              <div className="course-playground-editor-content">
-                <label>
-                  Topic title
-                </label>
-
-                <div className="course-playground-readonly-field">
-                  {
-                    selectedTopic.title
-                  }
-                </div>
-
-                <label>
-                  Learning
-                  blocks
-                </label>
-
-                <div className="course-playground-readonly-field">
-                  {
-                    learningBlocks.length
-                  }{" "}
-                  block
-                  {learningBlocks.length ===
-                  1
-                    ? ""
-                    : "s"}
-                </div>
-
-                <button
-                  type="button"
-                  className="course-playground-save-button full-width"
-                  onClick={
-                    handleOpenBlockLibrary
-                  }
-                >
-                  + Add Learning
-                  Block
-                </button>
-
-                <div className="course-playground-editor-note">
-                  <strong>
-                    Topic content
-                  </strong>
-
-                  <p>
-                    Learning
-                    blocks are
-                    rendered in
-                    order using
-                    the same
-                    components
-                    students
-                    will see.
-                  </p>
-                </div>
-              </div>
-            )}
-
-          {/* Course */}
-
-          {editorMode ===
-            "course" && (
-              <div className="course-playground-editor-content">
-                <div className="course-playground-editor-note">
-                  <strong>
-                    Build your
-                    course
-                  </strong>
-
-                  <p>
-                    Start by
-                    creating a
-                    lesson, then
-                    add topics
-                    and learning
-                    blocks.
-                  </p>
-                </div>
-              </div>
-            )}
         </aside>
       </div>
     </div>

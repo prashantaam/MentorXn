@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -11,7 +12,7 @@ import {
 
 import { useAuth } from "../../../context/AuthContext";
 
-import "../../../styles/teacher-courses.css";
+import "../../../styles/teachers/teacher-courses.css";
 
 function TeacherCoursePage() {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ function TeacherCoursePage() {
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [activeFilter, setActiveFilter] =
+    useState("all");
 
   const successMessage =
     location.state?.successMessage || "";
@@ -121,11 +125,36 @@ function TeacherCoursePage() {
   ).length;
 
   /*
-   * We do not have enrolments yet.
-   * Keep this at zero until we build the
-   * student enrolment system.
+   * Student enrolments are not connected yet.
+   * Keep this at zero until the enrolment
+   * system is implemented.
    */
   const totalStudents = 0;
+
+  /* =========================================
+     Course Filtering
+  ========================================= */
+
+  const filteredCourses = useMemo(() => {
+    if (activeFilter === "all") {
+      return courses;
+    }
+
+    return courses.filter(
+      (course) =>
+        course.status === activeFilter
+    );
+  }, [courses, activeFilter]);
+
+  const hasCourses =
+    courses.length > 0;
+
+  const hasFilteredCourses =
+    filteredCourses.length > 0;
+
+  /* =========================================
+     Render
+  ========================================= */
 
   return (
     <div className="teacher-courses-page">
@@ -183,7 +212,9 @@ function TeacherCoursePage() {
           <span>⚠️</span>
 
           <div>
-            <strong>Unable to load courses</strong>
+            <strong>
+              Unable to load courses
+            </strong>
 
             <p>{error}</p>
           </div>
@@ -196,7 +227,7 @@ function TeacherCoursePage() {
 
       <section className="teacher-course-summary">
         <article className="teacher-course-summary-card">
-          <div className="summary-icon">
+          <div className="summary-icon courses">
             📚
           </div>
 
@@ -207,7 +238,7 @@ function TeacherCoursePage() {
         </article>
 
         <article className="teacher-course-summary-card">
-          <div className="summary-icon">
+          <div className="summary-icon drafts">
             📝
           </div>
 
@@ -218,18 +249,21 @@ function TeacherCoursePage() {
         </article>
 
         <article className="teacher-course-summary-card">
-          <div className="summary-icon">
+          <div className="summary-icon published">
             🚀
           </div>
 
           <div>
-            <strong>{publishedCourses}</strong>
+            <strong>
+              {publishedCourses}
+            </strong>
+
             <span>Published</span>
           </div>
         </article>
 
         <article className="teacher-course-summary-card">
-          <div className="summary-icon">
+          <div className="summary-icon students">
             👨‍🎓
           </div>
 
@@ -247,7 +281,13 @@ function TeacherCoursePage() {
       <section className="teacher-courses-content">
         <div className="teacher-courses-toolbar">
           <div>
-            <h2>Your Learning Adventures</h2>
+            <div className="teacher-courses-section-label">
+              YOUR COURSES
+            </div>
+
+            <h2>
+              Your Learning Adventures
+            </h2>
 
             <p>
               Build, organise and publish courses
@@ -255,22 +295,66 @@ function TeacherCoursePage() {
             </p>
           </div>
 
-          <div className="teacher-course-filters">
-            <button
-              type="button"
-              className="active"
+          {hasCourses && (
+            <div
+              className="teacher-course-filters"
+              aria-label="Filter courses"
             >
-              All
-            </button>
+              <button
+                type="button"
+                className={
+                  activeFilter === "all"
+                    ? "active"
+                    : ""
+                }
+                aria-pressed={
+                  activeFilter === "all"
+                }
+                onClick={() =>
+                  setActiveFilter("all")
+                }
+              >
+                All
+                <span>{totalCourses}</span>
+              </button>
 
-            <button type="button">
-              Draft
-            </button>
+              <button
+                type="button"
+                className={
+                  activeFilter === "draft"
+                    ? "active"
+                    : ""
+                }
+                aria-pressed={
+                  activeFilter === "draft"
+                }
+                onClick={() =>
+                  setActiveFilter("draft")
+                }
+              >
+                Draft
+                <span>{draftCourses}</span>
+              </button>
 
-            <button type="button">
-              Published
-            </button>
-          </div>
+              <button
+                type="button"
+                className={
+                  activeFilter === "published"
+                    ? "active"
+                    : ""
+                }
+                aria-pressed={
+                  activeFilter === "published"
+                }
+                onClick={() =>
+                  setActiveFilter("published")
+                }
+              >
+                Published
+                <span>{publishedCourses}</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* =================================
@@ -279,12 +363,18 @@ function TeacherCoursePage() {
 
         {isLoading && (
           <div className="teacher-courses-loading">
-            <div className="teacher-course-loader" />
+            <div
+              className="teacher-course-loader"
+              aria-hidden="true"
+            />
 
-            <strong>Loading your courses...</strong>
+            <strong>
+              Loading your courses...
+            </strong>
 
             <span>
-              Preparing your learning adventures.
+              Preparing your learning
+              adventures.
             </span>
           </div>
         )}
@@ -295,7 +385,7 @@ function TeacherCoursePage() {
 
         {!isLoading &&
           !error &&
-          courses.length === 0 && (
+          !hasCourses && (
             <div className="teacher-courses-empty">
               <div className="teacher-empty-illustration">
                 <div className="empty-decoration decoration-one">
@@ -344,14 +434,47 @@ function TeacherCoursePage() {
           )}
 
         {/* =================================
+            No Filter Results
+        ================================= */}
+
+        {!isLoading &&
+          !error &&
+          hasCourses &&
+          !hasFilteredCourses && (
+            <div className="teacher-courses-filter-empty">
+              <div className="teacher-filter-empty-icon">
+                🔎
+              </div>
+
+              <h3>
+                No {activeFilter} courses
+              </h3>
+
+              <p>
+                You do not currently have any{" "}
+                {activeFilter} courses.
+              </p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveFilter("all")
+                }
+              >
+                View All Courses
+              </button>
+            </div>
+          )}
+
+        {/* =================================
             Course Grid
         ================================= */}
 
         {!isLoading &&
           !error &&
-          courses.length > 0 && (
+          hasFilteredCourses && (
             <div className="teacher-course-grid">
-              {courses.map((course) => (
+              {filteredCourses.map((course) => (
                 <article
                   className="teacher-course-card"
                   key={course.id}
@@ -363,7 +486,7 @@ function TeacherCoursePage() {
                     style={{
                       background:
                         course.accent_color ||
-                        "#ff9a8b",
+                        "#2f8f5b",
                     }}
                   >
                     <div className="teacher-course-card-icon">
@@ -373,7 +496,8 @@ function TeacherCoursePage() {
                     <span
                       className={`teacher-course-status ${course.status}`}
                     >
-                      {course.status === "published"
+                      {course.status ===
+                      "published"
                         ? "Published"
                         : "Draft"}
                     </span>
@@ -420,8 +544,16 @@ function TeacherCoursePage() {
                         to={`/teacher/courses/${course.id}/playground`}
                         className="teacher-course-manage-button"
                       >
-                        Open Playground
-                        <span>→</span>
+                        <span>
+                          Open Playground
+                        </span>
+
+                        <span
+                          className="teacher-course-manage-arrow"
+                          aria-hidden="true"
+                        >
+                          →
+                        </span>
                       </Link>
                     </div>
                   </div>

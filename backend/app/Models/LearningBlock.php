@@ -12,7 +12,7 @@ class LearningBlock extends Model
 
     protected $fillable = [
         'topic_id',
-        'type',
+        'lblock_template_id',
         'title',
         'icon',
         'data',
@@ -24,29 +24,22 @@ class LearningBlock extends Model
     {
         return [
             'data' => 'array',
+            'position' => 'integer',
         ];
     }
 
     public function topic(): BelongsTo
     {
-        return $this->belongsTo(Topic::class);
+        return $this->belongsTo(
+            Topic::class
+        );
     }
 
-    public function isContent(): bool
+    public function lblockTemplate(): BelongsTo
     {
-        return $this->type === 'content';
+        return $this->belongsTo(
+            LBlockTemplate::class,
+            'lblock_template_id'
+        );
     }
-
-    public function isQuiz(): bool
-    {
-        return $this->type === 'quiz';
-    }
-
-    public function template(): BelongsTo
-{
-    return $this->belongsTo(
-        LBlockTemplate::class,
-        'lblock_template_id'
-    );
-}
 }

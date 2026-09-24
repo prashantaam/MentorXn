@@ -1,0 +1,2180 @@
+.course-playground {
+  min-height: calc(100vh - 74px);
+  background-color: #f5f4ef;
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(31, 31, 31, 0.14) 1px,
+      transparent 1px
+    );
+  background-size: 18px 18px;
+  color: #1f1f1f;
+}
+
+.course-playground-header {
+  min-height: 88px;
+  padding: 14px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  background: #ffffff;
+  border-bottom: 3px solid #1f1f1f;
+}
+
+.course-playground-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.course-playground-back {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  background: #ffffff;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 12px;
+
+  font-size: 20px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.course-playground-back:hover {
+  background: #fff7cf;
+}
+
+.course-playground-course-icon {
+  width: 52px;
+  height: 52px;
+
+  display: grid;
+  place-items: center;
+
+  background: #ffd94d;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 14px;
+
+  box-shadow: 3px 3px 0 #1f1f1f;
+
+  font-size: 28px;
+}
+
+.course-playground-label {
+  display: block;
+
+  margin-bottom: 2px;
+
+  color: #b98500;
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+
+.course-playground-heading h1 {
+  margin: 0;
+
+  font-size: 23px;
+}
+
+.course-playground-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.course-playground-status {
+  padding: 7px 12px;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.course-playground-status.draft {
+  background: #fff7cf;
+}
+
+.course-playground-status.published {
+  background: #dff7e9;
+}
+
+.course-playground-preview-button {
+  padding: 10px 16px;
+
+  background: #ffd94d;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 12px;
+
+  box-shadow: 3px 3px 0 #1f1f1f;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.course-playground-preview-button:hover {
+  background: #ffe77a;
+}
+
+.course-playground-grid {
+  display: grid;
+  grid-template-columns:
+    260px
+    minmax(420px, 1fr)
+    300px;
+  align-items: start;
+  min-height: calc(100vh - 162px);
+}
+
+.course-playground-index,
+.course-playground-editor {
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 162px);
+  min-height: 0;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.course-playground-index {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border-right: 3px solid #1f1f1f;
+  border-bottom: 3px solid #1f1f1f;
+}
+
+.course-playground-editor {
+  border-left: 3px solid #1f1f1f;
+  border-bottom: 3px solid #1f1f1f;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #1f1f1f transparent;
+}
+
+.course-playground-panel-heading {
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border-bottom: 2px solid #1f1f1f;
+}
+
+.course-playground-panel-heading span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #b98500;
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.3px;
+}
+
+.course-playground-panel-heading h2 {
+  margin: 0;
+
+  font-size: 18px;
+}
+
+.course-playground-lessons {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 14px 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #1f1f1f transparent;
+}
+
+.course-playground-lesson {
+  width: 100%;
+  margin: 0 0 16px;
+}
+
+.course-playground-topics {
+  display: flex;
+  flex-direction: column;
+
+  margin-top: 4px;
+  margin-left: 8px;
+
+  gap: 5px;
+}
+
+.course-playground-topic {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 10px;
+
+  background: transparent;
+
+  border: 2px solid transparent;
+  border-radius: 10px;
+
+  color: #1f1f1f;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.course-playground-topic:hover {
+  background: color-mix(in srgb, var(--lesson-color) 35%, white);
+}
+
+.course-playground-topic.active {
+  background: var(--lesson-color);
+
+  border-color: #1f1f1f;
+
+  box-shadow: 2px 2px 0 #1f1f1f;
+
+  font-weight: 800;
+}
+
+.course-playground-index-actions {
+  padding: 14px;
+
+  display: grid;
+  gap: 9px;
+
+  border-top: 2px solid #1f1f1f;
+}
+
+.course-playground-add-button {
+  width: 100%;
+
+  padding: 10px;
+
+  background: #ffd94d;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 10px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.course-playground-add-button.secondary {
+  background: #fff7cf;
+}
+
+.course-playground-index-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  background: rgba(245, 244, 239, 0.94);
+}
+
+.course-playground-add-button.compact {
+  min-height: 30px;
+  padding: 4px 7px;
+  border-width: 2px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 #1f1f1f;
+  font-size: 11px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.course-playground-add-button.compact:hover:not(:disabled) {
+  background: #ffe77a;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 #1f1f1f;
+}
+
+.course-playground-add-button.secondary.compact {
+  background: #ffffff;
+}
+
+.course-playground-add-button.secondary.compact:hover:not(:disabled) {
+  background: #fff7cf;
+}
+
+.course-playground-lessons::-webkit-scrollbar,
+.course-playground-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+.course-playground-lessons::-webkit-scrollbar-track,
+.course-playground-editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.course-playground-lessons::-webkit-scrollbar-thumb,
+.course-playground-editor::-webkit-scrollbar-thumb {
+  background: #1f1f1f;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+
+.course-playground-preview {
+  min-width: 0;
+  min-height: calc(100vh - 162px);
+  background: transparent;
+}
+
+.course-playground-student-canvas {
+  max-width: 920px;
+
+  margin: 0 auto;
+
+  padding: 28px;
+}
+
+.course-playground-preview-empty,
+.course-playground-preview-placeholder {
+  padding: 38px 26px;
+
+  background: #ffffff;
+
+  border: 3px solid #1f1f1f;
+  border-radius: 18px;
+
+  box-shadow: 5px 5px 0 #1f1f1f;
+
+  text-align: center;
+}
+
+.course-playground-preview-empty > div,
+.course-playground-placeholder-icon {
+  margin-bottom: 10px;
+
+  font-size: 42px;
+}
+
+.course-playground-preview-empty h2,
+.course-playground-preview-placeholder h3 {
+  margin:
+    0
+    0
+    8px;
+}
+
+.course-playground-preview-empty p,
+.course-playground-preview-placeholder p {
+  max-width: 480px;
+
+  margin:
+    0
+    auto
+    20px;
+
+  line-height: 1.6;
+}
+
+.course-playground-empty {
+  padding: 32px 18px;
+
+  text-align: center;
+}
+
+.course-playground-empty > div {
+  margin-bottom: 8px;
+
+  font-size: 38px;
+}
+
+.course-playground-empty strong {
+  display: block;
+
+  margin-bottom: 5px;
+}
+
+.course-playground-empty p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.5;
+
+  opacity: 0.7;
+}
+
+.course-playground-editor-content {
+  padding: 18px;
+}
+
+.course-playground-editor-content label {
+  display: block;
+
+  margin:
+    0
+    0
+    6px;
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.course-playground-readonly-field {
+  margin-bottom: 18px;
+
+  padding: 10px 12px;
+
+  background: #f5f4f1;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 9px;
+
+  font-size: 14px;
+}
+
+.course-playground-editor-note {
+  margin-top: 20px;
+
+  padding: 14px;
+
+  background: #fff7cf;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 12px;
+}
+
+.course-playground-editor-note strong {
+  display: block;
+
+  margin-bottom: 5px;
+}
+
+.course-playground-editor-note p {
+  margin: 0;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.course-playground-state {
+  min-height: 65vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  text-align: center;
+}
+
+@media (max-width: 1150px) {
+  .course-playground-grid {
+    grid-template-columns:
+      240px
+      minmax(0, 1fr);
+  }
+
+  .course-playground-editor {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .course-playground-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .course-playground-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-playground-index {
+    position: static;
+    height: auto;
+    max-height: 55vh;
+    border-right: 0;
+    border-bottom: 3px solid #1f1f1f;
+  }
+
+  .course-playground-student-canvas {
+    padding: 18px;
+  }
+
+  .course-playground-grid {
+    min-height: 0;
+  }
+}
+/* =========================================================
+   Course Playground - Inline Builder
+   ========================================================= */
+
+.course-playground-lesson {
+  /*
+   * Lesson colour is assigned automatically by CoursePlaygroundPage.jsx
+   * from the shared 12-colour palette.
+   */
+  --lesson-color: var(--lesson-accent, #8fd9a8);
+}
+
+.course-playground-lesson-title {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 10px;
+  background: var(--lesson-color);
+  color: #1f1f1f;
+  border: 2.5px solid #1f1f1f;
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 #1f1f1f;
+  text-align: left;
+  font-family: Fredoka, "Trebuchet MS", system-ui, sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.15;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.course-playground-lesson-title:hover {
+  background: #ffffff;
+}
+
+.course-playground-lesson-title.active {
+  background: #ffffff;
+  border-color: #1f1f1f;
+  box-shadow: 3px 3px 0 #1f1f1f;
+  font-weight: 800;
+}
+
+.course-playground-add-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.course-playground-form {
+  padding: 18px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.course-playground-form label {
+  margin-bottom: 6px;
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.course-playground-form input,
+.course-playground-form textarea {
+  width: 100%;
+
+  margin-bottom: 18px;
+  padding: 10px 12px;
+
+  background: #ffffff;
+  color: #1f1f1f;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 9px;
+
+  font: inherit;
+
+  outline: none;
+}
+
+.course-playground-form input:focus,
+.course-playground-form textarea:focus {
+  border-color: #b98500;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(255, 217, 77, 0.30);
+}
+
+.course-playground-form textarea {
+  resize: vertical;
+}
+
+.course-playground-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+
+  margin-top: 4px;
+}
+
+.course-playground-save-button,
+.course-playground-cancel-button {
+  padding: 10px 14px;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 10px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.course-playground-save-button {
+  background: #ffd94d;
+
+  box-shadow:
+    2px 2px 0 #1f1f1f;
+}
+
+.course-playground-save-button:hover {
+  background: #ffe77a;
+}
+
+.course-playground-cancel-button {
+  background: #ffffff;
+}
+
+.course-playground-cancel-button:hover {
+  background: #f5f4f1;
+}
+
+.course-playground-save-button:disabled,
+.course-playground-cancel-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.course-playground-save-button.full-width {
+  width: 100%;
+
+  margin-top: 4px;
+}
+
+.course-playground-form-error {
+  margin: 16px 18px 0;
+  padding: 10px 12px;
+
+  background: #fff7cf;
+
+  border: 2px solid #b98500;
+  border-radius: 9px;
+
+  color: #8d382f;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.course-playground-parent-info {
+  margin-bottom: 20px;
+  padding: 12px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  background: #fff7cf;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 10px;
+}
+
+.course-playground-parent-info span {
+  font-size: 11px;
+  font-weight: 800;
+
+  opacity: 0.65;
+}
+
+.course-playground-parent-info strong {
+  font-size: 14px;
+}
+
+/* =========================================================
+   Learning Block Library
+   ========================================================= */
+
+.course-playground-inline-add-block {
+  width: 100%;
+
+  margin-top: 18px;
+  padding: 11px 16px;
+
+  background: #fff7cf;
+
+  border: 2px dashed #1f1f1f;
+  border-radius: 12px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.course-playground-inline-add-block:hover {
+  background: #ffd94d;
+}
+
+.course-playground-block-library {
+  padding: 18px;
+}
+
+.course-playground-library-intro {
+  margin: 0 0 4px;
+
+  font-size: 13px;
+}
+
+.course-playground-library-topic {
+  display: block;
+
+  margin-bottom: 20px;
+}
+
+.course-playground-block-option {
+  width: 100%;
+
+  margin-bottom: 10px;
+  padding: 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: #ffffff;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 12px;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.course-playground-block-option:hover {
+  background: #fff7cf;
+
+  box-shadow:
+    2px 2px 0 #1f1f1f;
+
+  transform: translate(
+    -1px,
+    -1px
+  );
+}
+
+.course-playground-block-option.disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+.course-playground-block-option.disabled:hover {
+  background: #ffffff;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+.course-playground-block-option-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: #ffd94d;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 10px;
+
+  font-size: 21px;
+}
+
+.course-playground-block-option strong {
+  display: block;
+
+  margin-bottom: 3px;
+}
+
+.course-playground-block-option small {
+  display: block;
+
+  opacity: 0.65;
+
+  line-height: 1.35;
+}
+
+.course-playground-content-editor {
+  min-height: 260px;
+
+  line-height: 1.6;
+}
+
+.course-playground-cancel-button.full-width {
+  width: 100%;
+
+  margin-top: 10px;
+}
+/* =========================================================
+   Quiz Authoring
+   ========================================================= */
+
+.course-playground-quiz-form {
+  padding-bottom: 30px;
+}
+
+.course-playground-quiz-settings {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+  gap: 14px;
+
+  align-items: end;
+}
+
+.course-playground-score-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.course-playground-score-input input {
+  min-width: 0;
+}
+
+.course-playground-score-input span {
+  font-weight: 900;
+}
+
+.course-playground-checkbox {
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 10px 12px;
+
+  background: #fff7cf;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.course-playground-checkbox input {
+  width: 18px;
+  height: 18px;
+
+  margin: 0;
+}
+
+.course-playground-checkbox span {
+  font-weight: 800;
+}
+
+.course-playground-quiz-divider {
+  margin:
+    12px 0 2px;
+
+  padding-bottom: 8px;
+
+  border-bottom:
+    2px solid #1f1f1f;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.course-playground-question-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-top: 12px;
+  padding: 14px;
+
+  background: #ffffff;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 14px;
+
+  box-shadow:
+    3px 3px 0 #1f1f1f;
+}
+
+.course-playground-question-header {
+  display: flex;
+  align-items: center;
+  justify-content:
+    space-between;
+  gap: 10px;
+
+  margin-bottom: 4px;
+}
+
+.course-playground-question-header strong {
+  font-size: 15px;
+}
+
+.course-playground-question-remove {
+  padding: 5px 8px;
+
+  background: #ffe2de;
+  color: #8d3025;
+
+  border:
+    1px solid #8d3025;
+  border-radius: 7px;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.course-playground-option-editor-list {
+  display: grid;
+  gap: 8px;
+}
+
+.course-playground-option-editor {
+  display: grid;
+  grid-template-columns:
+    28px
+    minmax(0, 1fr)
+    32px;
+  gap: 6px;
+
+  align-items: center;
+}
+
+.course-playground-option-number {
+  width: 28px;
+  height: 28px;
+
+  display: grid;
+  place-items: center;
+
+  background: #fff7cf;
+
+  border:
+    2px solid #1f1f1f;
+  border-radius: 50%;
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.course-playground-option-editor input {
+  min-width: 0;
+}
+
+.course-playground-option-remove {
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  background: #ffe2de;
+
+  border:
+    1px solid #8d3025;
+  border-radius: 7px;
+
+  color: #8d3025;
+
+  font-size: 20px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.course-playground-small-add-button {
+  align-self: flex-start;
+
+  padding: 7px 10px;
+
+  background: #fff7cf;
+
+  border:
+    2px solid #1f1f1f;
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.course-playground-small-add-button:hover {
+  background: #ffd94d;
+}
+
+.course-playground-question-editor select {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  background: #ffffff;
+  color: #1f1f1f;
+
+  border:
+    2px solid #1f1f1f;
+  border-radius: 9px;
+
+  font: inherit;
+}
+
+.course-playground-question-editor select:focus {
+  outline:
+    3px solid
+    rgba(
+      255,
+      154,
+      139,
+      0.25
+    );
+
+  border-color:
+    #b98500;
+}
+
+.course-playground-add-question-button {
+  width: 100%;
+
+  margin-top: 12px;
+  padding: 10px;
+
+  background: #fff7cf;
+
+  border:
+    2px dashed #1f1f1f;
+  border-radius: 10px;
+
+  font: inherit;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.course-playground-add-question-button:hover {
+  background: #ffd94d;
+}
+
+.learning-block-unsupported {
+  margin: 12px 0;
+  padding: 12px;
+
+  background: #fff4b8;
+
+  border:
+    2px solid #1f1f1f;
+  border-radius: 10px;
+}
+
+@media (
+  max-width: 700px
+) {
+  .course-playground-quiz-settings {
+    grid-template-columns:
+      1fr;
+  }
+}
+.course-playground-library-section-title {
+  margin: 18px 0 8px;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #6b7280;
+}
+
+.course-playground-library-loading {
+  margin: 14px 0;
+  padding: 14px;
+
+  border-radius: 10px;
+
+  background: #f8f9fa;
+
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.course-playground-template-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  margin-top: 7px;
+}
+
+.course-playground-template-tag {
+  display: inline-flex;
+
+  padding: 3px 7px;
+
+  border-radius: 999px;
+
+  background: #f1f3f5;
+
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  color: #495057;
+}
+
+.course-playground-template-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* =========================================================
+   Course Playground - Slide-over Learning Block Drawers
+   ========================================================= */
+
+/* The old right editor is removed from JSX.
+   Course Index + Preview now use the full playground width. */
+.course-playground-grid {
+  position: relative;
+
+  grid-template-columns:
+    260px
+    minmax(0, 1fr);
+
+  overflow: hidden;
+}
+
+.course-playground-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 0;
+
+  background: #ffffff;
+
+  border-left: 3px solid #1f1f1f;
+  border-bottom: 3px solid #1f1f1f;
+
+  box-shadow:
+    -8px 0 24px
+    rgba(31, 31, 31, 0.14);
+
+  transform: translateX(105%);
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    transform 0.28s ease,
+    visibility 0s linear 0.28s;
+}
+
+.course-playground-drawer.open {
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+
+  transition:
+    transform 0.28s ease,
+    visibility 0s linear 0s;
+}
+
+/* Library covers Preview only; Course Index stays visible. */
+.course-playground-library-drawer {
+  left: 260px;
+  z-index: 100;
+}
+
+/* Config sits above Library and leaves 48px visible. */
+.course-playground-config-drawer {
+  left: 308px;
+  z-index: 110;
+
+  box-shadow:
+    -10px 0 28px
+    rgba(31, 31, 31, 0.20);
+}
+
+.course-playground-config-drawer::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -48px;
+
+  width: 48px;
+
+  background:
+    rgba(31, 31, 31, 0.08);
+
+  pointer-events: none;
+}
+
+.course-playground-drawer-header {
+  position: relative;
+  z-index: 3;
+
+  flex: 0 0 auto;
+
+  min-height: 72px;
+  padding: 12px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  background: #ffffff;
+
+  border-bottom: 2px solid #1f1f1f;
+}
+
+.course-playground-drawer-header span {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #b98500;
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.3px;
+}
+
+.course-playground-drawer-header h2 {
+  margin: 0;
+
+  font-size: 20px;
+}
+
+.course-playground-drawer-close {
+  width: 38px;
+  height: 38px;
+
+  flex: 0 0 38px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  background: #ffffff;
+  color: #1f1f1f;
+
+  border: 2px solid #1f1f1f;
+  border-radius: 10px;
+
+  box-shadow:
+    2px 2px 0 #1f1f1f;
+
+  font: inherit;
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.course-playground-drawer-close:hover {
+  background: #fff7cf;
+
+  transform:
+    translate(-1px, -1px);
+
+  box-shadow:
+    3px 3px 0 #1f1f1f;
+}
+
+.course-playground-drawer-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color:
+    #1f1f1f transparent;
+}
+
+.course-playground-library-drawer
+.course-playground-block-library {
+  max-width: 1100px;
+
+  margin: 0 auto;
+  padding: 22px;
+}
+
+.course-playground-library-drawer
+.course-playground-block-option-icon {
+  background: #ffd94d;
+}
+
+.course-playground-library-drawer
+.course-playground-block-option {
+  max-width: 760px;
+}
+
+/* Configuration form fills the drawer. */
+.course-playground-drawer-form {
+  flex: 1 1 auto;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Keep actions visible while a long config form scrolls. */
+.course-playground-config-drawer
+.course-playground-drawer-footer {
+  position: sticky;
+  bottom: -18px;
+  z-index: 4;
+
+  margin:
+    18px
+    -18px
+    -18px;
+
+  padding: 14px 18px;
+
+  background: #ffffff;
+
+  border-top:
+    2px solid #1f1f1f;
+
+  box-shadow:
+    0 -8px 18px
+    rgba(31, 31, 31, 0.06);
+}
+
+/* Keep existing MentorXn yellow focus treatment. */
+.course-playground-config-drawer
+.course-playground-form
+input:focus,
+.course-playground-config-drawer
+.course-playground-form
+textarea:focus {
+  border-color: #b98500;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(255, 217, 77, 0.30);
+}
+
+@media (max-width: 1150px) {
+  .course-playground-grid {
+    grid-template-columns:
+      240px
+      minmax(0, 1fr);
+  }
+
+  .course-playground-library-drawer {
+    left: 240px;
+  }
+
+  .course-playground-config-drawer {
+    left: 288px;
+  }
+}
+
+@media (max-width: 760px) {
+  .course-playground-grid {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .course-playground-drawer {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 200;
+
+    border-left: 0;
+  }
+
+  .course-playground-config-drawer {
+    left: 0;
+    z-index: 210;
+  }
+
+  .course-playground-config-drawer::before {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-playground-drawer {
+    transition: none;
+  }
+}
+
+/* =========================================================
+   Course Playground - Full Area Layout
+   =========================================================
+   Layout-only overrides:
+   - fill the complete available viewport below the app header
+   - remove the decorative background from behind the Course Index
+   - keep the dotted workspace background inside Preview only
+   - preserve existing lesson/index/block/drawer styling
+   ========================================================= */
+
+.course-playground {
+  height: calc(100vh - 74px);
+  min-height: calc(100vh - 74px);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background: #ffffff;
+}
+
+.course-playground-header {
+  flex: 0 0 auto;
+}
+
+.course-playground-grid {
+  flex: 1 1 auto;
+
+  width: 100%;
+  min-height: 0;
+  height: auto;
+
+  align-items: stretch;
+}
+
+/* Course Index fills the complete left side of the workspace. */
+.course-playground-index {
+  position: relative;
+  top: auto;
+
+  height: 100%;
+  min-height: 0;
+
+  background: #ffffff;
+
+  border-bottom: 0;
+}
+
+/* Preview fills the remaining right side.
+   The original dotted playground treatment now belongs here only. */
+.course-playground-preview {
+  height: 100%;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background-color: #f5f4ef;
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(31, 31, 31, 0.14) 1px,
+      transparent 1px
+    );
+  background-size: 18px 18px;
+}
+
+/* Keep the preview content centred while allowing the workspace
+   background to extend fully to every edge. */
+.course-playground-student-canvas {
+  width: 100%;
+}
+
+/* Drawers continue to fill the entire workspace height. */
+.course-playground-drawer {
+  top: 0;
+  bottom: 0;
+
+  border-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .course-playground {
+    height: auto;
+    min-height: calc(100vh - 74px);
+    overflow: visible;
+  }
+
+  .course-playground-grid {
+    height: auto;
+    min-height: 0;
+  }
+
+  .course-playground-index,
+  .course-playground-preview {
+    height: auto;
+  }
+
+  .course-playground-preview {
+    min-height: 45vh;
+  }
+}
+
+
+/* =========================================================
+   MentorXn Course Index — Cluster Quest reference alignment
+   Kept at end to override legacy layout rules safely.
+   ========================================================= */
+.course-playground {
+  --playground-index-width: 318px;
+  --playground-paper: #e5e4df;
+  --playground-ink: #141414;
+  --playground-dot: rgba(20,20,20,.14);
+  background-color: var(--playground-paper);
+  background-image: radial-gradient(circle, var(--playground-dot) 1px, transparent 1.5px);
+  background-size: 26px 26px;
+  color: var(--playground-ink);
+}
+.course-playground-grid {
+  grid-template-columns: var(--playground-index-width) minmax(0,1fr);
+  width: 100%;
+  min-height: calc(100vh - 74px);
+  align-items: stretch;
+}
+.course-playground-index {
+  position: relative;
+  top: auto;
+  height: 100%;
+  min-height: 0;
+  background: transparent;
+  background-image: none;
+  border-right: 3px solid var(--playground-ink);
+  border-bottom: 0;
+  padding: 14px 12px 18px 16px;
+}
+.course-playground-panel-heading {
+  padding: 0 0 14px;
+  background: transparent;
+  border-bottom: 0;
+}
+.course-playground-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: auto;
+  height: auto;
+  min-height: 35px;
+  padding: 4px 10px;
+  margin-bottom: 16px;
+  border: 3px solid var(--playground-ink);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--playground-ink);
+  color: var(--playground-ink);
+  font: 800 13px Nunito, sans-serif;
+  cursor: pointer;
+}
+.course-playground-back:hover { background: #ffd84d; }
+.course-playground-index-course { display:flex; align-items:center; gap:12px; min-width:0; }
+.course-playground-index-course .course-playground-course-icon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  background: #ffd84d;
+  border: 3px solid var(--playground-ink);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--playground-ink);
+  font-size: 23px;
+}
+.course-playground-index-course-info { min-width:0; }
+.course-playground-index-course-info h1 {
+  margin: 0 0 6px;
+  font: 700 1.23rem/1.18 Fredoka, Nunito, sans-serif;
+  overflow-wrap: anywhere;
+  color: var(--playground-ink);
+}
+.course-playground-index-course-info .course-playground-status {
+  display: inline-block;
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 3px 8px;
+  border: 2px solid var(--playground-ink);
+  border-radius: 7px;
+  box-shadow: none;
+  color: var(--playground-ink);
+}
+.course-playground-lessons {
+  padding: 12px 2px 14px 0;
+  background: transparent;
+  gap: 0;
+}
+.course-playground-lesson { margin: 0 0 13px; padding:0; background:transparent; border:0; box-shadow:none; }
+.course-playground-lesson-title {
+  display: inline-flex;
+  width: auto;
+  max-width: calc(100% - 5px);
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 5px;
+  padding: 4px 10px;
+  background: var(--lesson-color, #8fd9a8);
+  border: 3px solid var(--playground-ink);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--playground-ink);
+  color: var(--playground-ink);
+  font: 700 .98rem/1.25 Fredoka, Nunito, sans-serif;
+  text-align: left;
+}
+.course-playground-lesson-title:hover,
+.course-playground-lesson-title.active {
+  background: var(--lesson-color, #8fd9a8);
+  border-color: var(--playground-ink);
+  color: var(--playground-ink);
+  box-shadow: 3px 3px 0 var(--playground-ink);
+}
+.course-playground-topics {
+  margin: 0 0 0 4px;
+  gap: 0;
+  padding: 0;
+  background: transparent;
+}
+.course-playground-topic {
+  min-height: 34px;
+  gap: 7px;
+  margin: 0;
+  padding: 5px 8px;
+  background: transparent;
+  border: 2.5px solid transparent;
+  border-radius: 12px;
+  box-shadow: none;
+  color: var(--playground-ink);
+  font: 800 .91rem/1.25 Nunito, sans-serif;
+}
+.course-playground-topic:hover { background: rgba(255,255,255,.78); }
+.course-playground-topic.active {
+  background: #fff;
+  border: 2.5px solid var(--playground-ink);
+  box-shadow: 3px 3px 0 var(--playground-ink);
+  color: var(--playground-ink);
+}
+.course-playground-index-actions { background: transparent; border-top: 2px solid var(--playground-ink); }
+.course-playground-preview {
+  min-width:0;
+  background-color: transparent;
+  background-image: none;
+}
+.course-playground-library-drawer { left: var(--playground-index-width); }
+.course-playground-config-drawer { left: calc(var(--playground-index-width) + 48px); }
+@media (max-width: 760px) {
+  .course-playground { --playground-index-width: 100%; }
+  .course-playground-grid { grid-template-columns: minmax(0,1fr); min-height: 0; }
+  .course-playground-index { height:auto; border-right:0; border-bottom:3px solid var(--playground-ink); }
+  .course-playground-library-drawer { left:0; }
+  .course-playground-config-drawer { left:48px; }
+}
+
+/* =========================================================
+   MentorXn Course Playground - FINAL Course Index Fix
+   ========================================================= */
+.course-playground {
+  --playground-index-width: 318px;
+  --playground-ink: #141414;
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+}
+.course-playground-header { background: transparent; }
+.course-playground-grid {
+  grid-template-columns: var(--playground-index-width) minmax(0, 1fr);
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+}
+.course-playground-index {
+  position: relative;
+  top: auto;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 12px 18px 16px;
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+  border-right: 3px solid var(--playground-ink);
+  border-bottom: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  overflow: hidden;
+}
+.course-playground-index-inner,
+.course-playground-panel-heading,
+.course-playground-index-course,
+.course-playground-index-course-info,
+.course-playground-index-content,
+.course-playground-lessons,
+.course-playground-lesson,
+.course-playground-topics,
+.course-playground-index-actions,
+.course-playground-index-toolbar,
+.course-playground-index-footer {
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.course-playground-panel-heading { flex: 0 0 auto; padding: 0 0 14px; border-bottom: 0; }
+.course-playground-back {
+  display: inline-flex; align-items: center; justify-content: flex-start;
+  width: auto; height: auto; min-height: 38px; margin: 0 0 18px; padding: 6px 12px;
+  background: #fff; color: var(--playground-ink); border: 3px solid var(--playground-ink);
+  border-radius: 11px; box-shadow: 4px 4px 0 var(--playground-ink);
+  font-family: Nunito, sans-serif; font-size: 13px; font-weight: 900; line-height: 1; cursor: pointer;
+}
+.course-playground-back:hover { background: #ffd84d; }
+.course-playground-index-course { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.course-playground-index-course-info {
+  min-width: 0; display: flex; align-items: center; flex-wrap: wrap; column-gap: 9px; row-gap: 6px;
+}
+.course-playground-index-course-info h1 {
+  margin: 0; color: var(--playground-ink); font-family: Fredoka, Nunito, sans-serif;
+  font-size: 1.42rem; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere;
+}
+.course-playground-index-course-info .course-playground-status {
+  display: inline-flex; align-items: center; justify-content: center; margin: 0; padding: 4px 9px;
+  background: #fff7cf; color: var(--playground-ink); border: 2px solid var(--playground-ink);
+  border-radius: 7px; box-shadow: 2px 2px 0 var(--playground-ink); font-size: 10px;
+  font-weight: 900; line-height: 1; letter-spacing: .05em; text-transform: uppercase;
+}
+.course-playground-index-course-info .course-playground-status.draft { background: #fff7cf; }
+.course-playground-index-course-info .course-playground-status.published { background: #8fd9a8; }
+.course-playground-lessons {
+  flex: 1 1 auto; min-height: 0; padding: 12px 3px 14px 0; overflow-y: auto; overflow-x: hidden;
+}
+.course-playground-lesson { width: 100%; margin: 0 0 10px; padding: 0; border: 0; }
+.course-playground-lesson-title {
+  display: inline-flex; align-items: center; width: auto; max-width: calc(100% - 6px); gap: 7px;
+  margin: 0 0 3px; padding: 5px 11px; background: var(--lesson-color); color: var(--playground-ink);
+  border: 3px solid var(--playground-ink); border-radius: 11px; box-shadow: 4px 4px 0 var(--playground-ink);
+  font-family: Fredoka, Nunito, sans-serif; font-size: .98rem; font-weight: 800; line-height: 1.2;
+}
+.course-playground-lesson-title:hover,
+.course-playground-lesson-title.active { background: var(--lesson-color); color: var(--playground-ink); border-color: var(--playground-ink); }
+.course-playground-topics { display: flex; flex-direction: column; margin: 0 0 0 5px; padding: 0; gap: 0; }
+.course-playground-topic {
+  width: auto; max-width: calc(100% - 7px); min-height: 31px; display: flex; align-items: center; gap: 7px;
+  margin: 0; padding: 4px 8px; background: transparent; color: var(--playground-ink);
+  border: 3px solid transparent; border-radius: 11px; box-shadow: none;
+  font-family: Nunito, sans-serif; font-size: .91rem; font-weight: 900; line-height: 1.2;
+}
+.course-playground-topic:hover { background: rgba(255,255,255,.78); }
+.course-playground-topic.active {
+  background: #fff; color: var(--playground-ink); border: 3px solid var(--playground-ink);
+  box-shadow: 4px 4px 0 var(--playground-ink); font-weight: 900;
+}
+.course-playground-index-actions {
+  flex: 0 0 auto; padding: 12px 2px 0 0; display: grid; gap: 9px; border-top: 3px solid var(--playground-ink);
+}
+.course-playground-index-toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0; }
+.course-playground-add-button,
+.course-playground-add-button.compact {
+  min-height: 42px; background: #ffd84d; color: var(--playground-ink); border: 3px solid var(--playground-ink);
+  border-radius: 11px; box-shadow: 3px 3px 0 var(--playground-ink); font-weight: 900;
+}
+.course-playground-add-button.secondary,
+.course-playground-add-button.secondary.compact { background: #fff7cf; }
+.course-playground-preview {
+  min-width: 0; height: 100%; min-height: 0; overflow-y: auto; overflow-x: hidden;
+  background: transparent; background-color: transparent; background-image: none;
+  box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+.course-playground-library-drawer { left: var(--playground-index-width); }
+.course-playground-config-drawer { left: calc(var(--playground-index-width) + 48px); }
+@media (max-width: 1150px) {
+  .course-playground { --playground-index-width: 290px; }
+}
+@media (max-width: 760px) {
+  .course-playground { --playground-index-width: 100%; height: auto; min-height: calc(100vh - 66px); overflow: visible; }
+  .course-playground-grid { grid-template-columns: minmax(0, 1fr); min-height: 0; overflow: visible; }
+  .course-playground-index { height: auto; padding: 14px; border-right: 0; border-bottom: 3px solid var(--playground-ink); }
+  .course-playground-lessons { max-height: 50vh; }
+  .course-playground-index-toolbar { grid-template-columns: 1fr; }
+  .course-playground-preview { height: auto; min-height: 45vh; }
+  .course-playground-library-drawer,
+  .course-playground-config-drawer { left: 0; }
+  .course-playground-config-drawer::before { display: none; }
+}
+
+/* =========================================================
+   FINAL COURSE INDEX — FULL SIDEBAR SCROLL
+   - Entire index scrolls from Back through Add buttons
+   - No vertical black divider
+   - No horizontal divider above actions
+   - Lessons/topics do not create a nested scrollbar
+   Keep this section at the end of the file.
+   ========================================================= */
+
+.course-playground-index {
+  height: 100%;
+  min-height: 0;
+  display: block;
+  padding: 18px 18px 24px;
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #141414 transparent;
+}
+
+.course-playground-index::-webkit-scrollbar {
+  width: 10px;
+}
+
+.course-playground-index::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.course-playground-index::-webkit-scrollbar-thumb {
+  background: #141414;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.course-playground-index::-webkit-scrollbar-thumb:hover {
+  background: #000000;
+  background-clip: padding-box;
+}
+
+.course-playground-panel-heading {
+  flex: none;
+}
+
+.course-playground-lessons {
+  display: block;
+  flex: none;
+  min-height: auto;
+  max-height: none !important;
+  padding: 12px 0 14px;
+  background: transparent;
+  overflow: visible !important;
+  scrollbar-width: none;
+}
+
+.course-playground-lessons::-webkit-scrollbar {
+  display: none;
+}
+
+.course-playground-index-actions {
+  display: grid;
+  flex: none;
+  gap: 10px;
+  margin: 18px 0 0;
+  padding: 18px 0 8px;
+  background: transparent;
+  border: 0 !important;
+  border-top: 0 !important;
+  box-shadow: none;
+}
+
+.course-playground-index-toolbar {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0 !important;
+  border-top: 0 !important;
+  box-shadow: none;
+}
+
+@media (max-width: 760px) {
+  .course-playground-index {
+    height: auto;
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+  }
+
+  .course-playground-lessons {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+
+/* =========================================================
+   FINAL MENTORXN COURSE INDEX
+   Full-height subtle divider + full-sidebar scrolling
+   Keep this section at the END of the file.
+   ========================================================= */
+
+.course-playground {
+  --playground-index-width: 318px;
+  --playground-divider: #c9c8c3;
+  --playground-scrollbar: #8f8e89;
+  --playground-scrollbar-hover: #666560;
+}
+
+/* The grid must fill the Playground so the divider reaches
+   from the top edge below the teacher nav to the bottom edge. */
+.course-playground-grid {
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: var(--playground-index-width) minmax(0, 1fr);
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+  overflow: hidden;
+}
+
+/* Entire Course Index is one continuous scrolling column. */
+.course-playground-index {
+  position: relative;
+  top: auto;
+
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  display: block;
+
+  margin: 0;
+  padding: 18px 18px 24px;
+
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+
+  /* Full-height, subtle structural divider. */
+  border-right: 2px solid var(--playground-divider) !important;
+  border-top: 0;
+  border-bottom: 0;
+  border-left: 0;
+
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--playground-scrollbar) transparent;
+}
+
+/* Do not create another surface inside the sidebar. */
+.course-playground-index-inner,
+.course-playground-panel-heading,
+.course-playground-index-course,
+.course-playground-index-course-info,
+.course-playground-index-content,
+.course-playground-lessons,
+.course-playground-lesson,
+.course-playground-topics,
+.course-playground-index-actions,
+.course-playground-index-toolbar,
+.course-playground-index-footer {
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Header is part of the same scrolling column. */
+.course-playground-panel-heading {
+  padding: 0 0 14px;
+  margin: 0;
+  border: 0;
+}
+
+/* Lessons/topics do NOT have their own scrollbar. */
+.course-playground-lessons {
+  display: block;
+
+  width: 100%;
+  min-height: auto;
+  max-height: none;
+
+  padding: 12px 0 14px;
+  margin: 0;
+
+  overflow: visible !important;
+
+  scrollbar-width: none;
+}
+
+.course-playground-lessons::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Bottom actions simply continue in the sidebar scroll. */
+.course-playground-index-actions {
+  display: grid;
+  gap: 10px;
+
+  margin: 18px 0 0;
+  padding: 18px 0 8px;
+
+  border: 0 !important;
+  border-top: 0 !important;
+
+  box-shadow: none;
+}
+
+.course-playground-index-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0 !important;
+  border-top: 0 !important;
+
+  box-shadow: none;
+}
+
+/* Full Course Index scrollbar. */
+.course-playground-index::-webkit-scrollbar {
+  width: 9px;
+}
+
+.course-playground-index::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.course-playground-index::-webkit-scrollbar-thumb {
+  background: var(--playground-scrollbar);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.course-playground-index::-webkit-scrollbar-thumb:hover {
+  background: var(--playground-scrollbar-hover);
+  background-clip: padding-box;
+}
+
+/* Preview remains on the same underlying teacher dotted surface. */
+.course-playground-preview {
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+
+  background: transparent;
+  background-color: transparent;
+  background-image: none;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Drawers begin after the wider Index column. */
+.course-playground-library-drawer {
+  left: var(--playground-index-width);
+}
+
+.course-playground-config-drawer {
+  left: calc(var(--playground-index-width) + 48px);
+}
+
+@media (max-width: 1150px) {
+  .course-playground {
+    --playground-index-width: 290px;
+  }
+
+  .course-playground-grid {
+    grid-template-columns: var(--playground-index-width) minmax(0, 1fr);
+  }
+
+  .course-playground-library-drawer {
+    left: var(--playground-index-width);
+  }
+
+  .course-playground-config-drawer {
+    left: calc(var(--playground-index-width) + 48px);
+  }
+}
+
+@media (max-width: 760px) {
+  .course-playground {
+    --playground-index-width: 100%;
+  }
+
+  .course-playground-grid {
+    height: auto;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+  }
+
+  .course-playground-index {
+    height: auto;
+    max-height: none;
+
+    padding: 14px;
+
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--playground-divider);
+
+    overflow-y: visible;
+  }
+
+  .course-playground-index-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .course-playground-library-drawer,
+  .course-playground-config-drawer {
+    left: 0;
+  }
+}

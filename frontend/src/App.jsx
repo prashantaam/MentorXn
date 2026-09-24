@@ -6,29 +6,35 @@ import {
 import HomePage from "./pages/HomePage";
 
 /* Student */
+
 import StudentLoginPage from "./pages/student/auth/LoginPage";
 import StudentRegisterPage from "./pages/student/auth/RegisterPage";
 import StudentDashboard from "./pages/student/StudentDashboard";
 
 /* Teacher */
+
 import TeacherLoginPage from "./pages/teacher/auth/TeacherLoginPage";
 import TeacherRegisterPage from "./pages/teacher/auth/TeacherRegisterPage";
-import TeacherDashboard from "./pages/teacher/TeacherDashboard";
+import TeacherDashboard from "./pages/teacher/dashboard/TeacherDashboard";
 
 import TeacherCoursePage from "./pages/teacher/courses/TeacherCoursePage";
 import CreateCoursePage from "./pages/teacher/courses/CreateCoursePage";
 import CoursePlaygroundPage from "./pages/teacher/courses/CoursePlaygroundPage";
 
 /* Layouts */
+
 import StudentLayout from "./layouts/StudentLayout";
 import TeacherLayout from "./layouts/TeacherLayout";
 
 /* Route Protection */
+
 import ProtectedRoute from "./components/common/ProtectedRoute";
+
 
 function App() {
   return (
     <Routes>
+
       {/* ========================================
           Public
       ======================================== */}
@@ -37,6 +43,7 @@ function App() {
         path="/"
         element={<HomePage />}
       />
+
 
       {/* ========================================
           Student Authentication
@@ -52,22 +59,34 @@ function App() {
         element={<StudentRegisterPage />}
       />
 
+
       {/* ========================================
           Student Application
       ======================================== */}
 
       <Route
         element={
-          <ProtectedRoute requiredRole="student" />
+          <ProtectedRoute
+            requiredRole="student"
+          />
         }
       >
-        <Route element={<StudentLayout />}>
+
+        <Route
+          element={<StudentLayout />}
+        >
+
           <Route
             path="/student/dashboard"
-            element={<StudentDashboard />}
+            element={
+              <StudentDashboard />
+            }
           />
+
         </Route>
+
       </Route>
+
 
       {/* ========================================
           Teacher Authentication
@@ -80,8 +99,11 @@ function App() {
 
       <Route
         path="/teacher/register"
-        element={<TeacherRegisterPage />}
+        element={
+          <TeacherRegisterPage />
+        }
       />
+
 
       {/* ========================================
           Teacher Application
@@ -89,33 +111,56 @@ function App() {
 
       <Route
         element={
-          <ProtectedRoute requiredRole="teacher" />
+          <ProtectedRoute
+            requiredRole="teacher"
+          />
         }
       >
-        <Route element={<TeacherLayout />}>
+
+        <Route
+          element={<TeacherLayout />}
+        >
+
           <Route
             path="/teacher/dashboard"
-            element={<TeacherDashboard />}
+            element={
+              <TeacherDashboard />
+            }
           />
+
 
           <Route
             path="/teacher/courses"
-            element={<TeacherCoursePage />}
+            element={
+              <TeacherCoursePage />
+            }
           />
+
 
           <Route
             path="/teacher/courses/create"
-            element={<CreateCoursePage />}
+            element={
+              <CreateCoursePage />
+            }
           />
+
 
           <Route
             path="/teacher/courses/:courseId/playground"
-            element={<CoursePlaygroundPage />}
+            element={
+              <CoursePlaygroundPage />
+            }
           />
+
+
+        
         </Route>
+
       </Route>
+
     </Routes>
   );
 }
+
 
 export default App;

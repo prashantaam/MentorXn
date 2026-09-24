@@ -11,20 +11,27 @@ class LBlockTemplate extends Model
 
     protected $fillable = [
         'name',
-        'type',
         'icon',
         'description',
         'component',
+        'tags',
         'configuration_schema',
-        'default_data',
+        'example_data',
         'status',
         'position',
     ];
 
     protected $casts = [
-        'configuration_schema' => 'array',
-        'default_data' => 'array',
-        'position' => 'integer',
+        'tags' => 'array',
+
+        'configuration_schema' =>
+            'array',
+
+        'example_data' =>
+            'array',
+
+        'position' =>
+            'integer',
     ];
 
     public function learningBlocks(): HasMany

@@ -19,41 +19,36 @@ function TeacherTopNav() {
     "Teacher";
 
   const firstInitial =
-    firstName.charAt(0).toUpperCase() ||
+    firstName
+      .charAt(0)
+      .toUpperCase() ||
     "T";
 
   const handleLogout = async () => {
     await logout();
 
-    navigate("/teacher/login", {
-      replace: true,
-    });
+    navigate(
+      "/teacher/login",
+      {
+        replace: true,
+      }
+    );
   };
 
   return (
     <header className="teacher-top-nav">
       <div className="teacher-top-nav-inner">
-        {/* Brand - far left */}
         <Link
-        to="/teacher/dashboard"
-        className="teacher-brand"
+          to="/teacher/dashboard"
+          className="teacher-brand"
         >
-            
-            <div className="teacher-brand-text">
-                <span className="teacher-brand-name">
-                Mentor
-                
-                </span>
-            </div>
-            <span className="teacher-brand-icon">
-                <span className="teacher-logo-x">
-                X<sup>n</sup>
-                </span>
+          <span className="teacher-brand-icon">
+            <span className="teacher-logo-x">
+              MX<sup>n</sup>
             </span>
-
+          </span>
         </Link>
 
-        {/* Main navigation - centre */}
         <nav
           className="teacher-navigation"
           aria-label="Teacher navigation"
@@ -61,7 +56,9 @@ function TeacherTopNav() {
           <NavLink
             to="/teacher/dashboard"
             className={({ isActive }) =>
-              isActive ? "active" : ""
+              isActive
+                ? "active"
+                : ""
             }
           >
             Dashboard
@@ -70,23 +67,27 @@ function TeacherTopNav() {
           <NavLink
             to="/teacher/courses"
             className={({ isActive }) =>
-              isActive ? "active" : ""
+              isActive
+                ? "active"
+                : ""
             }
           >
             Courses
           </NavLink>
 
+
           <NavLink
             to="/teacher/students"
             className={({ isActive }) =>
-              isActive ? "active" : ""
+              isActive
+                ? "active"
+                : ""
             }
           >
             Students
           </NavLink>
         </nav>
 
-        {/* Profile - far right */}
         <div className="teacher-nav-actions">
           <div className="teacher-profile">
             <div className="teacher-avatar">

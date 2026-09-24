@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import TeacherTopNav from "../components/teacher/TeacherTopNav";
 import TeacherFooter from "../components/teacher/TeacherFooter";
 
-import "../styles/teacher-layout.css";
+import "../styles/teachers/teacher-layout.css";
 
 function TeacherLayout() {
   return (

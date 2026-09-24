@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 
-import "../../styles/teacher-dashboard.css";
+import "../../../styles/teachers/teacher-dashboard.css";
 
 function TeacherDashboard() {
   const { user } = useAuth();
@@ -20,7 +20,6 @@ function TeacherDashboard() {
       {/* =====================================
           Welcome
       ===================================== */}
-
       <section className="teacher-dashboard-welcome">
         <div>
           <div className="teacher-dashboard-eyebrow">
@@ -53,7 +52,6 @@ function TeacherDashboard() {
       {/* =====================================
           Overview
       ===================================== */}
-
       <section className="teacher-dashboard-section">
         <div className="teacher-section-heading">
           <div>
@@ -112,7 +110,6 @@ function TeacherDashboard() {
       {/* =====================================
           Get Started
       ===================================== */}
-
       <section className="teacher-get-started">
         <div className="teacher-get-started-icon">
           🗺️

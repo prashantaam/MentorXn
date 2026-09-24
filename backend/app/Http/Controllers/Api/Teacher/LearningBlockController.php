@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\LBlockTemplate;
 use App\Models\Topic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -36,17 +37,32 @@ class LearningBlockController extends Controller
 
         $learningBlocks = $topic
             ->learningBlocks()
+            ->with('lblockTemplate')
             ->orderBy('position')
             ->get();
 
         return response()->json([
             'topic' => $topic,
-            'learning_blocks' => $learningBlocks,
+
+            'learning_blocks' =>
+                $learningBlocks,
         ]);
     }
 
     /**
      * Create a learning block.
+     *
+     * Supports:
+     *
+     * 1. Existing MentorXn blocks
+     *    - content
+     *    - quiz
+     *    - practice_terminal
+     *
+     * 2. Template-driven blocks
+     *    - lblock_template_id
+     *    - data generated from the
+     *      template configuration schema
      */
     public function store(
         Request $request,
@@ -56,7 +72,8 @@ class LearningBlockController extends Controller
 
         if (!$user->isTeacher()) {
             return response()->json([
-                'message' => 'Teacher access required.',
+                'message' =>
+                    'Teacher access required.',
             ], 403);
         }
 
@@ -65,21 +82,26 @@ class LearningBlockController extends Controller
             !== $user->id
         ) {
             return response()->json([
-                'message' => 'Topic not found.',
+                'message' =>
+                    'Topic not found.',
             ], 404);
         }
 
         /*
-         * Common Learning Block validation.
+         * =====================================
+         * TEMPLATE-DRIVEN VALIDATION
+         * =====================================
+         *
+         * Every learning block must be created
+         * from an active developer-managed
+         * learning block template.
          */
+
         $validated = $request->validate([
-            'type' => [
+            'lblock_template_id' => [
                 'required',
-                Rule::in([
-                    'content',
-                    'quiz',
-                    'practice_terminal',
-                ]),
+                'integer',
+                'exists:lblock_templates,id',
             ],
 
             'title' => [
@@ -101,6 +123,7 @@ class LearningBlockController extends Controller
 
             'status' => [
                 'required',
+
                 Rule::in([
                     'draft',
                     'published',
@@ -109,175 +132,57 @@ class LearningBlockController extends Controller
         ]);
 
         /*
-         * Content block.
+         * =====================================
+         * LOAD ACTIVE DEVELOPER TEMPLATE
+         * =====================================
          */
-        if ($validated['type'] === 'content') {
-            $request->validate([
-                'data.content' => [
-                    'required',
-                    'string',
-                ],
-            ]);
+
+        $template =
+            LBlockTemplate::query()
+                ->where(
+                    'id',
+                    $validated[
+                        'lblock_template_id'
+                    ]
+                )
+                ->where(
+                    'status',
+                    'active'
+                )
+                ->first();
+
+        if (!$template) {
+            return response()->json([
+                'message' =>
+                    'Learning block template not found.',
+            ], 422);
         }
 
         /*
-         * Quiz block.
+         * =====================================
+         * VALIDATE TEMPLATE CONFIGURATION
+         * =====================================
          */
-        if ($validated['type'] === 'quiz') {
-            $request->validate([
-                'data.instructions' => [
-                    'nullable',
-                    'string',
-                    'max:2000',
-                ],
 
-                'data.passing_score' => [
-                    'nullable',
-                    'integer',
-                    'min:0',
-                    'max:100',
-                ],
+        $templateError =
+            $this->validateTemplateData(
+                $template,
+                $validated['data']
+            );
 
-                'data.allow_retry' => [
-                    'nullable',
-                    'boolean',
-                ],
-
-                'data.questions' => [
-                    'required',
-                    'array',
-                    'min:1',
-                ],
-
-                'data.questions.*.question' => [
-                    'required',
-                    'string',
-                    'max:1000',
-                ],
-
-                'data.questions.*.type' => [
-                    'required',
-                    Rule::in([
-                        'multiple_choice',
-                    ]),
-                ],
-
-                'data.questions.*.options' => [
-                    'required',
-                    'array',
-                    'min:2',
-                ],
-
-                'data.questions.*.options.*' => [
-                    'required',
-                    'string',
-                    'max:500',
-                ],
-
-                /*
-                 * This was missing previously.
-                 */
-                'data.questions.*.correct_answer' => [
-                    'required',
-                    'integer',
-                    'min:0',
-                ],
-
-                'data.questions.*.correct_message' => [
-                    'nullable',
-                    'string',
-                    'max:1000',
-                ],
-
-                'data.questions.*.wrong_message' => [
-                    'nullable',
-                    'string',
-                    'max:1000',
-                ],
-
-                'data.questions.*.explanation' => [
-                    'nullable',
-                    'string',
-                    'max:2000',
-                ],
-            ]);
-
-            /*
-             * Make sure correct_answer references
-             * an existing option.
-             */
-            foreach (
-                $validated['data']['questions']
-                as $index => $question
-            ) {
-                $correctAnswer =
-                    $question['correct_answer'];
-
-                $optionCount =
-                    count($question['options']);
-
-                if (
-                    $correctAnswer >= $optionCount
-                ) {
-                    return response()->json([
-                        'message' =>
-                            'The selected correct answer is invalid.',
-
-                        'errors' => [
-                            "data.questions.$index.correct_answer" => [
-                                'The correct answer must reference one of the available options.',
-                            ],
-                        ],
-                    ], 422);
-                }
-            }
+        if ($templateError) {
+            return response()->json([
+                'message' =>
+                    $templateError,
+            ], 422);
         }
 
-                /*
-        * Practice Terminal block.
-        */
-        if ($validated['type'] === 'practice_terminal') {
-            $request->validate([
-                'data.welcome' => [
-                    'nullable',
-                    'string',
-                    'max:2000',
-                ],
-
-                'data.tip' => [
-                    'nullable',
-                    'string',
-                    'max:1000',
-                ],
-
-                'data.command_prefix' => [
-                    'nullable',
-                    'string',
-                    'max:100',
-                ],
-
-                'data.commands' => [
-                    'required',
-                    'array',
-                    'min:1',
-                ],
-
-                'data.commands.*.command' => [
-                    'required',
-                    'string',
-                    'max:500',
-                ],
-
-                'data.commands.*.output' => [
-                    'required',
-                    'string',
-                    'max:5000',
-                ],
-            ]);
-        }
         /*
-         * Automatically append the block.
+         * =====================================
+         * AUTOMATIC POSITION
+         * =====================================
          */
+
         $nextPosition =
             (
                 $topic
@@ -286,12 +191,25 @@ class LearningBlockController extends Controller
                 ?? 0
             ) + 1;
 
+        /*
+         * =====================================
+         * CREATE BLOCK
+         * =====================================
+         *
+         * The template relationship determines
+         * which trusted React component renders
+         * this learning block.
+         *
+         * The legacy "type" field is no longer
+         * used by the application.
+         */
+
         $learningBlock =
             $topic
                 ->learningBlocks()
                 ->create([
-                    'type' =>
-                        $validated['type'],
+                    'lblock_template_id' =>
+                        $template->id,
 
                     'title' =>
                         $validated['title']
@@ -311,6 +229,17 @@ class LearningBlockController extends Controller
                         $validated['status'],
                 ]);
 
+        /*
+         * Return the template relationship
+         * immediately so LearningBlockRenderer
+         * can resolve the trusted component
+         * through blockRegistry.js.
+         */
+
+        $learningBlock->load(
+            'lblockTemplate'
+        );
+
         return response()->json([
             'message' =>
                 'Learning block created successfully.',
@@ -318,5 +247,91 @@ class LearningBlockController extends Controller
             'learning_block' =>
                 $learningBlock,
         ], 201);
+    }
+
+    /**
+     * Validate data against the fields defined
+     * by the selected template.
+     *
+     * This is intentionally simple for the
+     * first template-driven implementation.
+     */
+    private function validateTemplateData(
+        LBlockTemplate $template,
+        array $data
+    ): ?string {
+        $schema =
+            $template->configuration_schema
+            ?? [];
+
+        $fields =
+            $schema['fields']
+            ?? [];
+
+        foreach ($fields as $field) {
+            $name =
+                $field['name']
+                ?? null;
+
+            if (!$name) {
+                continue;
+            }
+
+            /*
+             * Title and icon are stored as
+             * top-level learning block fields,
+             * not inside data.
+             */
+            if (
+                in_array(
+                    $name,
+                    [
+                        'title',
+                        'icon',
+                    ],
+                    true
+                )
+            ) {
+                continue;
+            }
+
+            $required =
+                (bool) (
+                    $field['required']
+                    ?? false
+                );
+
+            if (!$required) {
+                continue;
+            }
+
+            if (
+                !array_key_exists(
+                    $name,
+                    $data
+                )
+            ) {
+                return
+                    "The {$name} field is required.";
+            }
+
+            $value =
+                $data[$name];
+
+            if (
+                is_string($value)
+                && trim($value) === ''
+            ) {
+                return
+                    "The {$name} field is required.";
+            }
+
+            if ($value === null) {
+                return
+                    "The {$name} field is required.";
+            }
+        }
+
+        return null;
     }
 }

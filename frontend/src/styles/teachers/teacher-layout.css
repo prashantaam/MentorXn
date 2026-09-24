@@ -1,0 +1,687 @@
+/* =========================================================
+   MentorXn Teacher Portal
+   Common Application Layout
+
+   Brand System:
+   - Yellow = primary MentorXn identity
+   - Black  = typography, borders and shadows
+   - Soft Yellow = secondary/highlight surfaces
+   - Red    = destructive / error only
+   ========================================================= */
+
+
+/* =========================================================
+   Brand Variables
+   ========================================================= */
+
+:root {
+  /* Primary Brand - Yellow */
+  --brand-primary: #ffd84d;
+  --brand-primary-hover: #ffe77f;
+  --brand-primary-active: #ffc928;
+  --brand-primary-dark: #b98500;
+  --brand-primary-soft: #fff7cf;
+
+  /* Learning Accent */
+  --brand-accent: #ffd84d;
+  --brand-accent-hover: #ffe77f;
+  --brand-accent-active: #ffc928;
+  --brand-accent-soft: #fff7cf;
+
+  /* Neutral */
+  --brand-ink: #252a27;
+  --brand-text: #2f3732;
+  --brand-muted: #68706b;
+
+  --brand-bg: #f5f4ef;
+  --brand-white: #ffffff;
+  --brand-border: #d5d8d5;
+
+  /* Semantic */
+  --brand-danger: #8d3025;
+  --brand-danger-soft: #ffe2de;
+}
+
+
+/* =========================================================
+   Application Shell
+   ========================================================= */
+
+.teacher-app {
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background:
+    var(--brand-bg);
+
+  color:
+    var(--brand-ink);
+
+  font-family:
+    "Nunito",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+
+/* =========================================================
+   Shared Teacher Page Background
+
+   This dotted background belongs here so every teacher
+   page automatically receives the same background.
+   ========================================================= */
+
+.teacher-main {
+  flex: 1 0 auto;
+
+  width: 100%;
+  min-width: 0;
+
+  background-color:
+    var(--brand-bg);
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(37, 42, 39, 0.14) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    18px 18px;
+}
+
+
+/* =========================================================
+   Top Navigation
+   ========================================================= */
+
+.teacher-top-nav {
+  position: sticky;
+
+  top: 0;
+  z-index: 1000;
+
+  width: 100%;
+
+  background:
+    var(--brand-white);
+
+  border-bottom:
+    2px solid
+    var(--brand-border);
+
+  box-shadow:
+    0 3px 10px
+    rgba(37, 42, 39, 0.08);
+}
+
+.teacher-top-nav-inner {
+  width: 100%;
+  min-height: 74px;
+
+  padding:
+    0 28px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 1fr)
+    auto
+    minmax(220px, 1fr);
+
+  align-items: center;
+
+  gap: 24px;
+
+  box-sizing:
+    border-box;
+}
+
+
+/* =========================================================
+   MentorXn Logo
+   ========================================================= */
+
+.teacher-brand {
+  justify-self: start;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 11px;
+
+  color:
+    var(--brand-ink);
+
+  text-decoration: none;
+}
+
+.teacher-brand-icon {
+  position: relative;
+
+  width: 64px;
+  height: 64px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    var(--brand-primary);
+
+  color:
+    var(--brand-ink);
+
+  border:
+    2px solid
+    var(--brand-ink);
+
+  border-radius: 12px;
+
+  box-shadow:
+    3px 3px 0
+    var(--brand-ink);
+
+  transform-origin:
+    center;
+
+  animation:
+    teacherLogoFloat
+    2.6s
+    ease-in-out
+    infinite;
+}
+
+.teacher-logo-x {
+  position: relative;
+
+  display: inline-block;
+
+  color:
+    var(--brand-ink);
+
+  font-family:
+    "Fredoka",
+    "Nunito",
+    sans-serif;
+
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.teacher-logo-x sup {
+  position: relative;
+
+  top: -0.45em;
+
+  margin-left: 1px;
+
+  color:
+    var(--brand-ink);
+
+  font-size: 0.42em;
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   Logo Animation
+   ========================================================= */
+
+@keyframes teacherLogoFloat {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  50% {
+    transform:
+      translateY(-4px)
+      rotate(2deg);
+  }
+}
+
+
+/* =========================================================
+   Main Navigation
+   ========================================================= */
+
+.teacher-navigation {
+  justify-self: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+}
+
+.teacher-navigation a {
+  position: relative;
+
+  padding:
+    9px 16px;
+
+  background:
+    var(--brand-primary-soft);
+
+  color:
+    var(--brand-ink);
+
+  border:
+    2px solid
+    var(--brand-ink);
+
+  border-radius: 10px;
+
+  box-shadow:
+    2px 2px 0
+    var(--brand-ink);
+
+  text-decoration: none;
+
+  font-size: 0.87rem;
+  font-weight: 900;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.teacher-navigation a:hover {
+  background:
+    var(--brand-primary-hover);
+
+  color:
+    var(--brand-ink);
+
+  transform:
+    translate(-1px, -1px);
+
+  box-shadow:
+    3px 3px 0
+    var(--brand-ink);
+}
+
+.teacher-navigation a.active {
+  background:
+    var(--brand-primary);
+
+  color:
+    var(--brand-ink);
+
+  transform:
+    translate(1px, 1px);
+
+  box-shadow:
+    1px 1px 0
+    var(--brand-ink);
+}
+
+.teacher-navigation a.active::after {
+  display: none;
+}
+
+
+/* =========================================================
+   Navigation Actions
+   ========================================================= */
+
+.teacher-nav-actions {
+  justify-self: end;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+}
+
+
+/* =========================================================
+   Teacher Profile
+   ========================================================= */
+
+.teacher-profile {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+.teacher-avatar {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    var(--brand-primary);
+
+  color:
+    var(--brand-ink);
+
+  border:
+    2px solid
+    var(--brand-ink);
+
+  border-radius: 50%;
+
+  box-shadow:
+    2px 2px 0
+    var(--brand-ink);
+
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.teacher-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.teacher-profile-name {
+  color:
+    var(--brand-ink);
+
+  font-size: 0.83rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.teacher-profile-role {
+  margin-top: 2px;
+
+  color:
+    var(--brand-ink);
+
+  font-size: 0.67rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   Logout Button
+   ========================================================= */
+
+.teacher-logout-button {
+  min-height: 38px;
+
+  padding:
+    7px 14px;
+
+  background:
+    var(--brand-white);
+
+  color:
+    var(--brand-ink);
+
+  border:
+    2px solid
+    var(--brand-ink);
+
+  border-radius: 10px;
+
+  box-shadow:
+    2px 2px 0
+    var(--brand-ink);
+
+  cursor: pointer;
+
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 900;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.teacher-logout-button:hover {
+  background:
+    var(--brand-primary-soft);
+
+  color:
+    var(--brand-ink);
+
+  transform:
+    translate(-1px, -1px);
+
+  box-shadow:
+    3px 3px 0
+    var(--brand-ink);
+}
+
+.teacher-logout-button:active {
+  transform:
+    translate(1px, 1px);
+
+  box-shadow:
+    1px 1px 0
+    var(--brand-ink);
+}
+
+
+/* =========================================================
+   Footer
+   ========================================================= */
+
+.teacher-footer {
+  margin-top: auto;
+
+  background:
+    rgba(255, 255, 255, 0.9);
+
+  color:
+    var(--brand-ink);
+
+  border-top:
+    1px solid
+    var(--brand-border);
+}
+
+.teacher-footer-inner {
+  width:
+    min(
+      1120px,
+      calc(100% - 40px)
+    );
+
+  margin:
+    0 auto;
+
+  padding:
+    25px 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  color:
+    var(--brand-ink);
+
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.teacher-footer-inner p {
+  margin: 0;
+
+  color:
+    var(--brand-ink);
+}
+
+.teacher-footer-brand {
+  color:
+    var(--brand-ink);
+
+  font-family:
+    "Fredoka",
+    "Nunito",
+    sans-serif;
+
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.teacher-footer-brand sup {
+  position: relative;
+
+  top: -0.3em;
+
+  margin-left: 1px;
+
+  color:
+    var(--brand-ink);
+
+  font-size: 0.5em;
+  font-weight: 900;
+}
+
+.teacher-footer-copy {
+  color:
+    var(--brand-ink);
+}
+
+
+/* =========================================================
+   Focus States
+   ========================================================= */
+
+.teacher-brand:focus-visible,
+.teacher-navigation a:focus-visible,
+.teacher-logout-button:focus-visible {
+  outline:
+    3px solid
+    var(--brand-primary-active);
+
+  outline-offset:
+    3px;
+}
+
+
+/* =========================================================
+   Responsive - Tablet
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .teacher-top-nav-inner {
+    grid-template-columns:
+      auto
+      1fr
+      auto;
+
+    padding:
+      0 20px;
+
+    gap: 16px;
+  }
+
+  .teacher-navigation {
+    gap: 6px;
+  }
+
+  .teacher-navigation a {
+    padding:
+      8px 10px;
+
+    font-size: 0.8rem;
+  }
+
+  .teacher-profile-info {
+    display: none;
+  }
+}
+
+
+/* =========================================================
+   Responsive - Mobile
+   ========================================================= */
+
+@media (max-width: 650px) {
+  .teacher-top-nav-inner {
+    min-height: 66px;
+
+    grid-template-columns:
+      1fr
+      auto;
+
+    padding:
+      0 14px;
+
+    gap: 12px;
+  }
+
+  .teacher-brand-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .teacher-logo-x {
+    font-size: 1.25rem;
+  }
+
+  .teacher-navigation {
+    display: none;
+  }
+
+  .teacher-nav-actions {
+    justify-self: end;
+
+    gap: 7px;
+  }
+
+  .teacher-profile {
+    display: none;
+  }
+
+  .teacher-logout-button {
+    padding:
+      7px 10px;
+  }
+
+  .teacher-footer-inner {
+    width:
+      calc(100% - 28px);
+
+    flex-direction:
+      column;
+
+    gap: 7px;
+
+    text-align: center;
+  }
+}
+
+
+/* =========================================================
+   Reduced Motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .teacher-brand-icon {
+    animation: none;
+  }
+
+  .teacher-navigation a,
+  .teacher-logout-button {
+    transition: none;
+  }
+}
