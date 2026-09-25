@@ -1,242 +1,324 @@
+import {
+  useState,
+} from "react";
+
 function BlockConfigField({
   field,
   value,
   onChange,
+  showLabel = true,
 }) {
+  const [
+    answerInput,
+    setAnswerInput,
+  ] = useState("");
+
   if (!field?.name) {
     return null;
   }
 
-  const fieldId = `block-config-${field.name}`;
+  const fieldId =
+    `template-${field.name}`;
 
-  const label = field.label || field.name;
-
-  const requiredMark = field.required
-    ? " *"
-    : "";
+  const fieldLabel =
+    field.label ||
+    field.name;
 
   /*
    * =========================================
-   * Text
+   * Create default value
    * =========================================
    */
 
-  if (field.type === "text") {
-    return (
-      <>
-        <label htmlFor={fieldId}>
-          {label}
-          {requiredMark}
-        </label>
+  const getDefaultValue = (
+    targetField
+  ) => {
+    if (
+      Object.prototype.hasOwnProperty.call(
+        targetField,
+        "default"
+      )
+    ) {
+      return targetField.default;
+    }
 
-        <input
-          id={fieldId}
-          type="text"
-          value={value ?? ""}
-          placeholder={
-            field.placeholder || ""
-          }
-          onChange={(event) =>
-            onChange(
-              event.target.value
-            )
-          }
-        />
-      </>
-    );
-  }
+    if (
+      targetField.type ===
+      "boolean"
+    ) {
+      return false;
+    }
 
-  /*
-   * =========================================
-   * Number
-   * =========================================
-   */
+    if (
+      targetField.type ===
+        "repeater" ||
+      targetField.type ===
+        "answer_builder"
+    ) {
+      return [];
+    }
 
-  if (field.type === "number") {
-    return (
-      <>
-        <label htmlFor={fieldId}>
-          {label}
-          {requiredMark}
-        </label>
+    if (
+      targetField.type ===
+      "select"
+    ) {
+      const firstOption =
+        targetField.options?.[0];
 
-        <input
-          id={fieldId}
-          type="number"
-          value={value ?? ""}
-          min={field.min}
-          max={field.max}
-          step={field.step}
-          placeholder={
-            field.placeholder || ""
-          }
-          onChange={(event) =>
-            onChange(
-              event.target.value
-            )
-          }
-        />
-      </>
-    );
-  }
+      return typeof firstOption ===
+        "string"
+        ? firstOption
+        : firstOption?.value ??
+            "";
+    }
+
+    return "";
+  };
 
   /*
    * =========================================
-   * Textarea
+   * Answer Builder
    * =========================================
    */
 
   if (
-    field.type === "textarea"
+    field.type ===
+    "answer_builder"
   ) {
-    return (
-      <>
-        <label htmlFor={fieldId}>
-          {label}
-          {requiredMark}
-        </label>
-
-        <textarea
-          id={fieldId}
-          rows={
-            field.rows || 5
-          }
-          value={value ?? ""}
-          placeholder={
-            field.placeholder || ""
-          }
-          onChange={(event) =>
-            onChange(
-              event.target.value
-            )
-          }
-        />
-      </>
-    );
-  }
-
-  /*
-   * =========================================
-   * Code
-   * =========================================
-   */
-
-  if (field.type === "code") {
-    return (
-      <>
-        <label htmlFor={fieldId}>
-          {label}
-          {requiredMark}
-        </label>
-
-        <textarea
-          id={fieldId}
-          rows={
-            field.rows || 10
-          }
-          value={value ?? ""}
-          placeholder={
-            field.placeholder || ""
-          }
-          className="course-playground-code-input"
-          spellCheck="false"
-          onChange={(event) =>
-            onChange(
-              event.target.value
-            )
-          }
-        />
-      </>
-    );
-  }
-
-  /*
-   * =========================================
-   * Boolean
-   * =========================================
-   */
-
-  if (
-    field.type === "boolean"
-  ) {
-    return (
-      <label className="course-playground-checkbox">
-        <input
-          type="checkbox"
-          checked={Boolean(value)}
-          onChange={(event) =>
-            onChange(
-              event.target.checked
-            )
-          }
-        />
-
-        <span>
-          {label}
-        </span>
-      </label>
-    );
-  }
-
-  /*
-   * =========================================
-   * Select
-   * =========================================
-   */
-
-  if (field.type === "select") {
-    const options =
-      Array.isArray(field.options)
-        ? field.options
+    const answers =
+      Array.isArray(value)
+        ? value
         : [];
 
+    const minimumItems =
+      Number(
+        field.min_items ?? 0
+      );
+
+    const handleAddAnswer = () => {
+      const text =
+        answerInput.trim();
+
+      if (!text) {
+        return;
+      }
+
+      onChange([
+        ...answers,
+        {
+          text,
+          correct: false,
+        },
+      ]);
+
+      setAnswerInput("");
+    };
+
+    const handleAnswerKeyDown = (
+      event
+    ) => {
+      if (
+        event.key !== "Enter"
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      handleAddAnswer();
+    };
+
+    const handleCorrectAnswer = (
+      selectedIndex
+    ) => {
+      onChange(
+        answers.map(
+          (answer, index) => ({
+            ...answer,
+
+            correct:
+              index ===
+              selectedIndex,
+          })
+        )
+      );
+    };
+
+    const handleRemoveAnswer = (
+      answerIndex
+    ) => {
+      if (
+        answers.length <=
+        minimumItems
+      ) {
+        return;
+      }
+
+      onChange(
+        answers.filter(
+          (_, index) =>
+            index !==
+            answerIndex
+        )
+      );
+    };
+
     return (
-      <>
-        <label htmlFor={fieldId}>
-          {label}
-          {requiredMark}
-        </label>
+      <div className="course-playground-template-field">
+        {showLabel && (
+          <label>
+            {fieldLabel}
 
-        <select
-          id={fieldId}
-          value={value ?? ""}
-          onChange={(event) =>
-            onChange(
-              event.target.value
-            )
-          }
-        >
-          {options.map(
-            (option, index) => {
-              const optionValue =
-                typeof option ===
-                "string"
-                  ? option
-                  : option.value;
+            {field.required &&
+              " *"}
+          </label>
+        )}
 
-              const optionLabel =
-                typeof option ===
-                "string"
-                  ? option
-                  : option.label ??
-                    option.value;
+        {field.help && (
+          <p className="course-playground-field-help">
+            {field.help}
+          </p>
+        )}
 
-              return (
-                <option
-                  key={
-                    `${field.name}-${optionValue}-${index}`
-                  }
-                  value={
-                    optionValue
-                  }
-                >
-                  {optionLabel}
-                </option>
-              );
-            }
+        <div className="course-playground-answer-builder">
+          <div className="course-playground-answer-add-row">
+            <input
+              type="text"
+              value={
+                answerInput
+              }
+              placeholder={
+                field.placeholder ||
+                "Type an answer..."
+              }
+              onChange={(
+                event
+              ) =>
+                setAnswerInput(
+                  event.target
+                    .value
+                )
+              }
+              onKeyDown={
+                handleAnswerKeyDown
+              }
+            />
+
+            <button
+              type="button"
+              className="course-playground-small-add-button course-playground-answer-add-button"
+              disabled={
+                !answerInput.trim()
+              }
+              onClick={
+                handleAddAnswer
+              }
+              aria-label="Add answer"
+              title="Add answer"
+            >
+              +
+            </button>
+          </div>
+
+          {answers.length ===
+            0 && (
+            <div className="course-playground-answer-empty">
+              Add at least{" "}
+              {minimumItems ||
+                2}{" "}
+              answers.
+            </div>
           )}
-        </select>
-      </>
+
+          {answers.length >
+            0 && (
+            <div className="course-playground-answer-list">
+              {answers.map(
+                (
+                  answer,
+                  answerIndex
+                ) => (
+                  <div
+                    key={
+                      answerIndex
+                    }
+                    className={
+                      `course-playground-answer-item${
+                        answer.correct
+                          ? " is-correct"
+                          : ""
+                      }`
+                    }
+                  >
+                    <label className="course-playground-answer-choice">
+                      <input
+                        type="radio"
+                        name={
+                          `correct-answer-${field.name}`
+                        }
+                        checked={
+                          Boolean(
+                            answer.correct
+                          )
+                        }
+                        onChange={() =>
+                          handleCorrectAnswer(
+                            answerIndex
+                          )
+                        }
+                      />
+
+                      <span className="course-playground-answer-text">
+                        {answer.text}
+                      </span>
+                    </label>
+
+                    <button
+                      type="button"
+                      className="course-playground-answer-remove"
+                      disabled={
+                        answers.length <=
+                        minimumItems
+                      }
+                      onClick={() =>
+                        handleRemoveAnswer(
+                          answerIndex
+                        )
+                      }
+                      aria-label={
+                        `Remove ${answer.text}`
+                      }
+                      title={
+                        answers.length <=
+                        minimumItems
+                          ? `At least ${minimumItems} answers are required`
+                          : "Remove answer"
+                      }
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                )
+              )}
+            </div>
+          )}
+
+          {answers.length >
+            0 &&
+            !answers.some(
+              (answer) =>
+                Boolean(
+                  answer.correct
+                )
+            ) && (
+              <p className="course-playground-answer-hint">
+                Select the correct
+                answer using the
+                radio button.
+              </p>
+            )}
+        </div>
+      </div>
     );
   }
 
@@ -255,99 +337,52 @@ function BlockConfigField({
         : [];
 
     const itemFields =
-      Array.isArray(field.fields)
+      Array.isArray(
+        field.fields
+      )
         ? field.fields
         : [];
 
-    const addItem = () => {
-      const newItem = {};
+    const handleAddItem =
+      () => {
+        const newItem = {};
 
-      itemFields.forEach(
-        (itemField) => {
-          if (!itemField?.name) {
-            return;
-          }
-
-          if (
-            Object.prototype.hasOwnProperty.call(
-              itemField,
-              "default"
-            )
-          ) {
-            newItem[
-              itemField.name
-            ] =
-              itemField.default;
-
-            return;
-          }
-
-          if (
-            itemField.type ===
-            "boolean"
-          ) {
-            newItem[
-              itemField.name
-            ] = false;
-
-            return;
-          }
-
-          if (
-            itemField.type ===
-            "repeater"
-          ) {
-            newItem[
-              itemField.name
-            ] = [];
-
-            return;
-          }
-
-          if (
-            itemField.type ===
-            "select"
-          ) {
-            const firstOption =
-              itemField
-                .options?.[0];
+        itemFields.forEach(
+          (itemField) => {
+            if (
+              !itemField?.name
+            ) {
+              return;
+            }
 
             newItem[
               itemField.name
             ] =
-              typeof firstOption ===
-              "string"
-                ? firstOption
-                : firstOption
-                    ?.value ?? "";
-
-            return;
+              getDefaultValue(
+                itemField
+              );
           }
+        );
 
-          newItem[
-            itemField.name
-          ] = "";
-        }
-      );
+        onChange([
+          ...items,
+          newItem,
+        ]);
+      };
 
-      onChange([
-        ...items,
-        newItem,
-      ]);
-    };
-
-    const removeItem = (
+    const handleRemoveItem = (
       itemIndex
     ) => {
       onChange(
         items.filter(
           (_, index) =>
-            index !== itemIndex
+            index !==
+            itemIndex
         )
       );
     };
 
-    const changeItemField = (
+    const handleItemChange = (
       itemIndex,
       itemFieldName,
       newValue
@@ -368,61 +403,59 @@ function BlockConfigField({
     };
 
     return (
-      <div className="course-playground-repeater">
-        <div className="course-playground-repeater-heading">
+      <div className="course-playground-template-field">
+        {showLabel && (
           <label>
-            {label}
-            {requiredMark}
+            {fieldLabel}
+
+            {field.required &&
+              " *"}
           </label>
-
-          {field.help && (
-            <span>
-              {field.help}
-            </span>
-          )}
-        </div>
-
-        {items.length === 0 && (
-          <div className="course-playground-repeater-empty">
-            No items added yet.
-          </div>
         )}
 
-        {items.map(
-          (item, itemIndex) => (
-            <div
-              key={
-                `${field.name}-${itemIndex}`
-              }
-              className="course-playground-repeater-item"
-            >
-              <div className="course-playground-repeater-item-heading">
-                <strong>
-                  {field.item_label ||
-                    field.itemLabel ||
-                    "Item"}{" "}
-                  {itemIndex + 1}
-                </strong>
+        <div className="course-playground-repeater">
+          {items.map(
+            (
+              item,
+              itemIndex
+            ) => (
+              <section
+                key={
+                  itemIndex
+                }
+                className="course-playground-question-editor"
+              >
+                <div className="course-playground-question-header">
+                  <strong>
+                    {field.item_label ||
+                      "Item"}{" "}
+                    {itemIndex + 1}
+                  </strong>
 
-                <button
-                  type="button"
-                  className="course-playground-repeater-remove"
-                  onClick={() =>
-                    removeItem(
-                      itemIndex
-                    )
-                  }
-                >
-                  Remove
-                </button>
-              </div>
+                  {items.length >
+                    (field.min_items ||
+                      1) && (
+                    <button
+                      type="button"
+                      className="course-playground-question-remove"
+                      onClick={() =>
+                        handleRemoveItem(
+                          itemIndex
+                        )
+                      }
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
 
-              <div className="course-playground-repeater-fields">
                 {itemFields.map(
-                  (itemField) => (
+                  (
+                    itemField
+                  ) => (
                     <BlockConfigField
                       key={
-                        `${field.name}-${itemIndex}-${itemField.name}`
+                        itemField.name
                       }
                       field={
                         itemField
@@ -436,7 +469,7 @@ function BlockConfigField({
                       onChange={(
                         newValue
                       ) =>
-                        changeItemField(
+                        handleItemChange(
                           itemIndex,
                           itemField.name,
                           newValue
@@ -445,62 +478,186 @@ function BlockConfigField({
                     />
                   )
                 )}
-              </div>
-            </div>
-          )
-        )}
+              </section>
+            )
+          )}
 
-        <button
-          type="button"
-          className="course-playground-repeater-add"
-          onClick={addItem}
-        >
-          + Add{" "}
-          {field.item_label ||
-            field.itemLabel ||
-            "Item"}
-        </button>
+          <button
+            type="button"
+            className="course-playground-small-add-button"
+            onClick={
+              handleAddItem
+            }
+          >
+            + Add{" "}
+            {field.item_label ||
+              "Item"}
+          </button>
+        </div>
       </div>
     );
   }
 
   /*
    * =========================================
-   * Unknown field type
+   * Standard field wrapper
    * =========================================
-   *
-   * We deliberately fall back to a normal
-   * text field so an unsupported schema field
-   * does not break the entire configuration
-   * drawer.
    */
 
   return (
-    <>
-      <label htmlFor={fieldId}>
-        {label}
-        {requiredMark}
-      </label>
+    <div className="course-playground-template-field">
+      {showLabel && (
+        <label
+          htmlFor={
+            field.type ===
+            "boolean"
+              ? undefined
+              : fieldId
+          }
+        >
+          {fieldLabel}
 
-      <input
-        id={fieldId}
-        type="text"
-        value={
-          typeof value === "string" ||
-          typeof value === "number"
-            ? value
-            : ""
-        }
-        placeholder={
-          field.placeholder || ""
-        }
-        onChange={(event) =>
-          onChange(
-            event.target.value
-          )
-        }
-      />
-    </>
+          {field.required &&
+            " *"}
+        </label>
+      )}
+
+      {field.type ===
+      "textarea" ? (
+        <textarea
+          id={fieldId}
+          rows={
+            field.rows || 6
+          }
+          value={
+            value ?? ""
+          }
+          placeholder={
+            field.placeholder ||
+            ""
+          }
+          onChange={(event) =>
+            onChange(
+              event.target.value
+            )
+          }
+        />
+      ) : field.type ===
+        "code" ? (
+        <textarea
+          id={fieldId}
+          className="course-playground-content-editor"
+          rows={
+            field.rows || 10
+          }
+          spellCheck="false"
+          value={
+            value ?? ""
+          }
+          placeholder={
+            field.placeholder ||
+            ""
+          }
+          onChange={(event) =>
+            onChange(
+              event.target.value
+            )
+          }
+        />
+      ) : field.type ===
+        "boolean" ? (
+        <label className="course-playground-checkbox">
+          <input
+            id={fieldId}
+            type="checkbox"
+            checked={
+              Boolean(value)
+            }
+            onChange={(event) =>
+              onChange(
+                event.target
+                  .checked
+              )
+            }
+          />
+
+          <span>
+            Enabled
+          </span>
+        </label>
+      ) : field.type ===
+        "select" ? (
+        <select
+          id={fieldId}
+          value={
+            value ??
+            field.default ??
+            ""
+          }
+          onChange={(event) =>
+            onChange(
+              event.target.value
+            )
+          }
+        >
+          {(field.options ||
+            []).map(
+            (option) => {
+              const optionValue =
+                typeof option ===
+                "string"
+                  ? option
+                  : option.value;
+
+              const optionLabel =
+                typeof option ===
+                "string"
+                  ? option
+                  : option.label ??
+                    option.value;
+
+              return (
+                <option
+                  key={
+                    optionValue
+                  }
+                  value={
+                    optionValue
+                  }
+                >
+                  {optionLabel}
+                </option>
+              );
+            }
+          )}
+        </select>
+      ) : (
+        <input
+          id={fieldId}
+          type={
+            field.type ===
+            "number"
+              ? "number"
+              : "text"
+          }
+          value={
+            value ?? ""
+          }
+          placeholder={
+            field.placeholder ||
+            ""
+          }
+          min={field.min}
+          max={field.max}
+          step={field.step}
+          onChange={(event) =>
+            onChange(
+              event.target.value
+            )
+          }
+        />
+      )}
+    </div>
   );
 }
 

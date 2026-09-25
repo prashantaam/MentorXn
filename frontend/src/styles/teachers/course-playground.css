@@ -2884,3 +2884,145 @@ textarea:focus {
     width: 100%;
   }
 }
+/* =========================================================
+   Block Config - Answer Builder
+   ========================================================= */
+
+.course-playground-answer-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.course-playground-answer-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.course-playground-answer-add-row input {
+  min-width: 0;
+}
+
+.course-playground-answer-add-button {
+  width: 46px;
+  min-width: 46px;
+  padding: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.course-playground-answer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.course-playground-answer-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 8px 10px;
+
+  background: #eeede7;
+  border: 2px solid #141414;
+  border-radius: 10px;
+}
+
+.course-playground-answer-item.is-correct {
+  background: #cdf5e4;
+  border-color: #0b7a55;
+}
+
+.course-playground-answer-choice {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 0;
+
+  cursor: pointer;
+}
+
+.course-playground-answer-choice input[type="radio"] {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+
+  cursor: pointer;
+}
+
+.course-playground-answer-text {
+  flex: 1;
+  min-width: 0;
+
+  color: #141414;
+  font-weight: 800;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+.course-playground-answer-remove {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  background: #ffffff;
+  border: 2px solid #141414;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.course-playground-answer-remove:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.course-playground-answer-remove:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.course-playground-answer-empty {
+  padding: 10px 12px;
+
+  background: #eeede7;
+  border: 2px dashed #141414;
+  border-radius: 10px;
+
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.course-playground-answer-hint {
+  margin: 0;
+
+  color: #54554e;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .course-playground-answer-add-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      42px;
+  }
+
+  .course-playground-answer-add-button {
+    width: 42px;
+    min-width: 42px;
+  }
+}

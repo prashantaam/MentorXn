@@ -7,16 +7,15 @@ use Illuminate\Database\Seeder;
 
 class QuizBlockSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         /*
-         * =====================================================
-         * Find Existing Template
-         * =====================================================
-         *
-         * This allows the seeder to be run repeatedly without
-         * creating duplicate Quiz templates.
-         * =====================================================
+         * =========================================
+         * Find existing Quiz template
+         * =========================================
          */
 
         $template = LBlockTemplate::query()
@@ -24,64 +23,33 @@ class QuizBlockSeeder extends Seeder
             ->orWhere('name', 'Quiz')
             ->first();
 
-        if (!$template) {
-            $template = new LBlockTemplate();
-        }
-
-
         /*
-         * =====================================================
-         * Basic Template Information
-         * =====================================================
+         * =========================================
+         * Configuration Schema
+         * =========================================
          */
 
-        $template->name = 'Quiz';
-
-        $template->component = 'QuizBlock';
-
-        $template->icon = '🎯';
-
-        $template->description =
-            'Create an interactive quiz with multiple questions, '
-            . 'multiple answer options, feedback and explanations.';
-
-        $template->tags = [
-            'quiz',
-            'questions',
-            'assessment',
-            'knowledge-check',
-            'interactive',
-        ];
-
-
-        /*
-         * =====================================================
-         * Teacher Configuration Schema
-         * =====================================================
-         */
-
-        $template->configuration_schema = [
+        $configurationSchema = [
             'fields' => [
 
                 /*
-                 * -------------------------------------------------
-                 * Block Title
-                 * -------------------------------------------------
+                 * =================================
+                 * Title
+                 * =================================
                  */
 
                 [
                     'name' => 'title',
-                    'label' => 'Block title',
+                    'label' => 'Title',
                     'type' => 'text',
                     'required' => true,
                     'default' => 'Quick Quiz',
                 ],
 
-
                 /*
-                 * -------------------------------------------------
-                 * Block Icon
-                 * -------------------------------------------------
+                 * =================================
+                 * Icon
+                 * =================================
                  */
 
                 [
@@ -92,31 +60,25 @@ class QuizBlockSeeder extends Seeder
                     'default' => '🎯',
                 ],
 
-
                 /*
-                 * -------------------------------------------------
+                 * =================================
                  * Instructions
-                 * -------------------------------------------------
+                 * =================================
                  */
 
                 [
                     'name' => 'subtitle',
                     'label' => 'Instructions',
                     'type' => 'textarea',
-                    'rows' => 2,
                     'required' => false,
                     'default' =>
                         'Choose the correct answer for each question.',
                 ],
 
-
                 /*
-                 * -------------------------------------------------
+                 * =================================
                  * Questions
-                 * -------------------------------------------------
-                 *
-                 * Teachers can add as many questions as required.
-                 * -------------------------------------------------
+                 * =================================
                  */
 
                 [
@@ -124,114 +86,114 @@ class QuizBlockSeeder extends Seeder
                     'label' => 'Questions',
                     'type' => 'repeater',
                     'required' => true,
-                    'item_label' => 'Question',
                     'min_items' => 1,
+                    'item_label' => 'Question',
 
                     'fields' => [
 
                         /*
-                         * Question Text
+                         * =========================
+                         * Question
+                         * =========================
                          */
 
                         [
                             'name' => 'question',
                             'label' => 'Question',
                             'type' => 'textarea',
-                            'rows' => 2,
                             'required' => true,
+                            'rows' => 3,
                         ],
 
-
                         /*
-                         * -----------------------------------------
+                         * =========================
                          * Answers
-                         * -----------------------------------------
+                         * =========================
                          *
-                         * Each question can contain as many answer
-                         * options as required.
+                         * Custom MentorXn field.
                          *
-                         * For this first QuizBlock version,
-                         * exactly ONE answer should be marked
-                         * correct.
-                         * -----------------------------------------
+                         * The teacher can:
+                         *
+                         * - type an answer
+                         * - click +
+                         * - select the correct
+                         *   answer using a radio
+                         *   button
+                         * - remove answers
+                         *
+                         * Stored value:
+                         *
+                         * [
+                         *   [
+                         *     'text' => '...',
+                         *     'correct' => false,
+                         *   ],
+                         * ]
                          */
 
                         [
                             'name' => 'answers',
                             'label' => 'Answers',
-                            'type' => 'repeater',
+                            'type' => 'answer_builder',
                             'required' => true,
-                            'item_label' => 'Answer',
                             'min_items' => 2,
-
-                            'fields' => [
-
-                                [
-                                    'name' => 'text',
-                                    'label' => 'Answer',
-                                    'type' => 'text',
-                                    'required' => true,
-                                ],
-
-                                [
-                                    'name' => 'correct',
-                                    'label' => 'Correct answer',
-                                    'type' => 'boolean',
-                                    'required' => false,
-                                    'default' => false,
-                                ],
-                            ],
+                            'placeholder' =>
+                                'Type an answer...',
+                            'help' =>
+                                'Add the possible answers, then select the correct answer.',
                         ],
 
-
                         /*
-                         * Correct Feedback
+                         * =========================
+                         * Correct Message
+                         * =========================
                          */
 
                         [
                             'name' => 'correct_message',
                             'label' => 'Correct message',
                             'type' => 'textarea',
-                            'rows' => 2,
                             'required' => false,
+                            'rows' => 2,
                             'default' => '🎉 Yes!',
                         ],
 
-
                         /*
-                         * Incorrect Feedback
+                         * =========================
+                         * Incorrect Message
+                         * =========================
                          */
 
                         [
                             'name' => 'incorrect_message',
                             'label' => 'Incorrect message',
                             'type' => 'textarea',
-                            'rows' => 2,
                             'required' => false,
+                            'rows' => 2,
                             'default' =>
                                 'Not quite. Pick another answer, you can do it! 💪',
                         ],
 
-
                         /*
+                         * =========================
                          * Explanation
+                         * =========================
                          */
 
                         [
                             'name' => 'explanation',
                             'label' => 'Explanation',
                             'type' => 'textarea',
-                            'rows' => 3,
                             'required' => false,
+                            'rows' => 4,
                         ],
                     ],
                 ],
 
-
                 /*
-                 * -------------------------------------------------
+                 * =================================
                  * Shuffle Questions
-                 * -------------------------------------------------
+                 * =================================
                  */
 
                 [
@@ -242,11 +204,10 @@ class QuizBlockSeeder extends Seeder
                     'default' => false,
                 ],
 
-
                 /*
-                 * -------------------------------------------------
+                 * =================================
                  * Shuffle Answers
-                 * -------------------------------------------------
+                 * =================================
                  */
 
                 [
@@ -257,11 +218,10 @@ class QuizBlockSeeder extends Seeder
                     'default' => true,
                 ],
 
-
                 /*
-                 * -------------------------------------------------
-                 * Question Numbers
-                 * -------------------------------------------------
+                 * =================================
+                 * Show Question Numbers
+                 * =================================
                  */
 
                 [
@@ -272,66 +232,47 @@ class QuizBlockSeeder extends Seeder
                     'default' => true,
                 ],
 
-
                 /*
-                 * -------------------------------------------------
-                 * Retry Incorrect Answers
-                 * -------------------------------------------------
+                 * =================================
+                 * Retry Wrong Answers
+                 * =================================
                  */
 
                 [
                     'name' => 'retry_wrong_answers',
-                    'label' => 'Allow retry after wrong answer',
+                    'label' => 'Retry wrong answers',
                     'type' => 'boolean',
                     'required' => false,
                     'default' => true,
                 ],
 
-
                 /*
-                 * -------------------------------------------------
-                 * Quiz Completion Message
-                 * -------------------------------------------------
+                 * =================================
+                 * Completion Message
+                 * =================================
                  */
 
                 [
                     'name' => 'complete_message',
-                    'label' => 'Quiz complete message',
+                    'label' => 'Completion message',
                     'type' => 'textarea',
-                    'rows' => 2,
                     'required' => false,
+                    'rows' => 3,
                     'default' =>
                         '🎉 Great work! You completed all the questions.',
                 ],
             ],
         ];
 
-
         /*
-         * =====================================================
+         * =========================================
          * Example Data
-         * =====================================================
-         *
-         * Programming Basics example showing that a single
-         * Quiz block can contain multiple questions.
-         * =====================================================
+         * =========================================
          */
 
-        $template->example_data = [
-
-            'title' => 'Quick Quiz',
-
-            'icon' => '🎯',
-
+        $exampleData = [
             'subtitle' =>
                 'Choose the correct answer for each question.',
-
-
-            /*
-             * -------------------------------------------------
-             * Multiple Questions
-             * -------------------------------------------------
-             */
 
             'questions' => [
 
@@ -371,7 +312,6 @@ class QuizBlockSeeder extends Seeder
                         'An **algorithm** is a step-by-step recipe for solving a problem.',
                 ],
 
-
                 /*
                  * Question 2
                  */
@@ -383,17 +323,17 @@ class QuizBlockSeeder extends Seeder
                     'answers' => [
                         [
                             'text' =>
+                                'A physical part inside a computer',
+                            'correct' => false,
+                        ],
+                        [
+                            'text' =>
                                 'Instructions written in a language a computer can follow',
                             'correct' => true,
                         ],
                         [
                             'text' =>
-                                'The physical parts inside a computer',
-                            'correct' => false,
-                        ],
-                        [
-                            'text' =>
-                                'Only the text shown on a computer screen',
+                                'A type of computer screen',
                             'correct' => false,
                         ],
                     ],
@@ -402,12 +342,11 @@ class QuizBlockSeeder extends Seeder
                         '🎉 Correct!',
 
                     'incorrect_message' =>
-                        'Not quite. Try another answer! 💪',
+                        'Not quite. Pick another answer, you can do it! 💪',
 
                     'explanation' =>
-                        '**Code** is a set of instructions written in a language a computer can follow.',
+                        '**Code** is a set of instructions written in a programming language.',
                 ],
-
 
                 /*
                  * Question 3
@@ -420,8 +359,8 @@ class QuizBlockSeeder extends Seeder
                     'answers' => [
                         [
                             'text' =>
-                                'A mistake in code that causes unexpected behaviour',
-                            'correct' => true,
+                                'An insect inside the computer',
+                            'correct' => false,
                         ],
                         [
                             'text' =>
@@ -430,8 +369,8 @@ class QuizBlockSeeder extends Seeder
                         ],
                         [
                             'text' =>
-                                'A computer keyboard',
-                            'correct' => false,
+                                'A mistake in code that causes unexpected behaviour',
+                            'correct' => true,
                         ],
                     ],
 
@@ -439,19 +378,12 @@ class QuizBlockSeeder extends Seeder
                         '🎉 Exactly!',
 
                     'incorrect_message' =>
-                        'Not quite. Have another go! 💪',
+                        'Not quite. Pick another answer, you can do it! 💪',
 
                     'explanation' =>
-                        'A **bug** is a mistake in code that makes a program behave differently from what was expected.',
+                        'A **bug** is a mistake or problem in code that causes the program to behave unexpectedly.',
                 ],
             ],
-
-
-            /*
-             * -------------------------------------------------
-             * Quiz Options
-             * -------------------------------------------------
-             */
 
             'shuffle_questions' => false,
 
@@ -465,17 +397,57 @@ class QuizBlockSeeder extends Seeder
                 '🎉 Great work! You completed all the questions.',
         ];
 
-
         /*
-         * =====================================================
-         * Template Status
-         * =====================================================
+         * =========================================
+         * Template Data
+         * =========================================
          */
 
-        $template->status = 'active';
+        $templateData = [
+            'name' => 'Quiz',
 
-        $template->position = 50;
+            'component' =>
+                'QuizBlock',
 
-        $template->save();
+            'icon' => '🎯',
+
+            'description' =>
+                'Create an interactive multiple-choice quiz with one or more questions.',
+
+            'tags' => [
+                'quiz',
+                'question',
+                'assessment',
+                'interactive',
+            ],
+
+            'configuration_schema' =>
+                $configurationSchema,
+
+            'example_data' =>
+                $exampleData,
+
+            'status' => 'active',
+
+            'position' => 50,
+        ];
+
+        /*
+         * =========================================
+         * Create or Update
+         * =========================================
+         */
+
+        if ($template) {
+            $template->update(
+                $templateData
+            );
+
+            return;
+        }
+
+        LBlockTemplate::create(
+            $templateData
+        );
     }
 }

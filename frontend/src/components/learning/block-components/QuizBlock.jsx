@@ -7,28 +7,6 @@ import {
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 import LearningText from "../shared/LearningText";
 
-
-/*
- * =========================================================
- * MentorXn - Quiz Block
- * =========================================================
- *
- * Supports:
- *
- * - Multiple questions
- * - Multiple answers per question
- * - One correct answer
- * - Shuffled questions
- * - Shuffled answers
- * - Retry after incorrect answer
- * - Correct / incorrect feedback
- * - Explanation after correct answer
- * - LearningText formatting
- *
- * =========================================================
- */
-
-
 const toBoolean = (
   value,
   defaultValue = false
@@ -48,7 +26,6 @@ const toBoolean = (
   );
 };
 
-
 const shuffleArray = (items) => {
   const result = [...items];
 
@@ -57,9 +34,11 @@ const shuffleArray = (items) => {
     i > 0;
     i -= 1
   ) {
-    const randomIndex = Math.floor(
-      Math.random() * (i + 1)
-    );
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+          (i + 1)
+      );
 
     [
       result[i],
@@ -73,87 +52,96 @@ const shuffleArray = (items) => {
   return result;
 };
 
-
 function QuizBlock({ block }) {
-  const data = block?.data || {};
-
-  const sourceQuestions = useMemo(
-    () =>
-      Array.isArray(data.questions)
-        ? data.questions
-        : [],
-    [data.questions]
-  );
-
-
-  const shuffleQuestions = toBoolean(
-    data.shuffle_questions ??
-      data.shuffleQuestions,
-    false
-  );
-
-  const shuffleAnswers = toBoolean(
-    data.shuffle_answers ??
-      data.shuffleAnswers,
-    true
-  );
-
-  const showQuestionNumbers = toBoolean(
-    data.show_question_numbers ??
-      data.showQuestionNumbers,
-    true
-  );
-
-  const retryWrongAnswers = toBoolean(
-    data.retry_wrong_answers ??
-      data.retryWrongAnswers,
-    true
-  );
-
+  const data =
+    block?.data || {};
 
   /*
-   * ---------------------------------------------------------
-   * Question Order
-   * ---------------------------------------------------------
+   * =========================================
+   * Questions
+   * =========================================
    */
 
-  const [questionOrder, setQuestionOrder] =
-    useState([]);
+  const sourceQuestions =
+    useMemo(
+      () =>
+        Array.isArray(
+          data.questions
+        )
+          ? data.questions
+          : [],
+      [data.questions]
+    );
 
   /*
-   * Stores answer order separately for every question.
-   *
-   * {
-   *   0: [2, 0, 1],
-   *   1: [1, 2, 0]
-   * }
+   * =========================================
+   * Options
+   * =========================================
    */
+
+  const shuffleQuestions =
+    toBoolean(
+      data.shuffle_questions ??
+        data.shuffleQuestions,
+      false
+    );
+
+  const shuffleAnswers =
+    toBoolean(
+      data.shuffle_answers ??
+        data.shuffleAnswers,
+      true
+    );
+
+  const showQuestionNumbers =
+    toBoolean(
+      data.show_question_numbers ??
+        data.showQuestionNumbers,
+      true
+    );
+
+  const retryWrongAnswers =
+    toBoolean(
+      data.retry_wrong_answers ??
+        data.retryWrongAnswers,
+      true
+    );
+
+  /*
+   * =========================================
+   * State
+   * =========================================
+   */
+
+  const [
+    questionOrder,
+    setQuestionOrder,
+  ] = useState([]);
+
   const [
     answerOrders,
     setAnswerOrders,
   ] = useState({});
 
-
-  /*
-   * Stores the state of each question.
-   *
-   * {
-   *   0: {
-   *     solved: true,
-   *     wrongAnswers: [1]
-   *   }
-   * }
-   */
   const [
     questionStates,
     setQuestionStates,
   ] = useState({});
 
+  const [
+    currentPosition,
+    setCurrentPosition,
+  ] = useState(0);
+
+  const [
+    quizComplete,
+    setQuizComplete,
+  ] = useState(false);
 
   /*
-   * ---------------------------------------------------------
-   * Initialise / Reset Quiz
-   * ---------------------------------------------------------
+   * =========================================
+   * Initialise Quiz
+   * =========================================
    */
 
   useEffect(() => {
@@ -169,10 +157,14 @@ function QuizBlock({ block }) {
         );
     }
 
-    const newAnswerOrders = {};
+    const newAnswerOrders =
+      {};
 
     sourceQuestions.forEach(
-      (question, questionIndex) => {
+      (
+        question,
+        questionIndex
+      ) => {
         const answers =
           Array.isArray(
             question?.answers
@@ -182,7 +174,8 @@ function QuizBlock({ block }) {
 
         let answerIndexes =
           answers.map(
-            (_, index) => index
+            (_, index) =>
+              index
           );
 
         if (shuffleAnswers) {
@@ -207,38 +200,108 @@ function QuizBlock({ block }) {
     );
 
     setQuestionStates({});
+
+    setCurrentPosition(0);
+
+    setQuizComplete(false);
   }, [
     sourceQuestions,
     shuffleQuestions,
     shuffleAnswers,
   ]);
 
+  /*
+   * =========================================
+   * Current Question
+   * =========================================
+   */
+
+  const totalQuestions =
+    sourceQuestions.length;
+
+  const currentQuestionIndex =
+    questionOrder[
+      currentPosition
+    ];
+
+  const currentQuestion =
+    currentQuestionIndex !==
+    undefined
+      ? sourceQuestions[
+          currentQuestionIndex
+        ]
+      : null;
+
+  const answers =
+    Array.isArray(
+      currentQuestion?.answers
+    )
+      ? currentQuestion.answers
+      : [];
+
+  const answerOrder =
+    currentQuestionIndex !==
+    undefined
+      ? answerOrders[
+          currentQuestionIndex
+        ] ||
+        answers.map(
+          (_, index) =>
+            index
+        )
+      : [];
+
+  const currentState =
+    currentQuestionIndex !==
+    undefined
+      ? questionStates[
+          currentQuestionIndex
+        ] || {}
+      : {};
+
+  const solved =
+    Boolean(
+      currentState.solved
+    );
+
+  const locked =
+    Boolean(
+      currentState.locked
+    );
+
+  const wrongAnswers =
+    Array.isArray(
+      currentState.wrongAnswers
+    )
+      ? currentState.wrongAnswers
+      : [];
+
+  const hasWrongAnswer =
+    wrongAnswers.length > 0;
+
+  const questionFinished =
+    solved || locked;
+
+  const isLastQuestion =
+    currentPosition ===
+    totalQuestions - 1;
 
   /*
-   * ---------------------------------------------------------
-   * Select Answer
-   * ---------------------------------------------------------
+   * =========================================
+   * Answer Question
+   * =========================================
    */
 
   const handleAnswer = (
-    questionIndex,
     answerIndex
   ) => {
-    const question =
-      sourceQuestions[
-        questionIndex
-      ];
-
-    if (!question) {
+    if (
+      currentQuestionIndex ===
+        undefined ||
+      !currentQuestion
+    ) {
       return;
     }
-
-    const answers =
-      Array.isArray(
-        question.answers
-      )
-        ? question.answers
-        : [];
 
     const answer =
       answers[answerIndex];
@@ -247,58 +310,56 @@ function QuizBlock({ block }) {
       return;
     }
 
-    const currentState =
-      questionStates[
-        questionIndex
-      ] || {};
-
-    /*
-     * Question already solved.
-     */
-    if (currentState.solved) {
+    if (
+      solved ||
+      locked
+    ) {
       return;
     }
 
-    const isCorrect = toBoolean(
-      answer.correct ??
-        answer.is_correct ??
-        answer.isCorrect,
-      false
-    );
-
+    const isCorrect =
+      toBoolean(
+        answer.correct ??
+          answer.is_correct ??
+          answer.isCorrect,
+        false
+      );
 
     /*
-     * Correct Answer
+     * Correct answer
      */
+
     if (isCorrect) {
       setQuestionStates(
         (current) => ({
           ...current,
 
-          [questionIndex]: {
-            ...current[
-              questionIndex
-            ],
+          [currentQuestionIndex]:
+            {
+              ...current[
+                currentQuestionIndex
+              ],
 
-            solved: true,
-            selectedAnswer:
-              answerIndex,
-          },
+              solved: true,
+
+              selectedAnswer:
+                answerIndex,
+            },
         })
       );
 
       return;
     }
 
-
     /*
-     * Incorrect Answer
+     * Wrong answer
      */
+
     setQuestionStates(
       (current) => {
         const previous =
           current[
-            questionIndex
+            currentQuestionIndex
           ] || {};
 
         const previousWrong =
@@ -311,60 +372,59 @@ function QuizBlock({ block }) {
         return {
           ...current,
 
-          [questionIndex]: {
-            ...previous,
+          [currentQuestionIndex]:
+            {
+              ...previous,
 
-            wrongAnswers: [
-              ...new Set([
-                ...previousWrong,
-                answerIndex,
-              ]),
-            ],
+              wrongAnswers: [
+                ...new Set([
+                  ...previousWrong,
+                  answerIndex,
+                ]),
+              ],
 
-            /*
-             * If retry is disabled,
-             * lock the question.
-             */
-            locked:
-              !retryWrongAnswers,
-          },
+              locked:
+                !retryWrongAnswers,
+            },
         };
       }
     );
   };
 
-
   /*
-   * ---------------------------------------------------------
-   * Progress
-   * ---------------------------------------------------------
+   * =========================================
+   * Next Question
+   * =========================================
    */
 
-  const solvedCount =
-    Object.values(
-      questionStates
-    ).filter(
-      (state) =>
-        state?.solved
-    ).length;
+  const handleNextQuestion =
+    () => {
+      if (
+        !questionFinished
+      ) {
+        return;
+      }
 
-  const totalQuestions =
-    sourceQuestions.length;
+      if (isLastQuestion) {
+        setQuizComplete(true);
+        return;
+      }
 
-  const quizComplete =
-    totalQuestions > 0 &&
-    solvedCount ===
-      totalQuestions;
-
+      setCurrentPosition(
+        (current) =>
+          current + 1
+      );
+    };
 
   /*
-   * ---------------------------------------------------------
-   * Empty State
-   * ---------------------------------------------------------
+   * =========================================
+   * Empty Quiz
+   * =========================================
    */
 
   if (
-    sourceQuestions.length === 0
+    sourceQuestions.length ===
+    0
   ) {
     return (
       <LearningBlockShell
@@ -373,12 +433,63 @@ function QuizBlock({ block }) {
         className="quiz-block"
       >
         <div className="quiz-block-empty">
-          No quiz questions have been added yet.
+          No quiz questions have
+          been added yet.
         </div>
       </LearningBlockShell>
     );
   }
 
+  /*
+   * =========================================
+   * Completed Quiz
+   * =========================================
+   */
+
+  if (quizComplete) {
+    return (
+      <LearningBlockShell
+        title={block?.title}
+        icon={block?.icon}
+        className="quiz-block"
+      >
+        <div className="quiz-block-complete">
+          <LearningText
+            text={
+              data.complete_message ||
+              "🎉 Great work! You completed all the questions."
+            }
+          />
+        </div>
+      </LearningBlockShell>
+    );
+  }
+
+  /*
+   * =========================================
+   * Loading / Initialising
+   * =========================================
+   */
+
+  if (!currentQuestion) {
+    return (
+      <LearningBlockShell
+        title={block?.title}
+        icon={block?.icon}
+        className="quiz-block"
+      >
+        <div className="quiz-block-empty">
+          Preparing quiz...
+        </div>
+      </LearningBlockShell>
+    );
+  }
+
+  /*
+   * =========================================
+   * Quiz
+   * =========================================
+   */
 
   return (
     <LearningBlockShell
@@ -386,301 +497,225 @@ function QuizBlock({ block }) {
       icon={block?.icon}
       className="quiz-block"
     >
-
-      {/* ===============================================
-          Instructions
-          =============================================== */}
-
       {data.subtitle && (
         <LearningText
-          text={data.subtitle}
+          text={
+            data.subtitle
+          }
           className="quiz-block-instructions"
         />
       )}
 
+      <section className="quiz-block-question">
+        {showQuestionNumbers && (
+          <div className="quiz-block-progress">
+            Question{" "}
+            {currentPosition + 1}{" "}
+            of{" "}
+            {totalQuestions}
+          </div>
+        )}
 
-      {/* ===============================================
-          Progress
-          =============================================== */}
+        <LearningText
+          text={
+            currentQuestion.question ||
+            currentQuestion.text ||
+            ""
+          }
+          className="quiz-block-question-text"
+        />
 
-      {totalQuestions > 1 && (
-        <div className="quiz-block-progress">
-          <span>
-            {solvedCount} of{" "}
-            {totalQuestions} correct
-          </span>
-        </div>
-      )}
+        <div className="quiz-block-options">
+          {answerOrder.map(
+            (answerIndex) => {
+              const answer =
+                answers[
+                  answerIndex
+                ];
 
+              if (!answer) {
+                return null;
+              }
 
-      {/* ===============================================
-          Questions
-          =============================================== */}
+              const wasWrong =
+                wrongAnswers.includes(
+                  answerIndex
+                );
 
-      <div className="quiz-block-questions">
-        {questionOrder.map(
-          (
-            questionIndex,
-            displayIndex
-          ) => {
-            const question =
-              sourceQuestions[
-                questionIndex
-              ];
+              const selectedCorrect =
+                solved &&
+                currentState
+                  .selectedAnswer ===
+                  answerIndex;
 
-            if (!question) {
-              return null;
-            }
+              const answerIsCorrect =
+                toBoolean(
+                  answer.correct ??
+                    answer.is_correct ??
+                    answer.isCorrect,
+                  false
+                );
 
-            const answers =
-              Array.isArray(
-                question.answers
-              )
-                ? question.answers
-                : [];
+              const revealCorrect =
+                locked &&
+                answerIsCorrect;
 
-            const answerOrder =
-              answerOrders[
-                questionIndex
-              ] ||
-              answers.map(
-                (_, index) =>
-                  index
-              );
+              let className =
+                "quiz-block-option";
 
-            const state =
-              questionStates[
-                questionIndex
-              ] || {};
+              if (
+                selectedCorrect ||
+                revealCorrect
+              ) {
+                className +=
+                  " is-correct";
+              }
 
-            const solved =
-              Boolean(
-                state.solved
-              );
+              if (wasWrong) {
+                className +=
+                  " is-wrong";
+              }
 
-            const locked =
-              Boolean(
-                state.locked
-              );
-
-            const wrongAnswers =
-              Array.isArray(
-                state.wrongAnswers
-              )
-                ? state.wrongAnswers
-                : [];
-
-            const hasWrongAnswer =
-              wrongAnswers.length >
-              0;
-
-            return (
-              <section
-                key={
-                  `quiz-question-${questionIndex}`
-                }
-                className={
-                  `quiz-block-question` +
-                  `${
-                    solved
-                      ? " is-correct"
-                      : ""
-                  }`
-                }
-              >
-
-                {/* Question */}
-
-                <div className="quiz-block-question-heading">
-                  {showQuestionNumbers && (
-                    <span className="quiz-block-question-number">
-                      {displayIndex + 1}
-                    </span>
-                  )}
-
+              return (
+                <button
+                  key={
+                    `answer-${currentQuestionIndex}-${answerIndex}`
+                  }
+                  type="button"
+                  className={
+                    className
+                  }
+                  disabled={
+                    solved ||
+                    locked ||
+                    (
+                      wasWrong &&
+                      retryWrongAnswers
+                    )
+                  }
+                  onClick={() =>
+                    handleAnswer(
+                      answerIndex
+                    )
+                  }
+                >
                   <LearningText
                     text={
-                      question.question ||
-                      question.text ||
+                      answer.text ||
                       ""
                     }
-                    className="quiz-block-question-text"
                   />
-                </div>
-
-
-                {/* Answers */}
-
-                <div className="quiz-block-options">
-                  {answerOrder.map(
-                    (answerIndex) => {
-                      const answer =
-                        answers[
-                          answerIndex
-                        ];
-
-                      if (!answer) {
-                        return null;
-                      }
-
-                      const isCorrect =
-                        toBoolean(
-                          answer.correct ??
-                            answer.is_correct ??
-                            answer.isCorrect,
-                          false
-                        );
-
-                      const wasWrong =
-                        wrongAnswers.includes(
-                          answerIndex
-                        );
-
-                      const selectedCorrect =
-                        solved &&
-                        state.selectedAnswer ===
-                          answerIndex;
-
-                      let className =
-                        "quiz-block-option";
-
-                      if (
-                        selectedCorrect
-                      ) {
-                        className +=
-                          " is-correct";
-                      }
-
-                      if (wasWrong) {
-                        className +=
-                          " is-wrong";
-                      }
-
-                      return (
-                        <button
-                          key={
-                            `answer-${questionIndex}-${answerIndex}`
-                          }
-                          type="button"
-                          className={
-                            className
-                          }
-                          disabled={
-                            solved ||
-                            locked ||
-                            (
-                              wasWrong &&
-                              retryWrongAnswers
-                            )
-                          }
-                          onClick={() =>
-                            handleAnswer(
-                              questionIndex,
-                              answerIndex
-                            )
-                          }
-                        >
-                          <LearningText
-                            text={
-                              answer.text ||
-                              ""
-                            }
-                          />
-                        </button>
-                      );
-                    }
-                  )}
-                </div>
-
-
-                {/* Incorrect Feedback */}
-
-                {!solved &&
-                  hasWrongAnswer &&
-                  !locked && (
-                    <div
-                      className="quiz-block-feedback quiz-block-feedback--incorrect"
-                      aria-live="polite"
-                    >
-                      <LearningText
-                        text={
-                          question.incorrect_message ||
-                          "Not quite. Pick another answer, you can do it! 💪"
-                        }
-                      />
-                    </div>
-                  )}
-
-
-                {/* Locked Incorrect Feedback */}
-
-                {!solved &&
-                  locked && (
-                    <div
-                      className="quiz-block-feedback quiz-block-feedback--incorrect"
-                      aria-live="polite"
-                    >
-                      <LearningText
-                        text={
-                          question.incorrect_message ||
-                          "Not quite. Review the question and try again later."
-                        }
-                      />
-                    </div>
-                  )}
-
-
-                {/* Correct Feedback */}
-
-                {solved && (
-                  <div
-                    className="quiz-block-feedback quiz-block-feedback--correct"
-                    aria-live="polite"
-                  >
-                    <LearningText
-                      text={
-                        question.correct_message ||
-                        "🎉 Yes!"
-                      }
-                    />
-
-                    {question.explanation && (
-                      <LearningText
-                        text={
-                          question.explanation
-                        }
-                        className="quiz-block-explanation"
-                      />
-                    )}
-                  </div>
-                )}
-              </section>
-            );
-          }
-        )}
-      </div>
-
-
-      {/* ===============================================
-          Quiz Complete
-          =============================================== */}
-
-      {quizComplete && (
-        <div
-          className="quiz-block-complete"
-          aria-live="polite"
-        >
-          <LearningText
-            text={
-              data.complete_message ||
-              `🎉 Great work! You completed all ${totalQuestions} questions.`
+                </button>
+              );
             }
-          />
+          )}
         </div>
-      )}
+
+        {/*
+         * =====================================
+         * Wrong - Retry Enabled
+         * =====================================
+         */}
+
+        {!solved &&
+          hasWrongAnswer &&
+          !locked && (
+            <div
+              className="quiz-block-feedback quiz-block-feedback--incorrect"
+              aria-live="polite"
+            >
+              <LearningText
+                text={
+                  currentQuestion.incorrect_message ||
+                  "Not quite. Pick another answer, you can do it! 💪"
+                }
+              />
+            </div>
+          )}
+
+        {/*
+         * =====================================
+         * Wrong - Retry Disabled
+         * =====================================
+         */}
+
+        {!solved &&
+          locked && (
+            <div
+              className="quiz-block-feedback quiz-block-feedback--incorrect"
+              aria-live="polite"
+            >
+              <LearningText
+                text={
+                  currentQuestion.incorrect_message ||
+                  "Not this time."
+                }
+              />
+
+              {currentQuestion.explanation && (
+                <LearningText
+                  text={
+                    currentQuestion.explanation
+                  }
+                  className="quiz-block-explanation"
+                />
+              )}
+            </div>
+          )}
+
+        {/*
+         * =====================================
+         * Correct
+         * =====================================
+         */}
+
+        {solved && (
+          <div
+            className="quiz-block-feedback quiz-block-feedback--correct"
+            aria-live="polite"
+          >
+            <LearningText
+              text={
+                currentQuestion.correct_message ||
+                "🎉 Yes!"
+              }
+            />
+
+            {currentQuestion.explanation && (
+              <LearningText
+                text={
+                  currentQuestion.explanation
+                }
+                className="quiz-block-explanation"
+              />
+            )}
+          </div>
+        )}
+
+        {/*
+         * =====================================
+         * Next / Finish
+         * =====================================
+         */}
+
+        {questionFinished && (
+          <div className="quiz-block-navigation">
+            <button
+              type="button"
+              className="quiz-block-next-button"
+              onClick={
+                handleNextQuestion
+              }
+            >
+              {isLastQuestion
+                ? "Finish quiz ✓"
+                : "Next question →"}
+            </button>
+          </div>
+        )}
+      </section>
     </LearningBlockShell>
   );
 }
-
 
 export default QuizBlock;
