@@ -1,0 +1,228 @@
+/* =========================================================
+   MentorXn - Big Ideas Block
+   ========================================================= */
+
+.big-ideas-block {
+  width: 100%;
+}
+
+
+/* =========================================================
+   Ideas
+   ========================================================= */
+
+.big-ideas-block .big-ideas-items {
+  margin: 10px 0;
+}
+
+
+/* =========================================================
+   Card Style
+   ========================================================= */
+
+.big-ideas-block .big-ideas-items--cards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.big-ideas-block
+  .big-ideas-items--cards
+  .big-ideas-item-wrapper {
+  display: flex;
+  flex: 1 1 130px;
+  align-items: center;
+  gap: 12px;
+}
+
+.big-ideas-block .big-ideas-card {
+  flex: 1;
+
+  min-width: 120px;
+  min-height: 110px;
+
+  padding: 12px 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  background: #eeede7;
+  color: var(--text);
+
+  border: 2.5px solid var(--ink);
+  border-radius: 16px;
+
+  font-family: inherit;
+  font-weight: 800;
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.big-ideas-block .big-ideas-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    3px 3px 0 var(--shadow-c);
+}
+
+.big-ideas-block .big-ideas-card.on {
+  background: var(--w);
+  color: var(--on-w);
+
+  box-shadow:
+    3px 3px 0 var(--shadow-c);
+}
+
+.big-ideas-block .big-ideas-card-icon {
+  display: block;
+
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.big-ideas-block .big-ideas-card-title {
+  display: block;
+
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+
+/* =========================================================
+   Button Style
+   ========================================================= */
+
+.big-ideas-block .big-ideas-items--buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.big-ideas-block
+  .big-ideas-items--buttons
+  .big-ideas-item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.big-ideas-block .big-ideas-button {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 3px 13px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.big-ideas-block .big-ideas-button:hover {
+  background: var(--surface2);
+}
+
+.big-ideas-block .big-ideas-button.on {
+  background: var(--w);
+  color: var(--on-w);
+
+  box-shadow:
+    3px 3px 0 var(--shadow-c);
+}
+
+.big-ideas-block .big-ideas-button-icon {
+  line-height: 1;
+}
+
+
+/* =========================================================
+   Flow
+   ========================================================= */
+
+.big-ideas-block .big-ideas-flow-arrow {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--ink);
+
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1;
+
+  user-select: none;
+}
+
+
+/* =========================================================
+   Explanation Panel
+   ========================================================= */
+
+.big-ideas-block .big-ideas-panel {
+  margin-top: 12px;
+
+  padding: 12px 14px;
+
+  background: var(--surface2);
+
+  border: 2.5px dashed var(--ink);
+  border-radius: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .big-ideas-block
+    .big-ideas-items--cards
+    .big-ideas-item-wrapper {
+    flex-basis: calc(50% - 6px);
+  }
+
+  .big-ideas-block .big-ideas-card {
+    min-height: 100px;
+  }
+
+  .big-ideas-block .big-ideas-flow-arrow {
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 440px) {
+  .big-ideas-block
+    .big-ideas-items--cards
+    .big-ideas-item-wrapper {
+    flex-basis: 100%;
+  }
+}

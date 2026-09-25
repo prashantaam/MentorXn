@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Models\LBlockTemplate;
+use App\Models\LearningBlock;
 use App\Models\Topic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -43,26 +44,12 @@ class LearningBlockController extends Controller
 
         return response()->json([
             'topic' => $topic,
-
-            'learning_blocks' =>
-                $learningBlocks,
+            'learning_blocks' => $learningBlocks,
         ]);
     }
 
     /**
-     * Create a learning block.
-     *
-     * Supports:
-     *
-     * 1. Existing MentorXn blocks
-     *    - content
-     *    - quiz
-     *    - practice_terminal
-     *
-     * 2. Template-driven blocks
-     *    - lblock_template_id
-     *    - data generated from the
-     *      template configuration schema
+     * Create a template-driven learning block.
      */
     public function store(
         Request $request,
@@ -72,8 +59,7 @@ class LearningBlockController extends Controller
 
         if (!$user->isTeacher()) {
             return response()->json([
-                'message' =>
-                    'Teacher access required.',
+                'message' => 'Teacher access required.',
             ], 403);
         }
 
@@ -82,20 +68,9 @@ class LearningBlockController extends Controller
             !== $user->id
         ) {
             return response()->json([
-                'message' =>
-                    'Topic not found.',
+                'message' => 'Topic not found.',
             ], 404);
         }
-
-        /*
-         * =====================================
-         * TEMPLATE-DRIVEN VALIDATION
-         * =====================================
-         *
-         * Every learning block must be created
-         * from an active developer-managed
-         * learning block template.
-         */
 
         $validated = $request->validate([
             'lblock_template_id' => [
@@ -103,27 +78,22 @@ class LearningBlockController extends Controller
                 'integer',
                 'exists:lblock_templates,id',
             ],
-
             'title' => [
                 'nullable',
                 'string',
                 'max:150',
             ],
-
             'icon' => [
                 'nullable',
                 'string',
                 'max:20',
             ],
-
             'data' => [
                 'required',
                 'array',
             ],
-
             'status' => [
                 'required',
-
                 Rule::in([
                     'draft',
                     'published',
@@ -131,25 +101,13 @@ class LearningBlockController extends Controller
             ],
         ]);
 
-        /*
-         * =====================================
-         * LOAD ACTIVE DEVELOPER TEMPLATE
-         * =====================================
-         */
-
-        $template =
-            LBlockTemplate::query()
-                ->where(
-                    'id',
-                    $validated[
-                        'lblock_template_id'
-                    ]
-                )
-                ->where(
-                    'status',
-                    'active'
-                )
-                ->first();
+        $template = LBlockTemplate::query()
+            ->where(
+                'id',
+                $validated['lblock_template_id']
+            )
+            ->where('status', 'active')
+            ->first();
 
         if (!$template) {
             return response()->json([
@@ -157,12 +115,6 @@ class LearningBlockController extends Controller
                     'Learning block template not found.',
             ], 422);
         }
-
-        /*
-         * =====================================
-         * VALIDATE TEMPLATE CONFIGURATION
-         * =====================================
-         */
 
         $templateError =
             $this->validateTemplateData(
@@ -172,16 +124,9 @@ class LearningBlockController extends Controller
 
         if ($templateError) {
             return response()->json([
-                'message' =>
-                    $templateError,
+                'message' => $templateError,
             ], 422);
         }
-
-        /*
-         * =====================================
-         * AUTOMATIC POSITION
-         * =====================================
-         */
 
         $nextPosition =
             (
@@ -191,50 +136,24 @@ class LearningBlockController extends Controller
                 ?? 0
             ) + 1;
 
-        /*
-         * =====================================
-         * CREATE BLOCK
-         * =====================================
-         *
-         * The template relationship determines
-         * which trusted React component renders
-         * this learning block.
-         *
-         * The legacy "type" field is no longer
-         * used by the application.
-         */
-
-        $learningBlock =
-            $topic
-                ->learningBlocks()
-                ->create([
-                    'lblock_template_id' =>
-                        $template->id,
-
-                    'title' =>
-                        $validated['title']
-                        ?? null,
-
-                    'icon' =>
-                        $validated['icon']
-                        ?? null,
-
-                    'data' =>
-                        $validated['data'],
-
-                    'position' =>
-                        $nextPosition,
-
-                    'status' =>
-                        $validated['status'],
-                ]);
-
-        /*
-         * Return the template relationship
-         * immediately so LearningBlockRenderer
-         * can resolve the trusted component
-         * through blockRegistry.js.
-         */
+        $learningBlock = $topic
+            ->learningBlocks()
+            ->create([
+                'lblock_template_id' =>
+                    $template->id,
+                'title' =>
+                    $validated['title']
+                    ?? null,
+                'icon' =>
+                    $validated['icon']
+                    ?? null,
+                'data' =>
+                    $validated['data'],
+                'position' =>
+                    $nextPosition,
+                'status' =>
+                    $validated['status'],
+            ]);
 
         $learningBlock->load(
             'lblockTemplate'
@@ -243,18 +162,171 @@ class LearningBlockController extends Controller
         return response()->json([
             'message' =>
                 'Learning block created successfully.',
-
             'learning_block' =>
                 $learningBlock,
         ], 201);
     }
 
     /**
+     * Update an existing learning block.
+     *
+     * The template itself is intentionally not
+     * changeable here. Editing changes only the
+     * block content/configuration.
+     */
+    public function update(
+        Request $request,
+        LearningBlock $learningBlock
+    ): JsonResponse {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json([
+                'message' => 'Teacher access required.',
+            ], 403);
+        }
+
+        $learningBlock->loadMissing(
+            'topic.lesson.course',
+            'lblockTemplate'
+        );
+
+        if (
+            !$learningBlock->topic ||
+            !$learningBlock->topic->lesson ||
+            !$learningBlock->topic->lesson->course ||
+            $learningBlock
+                ->topic
+                ->lesson
+                ->course
+                ->teacher_id !== $user->id
+        ) {
+            return response()->json([
+                'message' =>
+                    'Learning block not found.',
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'title' => [
+                'nullable',
+                'string',
+                'max:150',
+            ],
+            'icon' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+            'data' => [
+                'required',
+                'array',
+            ],
+            'status' => [
+                'required',
+                Rule::in([
+                    'draft',
+                    'published',
+                ]),
+            ],
+        ]);
+
+        $template =
+            $learningBlock->lblockTemplate;
+
+        if (
+            !$template ||
+            $template->status !== 'active'
+        ) {
+            return response()->json([
+                'message' =>
+                    'Learning block template not found.',
+            ], 422);
+        }
+
+        $templateError =
+            $this->validateTemplateData(
+                $template,
+                $validated['data']
+            );
+
+        if ($templateError) {
+            return response()->json([
+                'message' => $templateError,
+            ], 422);
+        }
+
+        $learningBlock->update([
+            'title' =>
+                $validated['title']
+                ?? null,
+            'icon' =>
+                $validated['icon']
+                ?? null,
+            'data' =>
+                $validated['data'],
+            'status' =>
+                $validated['status'],
+        ]);
+
+        $learningBlock->load(
+            'lblockTemplate'
+        );
+
+        return response()->json([
+            'message' =>
+                'Learning block updated successfully.',
+            'learning_block' =>
+                $learningBlock,
+        ]);
+    }
+
+    /**
+     * Delete a learning block.
+     */
+    public function destroy(
+        Request $request,
+        LearningBlock $learningBlock
+    ): JsonResponse {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json([
+                'message' => 'Teacher access required.',
+            ], 403);
+        }
+
+        $learningBlock->loadMissing(
+            'topic.lesson.course'
+        );
+
+        if (
+            !$learningBlock->topic ||
+            !$learningBlock->topic->lesson ||
+            !$learningBlock->topic->lesson->course ||
+            $learningBlock
+                ->topic
+                ->lesson
+                ->course
+                ->teacher_id !== $user->id
+        ) {
+            return response()->json([
+                'message' =>
+                    'Learning block not found.',
+            ], 404);
+        }
+
+        $learningBlock->delete();
+
+        return response()->json([
+            'message' =>
+                'Learning block deleted successfully.',
+        ]);
+    }
+
+    /**
      * Validate data against the fields defined
      * by the selected template.
-     *
-     * This is intentionally simple for the
-     * first template-driven implementation.
      */
     private function validateTemplateData(
         LBlockTemplate $template,
@@ -278,9 +350,8 @@ class LearningBlockController extends Controller
             }
 
             /*
-             * Title and icon are stored as
-             * top-level learning block fields,
-             * not inside data.
+             * Title and icon are top-level
+             * LearningBlock fields.
              */
             if (
                 in_array(
@@ -327,6 +398,14 @@ class LearningBlockController extends Controller
             }
 
             if ($value === null) {
+                return
+                    "The {$name} field is required.";
+            }
+
+            if (
+                is_array($value)
+                && count($value) === 0
+            ) {
                 return
                     "The {$name} field is required.";
             }

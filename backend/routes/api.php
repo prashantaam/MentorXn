@@ -51,7 +51,6 @@ Route::prefix('teacher')->group(function () {
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-
     /*
     |--------------------------------------------------------------------------
     | Authentication
@@ -75,7 +74,6 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::prefix('teacher')->group(function () {
-
         /*
         |--------------------------------------------------------------------------
         | Courses
@@ -123,8 +121,6 @@ Route::middleware('auth:sanctum')->group(function () {
             [LessonController::class, 'destroy']
         );
 
-
-
         /*
         |--------------------------------------------------------------------------
         | Topics
@@ -165,6 +161,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post(
             '/topics/{topic}/learning-blocks',
             [LearningBlockController::class, 'store']
+        );
+
+        Route::put(
+            '/learning-blocks/{learningBlock}',
+            [LearningBlockController::class, 'update']
+        );
+
+        Route::delete(
+            '/learning-blocks/{learningBlock}',
+            [LearningBlockController::class, 'destroy']
         );
 
         /*

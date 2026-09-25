@@ -12,8 +12,11 @@ import { useAuth } from "../../../context/AuthContext";
 
 import LearningBlockRenderer from "../../../components/learning/block-component-settings/LearningBlockRenderer";
 
+import LearningText from "../../../components/learning/shared/LearningText";
+
 import "../../../styles/teachers/course-playground.css";
 import "../../../styles/adventure-land.css";
+import BlockConfigField from "./BlockConfigField";
 
 const LESSON_ACCENT_COLORS = [
   "#8fd9a8", // Mint Green
@@ -47,75 +50,6 @@ const getLessonAccentColor = (lessons, selectedLesson) => {
 };
 
 
-const renderTopicIntroduction = (text = "") => {
-  const pattern =
-    /(\*\*[^*\n]+\*\*|`[^`\n]+`|\[\[[^\]\n]+\]\])/g;
-
-  return text
-    .split("\n")
-    .map((line, lineIndex) => {
-      const parts = line
-        .split(pattern)
-        .filter(Boolean);
-
-      return (
-        <span
-          key={`intro-line-${lineIndex}`}
-          className="course-playground-topic-intro-line"
-        >
-          {parts.map((part, partIndex) => {
-            const key =
-              `intro-part-${lineIndex}-${partIndex}`;
-
-            if (
-              part.startsWith("**") &&
-              part.endsWith("**")
-            ) {
-              return (
-                <strong key={key}>
-                  {part.slice(2, -2)}
-                </strong>
-              );
-            }
-
-            if (
-              part.startsWith("`") &&
-              part.endsWith("`")
-            ) {
-              return (
-                <code
-                  key={key}
-                  className="course-playground-topic-intro-code"
-                >
-                  {part.slice(1, -1)}
-                </code>
-              );
-            }
-
-            if (
-              part.startsWith("[[") &&
-              part.endsWith("]]")
-            ) {
-              return (
-                <span
-                  key={key}
-                  className="course-playground-topic-intro-label"
-                >
-                  {part.slice(2, -2)}
-                </span>
-              );
-            }
-
-            return part;
-          })}
-
-          {lineIndex < text.split("\n").length - 1 && (
-            <br />
-          )}
-        </span>
-      );
-    });
-};
 
 
 function CoursePlaygroundPage() {
@@ -167,6 +101,16 @@ function CoursePlaygroundPage() {
     templateForm,
     setTemplateForm,
   ] = useState({});
+
+  const [
+    editingLearningBlock,
+    setEditingLearningBlock,
+  ] = useState(null);
+
+  const [
+    learningBlockPendingDelete,
+    setLearningBlockPendingDelete,
+  ] = useState(null);
 
   const [
     isLoadingTemplates,
@@ -1346,17 +1290,28 @@ function CoursePlaygroundPage() {
             return;
           }
 
-          switch (field.type) {
-            case "boolean":
-              initialForm[fieldName] =
-                false;
-              break;
+            switch (field.type) {
+              case "boolean":
+                initialForm[fieldName] =
+                  field.default ?? false;
+                break;
 
-            default:
-              initialForm[fieldName] =
-                "";
-              break;
-          }
+              case "select":
+                initialForm[fieldName] =
+                  field.default ??
+                  field.options?.[0]?.value ??
+                  "";
+                break;
+
+              case "repeater":
+                initialForm[fieldName] = [];
+                break;
+
+              default:
+                initialForm[fieldName] =
+                  field.default ?? "";
+                break;
+            }
         }
       );
 
@@ -1619,6 +1574,322 @@ function CoursePlaygroundPage() {
 
   /*
    * =========================================
+   * Edit / Delete Learning Blocks
+   * =========================================
+   */
+
+  const handleEditLearningBlock = (block) => {
+    const template =
+      block?.lblock_template ||
+      block?.lblockTemplate ||
+      blockTemplates.find(
+        (item) =>
+          Number(item.id) ===
+          Number(block?.lblock_template_id)
+      );
+
+    if (!template) {
+      setFormError(
+        "Unable to find the learning block template."
+      );
+      return;
+    }
+
+    const fields =
+      template.configuration_schema?.fields ||
+      [];
+
+    const initialForm = {};
+
+    fields.forEach((field) => {
+      if (!field?.name) {
+        return;
+      }
+
+      if (field.name === "title") {
+        initialForm.title =
+          block?.title ?? "";
+        return;
+      }
+
+      if (field.name === "icon") {
+        initialForm.icon =
+          block?.icon ?? "";
+        return;
+      }
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          block?.data || {},
+          field.name
+        )
+      ) {
+        initialForm[field.name] =
+          block.data[field.name];
+        return;
+      }
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          field,
+          "default"
+        )
+      ) {
+        initialForm[field.name] =
+          field.default;
+        return;
+      }
+
+      if (field.type === "boolean") {
+        initialForm[field.name] = false;
+      } else if (field.type === "repeater") {
+        initialForm[field.name] = [];
+      } else if (field.type === "select") {
+        const firstOption =
+          field.options?.[0];
+
+        initialForm[field.name] =
+          typeof firstOption === "string"
+            ? firstOption
+            : firstOption?.value ?? "";
+      } else {
+        initialForm[field.name] = "";
+      }
+    });
+
+    setEditingLearningBlock(block);
+    setSelectedBlockTemplate(template);
+    setTemplateForm(initialForm);
+    setFormError("");
+    setEditorMode("edit-template-block");
+  };
+
+  const handleSaveTemplateBlock =
+    async (event) => {
+      event.preventDefault();
+
+      if (!editingLearningBlock) {
+        setFormError(
+          "No learning block is selected for editing."
+        );
+        return;
+      }
+
+      if (!selectedBlockTemplate) {
+        setFormError(
+          "Unable to find the learning block template."
+        );
+        return;
+      }
+
+      const fields =
+        selectedBlockTemplate
+          .configuration_schema
+          ?.fields || [];
+
+      for (const field of fields) {
+        if (!field.required) {
+          continue;
+        }
+
+        const value =
+          templateForm[field.name];
+
+        if (
+          value === undefined ||
+          value === null ||
+          (
+            typeof value === "string" &&
+            !value.trim()
+          )
+        ) {
+          setFormError(
+            `${field.label || field.name} is required.`
+          );
+          return;
+        }
+      }
+
+      const blockData = {};
+
+      fields.forEach((field) => {
+        if (
+          field.name === "title" ||
+          field.name === "icon"
+        ) {
+          return;
+        }
+
+        let value =
+          templateForm[field.name];
+
+        if (typeof value === "string") {
+          value = value.trim();
+        }
+
+        blockData[field.name] = value;
+      });
+
+      setIsSaving(true);
+      setFormError("");
+
+      try {
+        const response =
+          await fetch(
+            `http://127.0.0.1:8000/api/teacher/learning-blocks/${editingLearningBlock.id}`,
+            {
+              method: "PUT",
+              headers: getHeaders(true),
+              body: JSON.stringify({
+                title:
+                  typeof templateForm.title ===
+                  "string"
+                    ? templateForm.title.trim() ||
+                      null
+                    : null,
+                icon:
+                  typeof templateForm.icon ===
+                  "string"
+                    ? templateForm.icon.trim() ||
+                      null
+                    : null,
+                data: blockData,
+                status:
+                  editingLearningBlock.status ||
+                  "draft",
+              }),
+            }
+          );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          const firstError =
+            data.errors
+              ? Object.values(
+                  data.errors
+                )?.[0]?.[0]
+              : null;
+
+          throw new Error(
+            firstError ||
+              data.message ||
+              "Unable to update learning block."
+          );
+        }
+
+        setLearningBlocks((current) =>
+          current.map((block) =>
+            Number(block.id) ===
+            Number(data.learning_block.id)
+              ? data.learning_block
+              : block
+          )
+        );
+
+        setEditingLearningBlock(null);
+        setSelectedBlockTemplate(null);
+        setTemplateForm({});
+        setEditorMode("topic");
+      } catch (requestError) {
+        console.error(
+          "Update learning block error:",
+          requestError
+        );
+
+        setFormError(
+          requestError.message ||
+            "Unable to update learning block."
+        );
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+  const handleRequestDeleteLearningBlock =
+    (block) => {
+      setLearningBlockPendingDelete(block);
+      setFormError("");
+    };
+
+  const handleCancelDeleteLearningBlock = () => {
+    if (isSaving) {
+      return;
+    }
+
+    setLearningBlockPendingDelete(null);
+  };
+
+  const handleDeleteLearningBlock =
+    async () => {
+      if (!learningBlockPendingDelete) {
+        return;
+      }
+
+      setIsSaving(true);
+      setFormError("");
+
+      try {
+        const response =
+          await fetch(
+            `http://127.0.0.1:8000/api/teacher/learning-blocks/${learningBlockPendingDelete.id}`,
+            {
+              method: "DELETE",
+              headers: getHeaders(),
+            }
+          );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+              "Unable to delete learning block."
+          );
+        }
+
+        setLearningBlocks((current) =>
+          current.filter(
+            (block) =>
+              Number(block.id) !==
+              Number(
+                learningBlockPendingDelete.id
+              )
+          )
+        );
+
+        if (
+          Number(editingLearningBlock?.id) ===
+          Number(
+            learningBlockPendingDelete.id
+          )
+        ) {
+          setEditingLearningBlock(null);
+          setSelectedBlockTemplate(null);
+          setTemplateForm({});
+          setEditorMode("topic");
+        }
+
+        setLearningBlockPendingDelete(null);
+      } catch (requestError) {
+        console.error(
+          "Delete learning block error:",
+          requestError
+        );
+
+        setFormError(
+          requestError.message ||
+            "Unable to delete learning block."
+        );
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+  /*
+   * =========================================
    * Learning Block Drawers
    * =========================================
    */
@@ -1638,10 +1909,19 @@ function CoursePlaygroundPage() {
   };
 
   const handleCloseTemplateDrawer = () => {
+    const wasEditing =
+      editorMode === "edit-template-block";
+
+    setEditingLearningBlock(null);
     setSelectedBlockTemplate(null);
     setTemplateForm({});
     setFormError("");
-    setEditorMode("block-library");
+
+    setEditorMode(
+      wasEditing
+        ? "topic"
+        : "block-library"
+    );
   };
 
   /*
@@ -2003,11 +2283,10 @@ function CoursePlaygroundPage() {
                   </div>
 
                   <div className="course-playground-topic-intro-content">
-                    <p>
-                      {renderTopicIntroduction(
-                        selectedTopic.introduction
-                      )}
-                    </p>
+                    <LearningText
+                      text={selectedTopic.introduction}
+                      as="p"
+                    />
                   </div>
                 </div>
 
@@ -2024,14 +2303,44 @@ function CoursePlaygroundPage() {
                   <>
                     {learningBlocks.map(
                       (block) => (
-                        <LearningBlockRenderer
-                          key={
-                            block.id
-                          }
-                          block={
-                            block
-                          }
-                        />
+                        <div
+                          key={block.id}
+                          className="course-playground-learning-block"
+                        >
+                          <div className="course-playground-learning-block-actions">
+                            <button
+                              type="button"
+                              className="course-playground-block-action-button"
+                              onClick={() =>
+                                handleEditLearningBlock(
+                                  block
+                                )
+                              }
+                              aria-label={`Edit ${block.title || "learning block"}`}
+                              title="Edit learning block"
+                            >
+                              ✏️ Edit
+                            </button>
+
+                            <button
+                              type="button"
+                              className="course-playground-block-action-button danger"
+                              onClick={() =>
+                                handleRequestDeleteLearningBlock(
+                                  block
+                                )
+                              }
+                              aria-label={`Delete ${block.title || "learning block"}`}
+                              title="Delete learning block"
+                            >
+                              🗑️ Delete
+                            </button>
+                          </div>
+
+                          <LearningBlockRenderer
+                            block={block}
+                          />
+                        </div>
                       )
                     )}
 
@@ -2636,7 +2945,10 @@ function CoursePlaygroundPage() {
 
         <aside
           className={`course-playground-drawer course-playground-config-drawer ${
-            editorMode === "add-template-block" &&
+            (
+              editorMode === "add-template-block" ||
+              editorMode === "edit-template-block"
+            ) &&
             selectedBlockTemplate
               ? "open"
               : ""
@@ -2646,7 +2958,11 @@ function CoursePlaygroundPage() {
             <>
               <div className="course-playground-drawer-header">
                 <div>
-                  <span>CONFIGURE BLOCK</span>
+                  <span>
+                    {editorMode === "edit-template-block"
+                      ? "EDIT BLOCK"
+                      : "CONFIGURE BLOCK"}
+                  </span>
                   <h2>
                     {selectedBlockTemplate.icon || "🧩"}{" "}
                     {selectedBlockTemplate.name}
@@ -2666,12 +2982,16 @@ function CoursePlaygroundPage() {
               <form
               className="course-playground-form course-playground-drawer-form"
               onSubmit={
-                handleCreateTemplateBlock
+                editorMode === "edit-template-block"
+                  ? handleSaveTemplateBlock
+                  : handleCreateTemplateBlock
               }
             >
               <div className="course-playground-parent-info">
                 <span>
-                  Adding{" "}
+                  {editorMode === "edit-template-block"
+                    ? "Editing "
+                    : "Adding "}
                   {
                     selectedBlockTemplate.name
                   }{" "}
@@ -2881,6 +3201,56 @@ function CoursePlaygroundPage() {
                           Enabled
                         </span>
                       </label>
+                    ) : field.type ===
+                      "select" ? (
+                      <select
+                        id={`template-${field.name}`}
+                        value={
+                          fieldValue ??
+                          field.default ??
+                          ""
+                        }
+                        onChange={(
+                          event
+                        ) =>
+                          handleTemplateFieldChange(
+                            field.name,
+                            event
+                              .target
+                              .value
+                          )
+                        }
+                      >
+                        {(field.options || []).map(
+                          (option) => {
+                            const optionValue =
+                              typeof option === "string"
+                                ? option
+                                : option.value;
+
+                            const optionLabel =
+                              typeof option === "string"
+                                ? option
+                                : option.label ??
+                                  option.value;
+
+                            return (
+                              <option
+                                key={
+                                  optionValue
+                                }
+                                value={
+                                  optionValue
+                                }
+                              >
+                                {
+                                  optionLabel
+                                }
+                              </option>
+                            );
+                          }
+                        )}
+                      </select>
                     ) : (
                       <input
                         id={`template-${field.name}`}
@@ -2931,6 +3301,8 @@ function CoursePlaygroundPage() {
                 >
                   {isSaving
                     ? "Saving..."
+                    : editorMode === "edit-template-block"
+                    ? "Save Changes"
                     : "Add Learning Block"}
                 </button>
               </div>
@@ -2938,6 +3310,73 @@ function CoursePlaygroundPage() {
             </>
           )}
         </aside>
+
+        {learningBlockPendingDelete && (
+          <div
+            className="course-playground-confirm-overlay"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (
+                event.target ===
+                event.currentTarget
+              ) {
+                handleCancelDeleteLearningBlock();
+              }
+            }}
+          >
+            <div
+              className="course-playground-confirm-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delete-learning-block-title"
+            >
+              <div className="course-playground-confirm-icon">
+                🗑️
+              </div>
+
+              <h2 id="delete-learning-block-title">
+                Delete Learning Block
+              </h2>
+
+              <p>
+                Are you sure you want to delete{" "}
+                <strong>
+                  {learningBlockPendingDelete.icon ||
+                    "🧩"}{" "}
+                  {learningBlockPendingDelete.title ||
+                    "this learning block"}
+                </strong>
+                ? This action cannot be undone.
+              </p>
+
+              <div className="course-playground-confirm-actions">
+                <button
+                  type="button"
+                  className="course-playground-cancel-button"
+                  disabled={isSaving}
+                  onClick={
+                    handleCancelDeleteLearningBlock
+                  }
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className="course-playground-delete-confirm-button"
+                  disabled={isSaving}
+                  onClick={
+                    handleDeleteLearningBlock
+                  }
+                >
+                  {isSaving
+                    ? "Deleting..."
+                    : "Delete Block"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

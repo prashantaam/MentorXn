@@ -2721,3 +2721,166 @@ textarea:focus {
   font-size: 11px;
   font-weight: 700;
 }
+
+/* =========================================================
+   MentorXn - Learning Block Edit / Delete Controls
+   ========================================================= */
+
+.course-playground-form select {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: #1f1f1f;
+  border: 2px solid #1f1f1f;
+  border-radius: 9px;
+  font: inherit;
+  outline: none;
+}
+
+.course-playground-form select:focus {
+  border-color: #b98500;
+  box-shadow: 0 0 0 3px rgba(255, 217, 77, 0.30);
+}
+
+.course-playground-learning-block {
+  position: relative;
+  margin: 0 0 18px;
+  padding-top: 40px;
+}
+
+.course-playground-learning-block-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.course-playground-block-action-button {
+  min-height: 32px;
+  padding: 5px 9px;
+  background: #ffffff;
+  color: #141414;
+  border: 2px solid #141414;
+  border-radius: 9px;
+  box-shadow: 2px 2px 0 #141414;
+  font: 900 12px/1 Nunito, sans-serif;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.course-playground-block-action-button:hover {
+  background: #fff7cf;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 #141414;
+}
+
+.course-playground-block-action-button.danger {
+  background: #ffe2de;
+  color: #8d3025;
+  border-color: #8d3025;
+  box-shadow: 2px 2px 0 #8d3025;
+}
+
+.course-playground-block-action-button.danger:hover {
+  background: #ffd2cc;
+  box-shadow: 3px 3px 0 #8d3025;
+}
+
+.course-playground-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(20, 20, 20, 0.42);
+}
+
+.course-playground-confirm-dialog {
+  width: min(460px, 100%);
+  padding: 24px;
+  background: #ffffff;
+  color: #141414;
+  border: 3px solid #141414;
+  border-radius: 18px;
+  box-shadow: 7px 7px 0 #141414;
+}
+
+.course-playground-confirm-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+  background: #ffe2de;
+  border: 2px solid #141414;
+  border-radius: 12px;
+  font-size: 24px;
+}
+
+.course-playground-confirm-dialog h2 {
+  margin: 0 0 10px;
+  font-family: Fredoka, Nunito, sans-serif;
+  font-size: 1.35rem;
+}
+
+.course-playground-confirm-dialog p {
+  margin: 0;
+  color: #54554e;
+  line-height: 1.55;
+}
+
+.course-playground-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.course-playground-delete-confirm-button {
+  padding: 10px 14px;
+  background: #8d3025;
+  color: #ffffff;
+  border: 2px solid #141414;
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 #141414;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.course-playground-delete-confirm-button:hover:not(:disabled) {
+  background: #74261e;
+}
+
+.course-playground-delete-confirm-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .course-playground-learning-block {
+    padding-top: 78px;
+  }
+
+  .course-playground-learning-block-actions {
+    left: 0;
+    right: auto;
+    flex-wrap: wrap;
+  }
+
+  .course-playground-confirm-actions {
+    flex-direction: column-reverse;
+  }
+
+  .course-playground-confirm-actions button {
+    width: 100%;
+  }
+}

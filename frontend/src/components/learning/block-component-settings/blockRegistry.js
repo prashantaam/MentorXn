@@ -1,20 +1,38 @@
-import ChipSelectorBlock from "../block-components/ChipSelectorBlock";
-import FlipCardsBlock from "../block-components/FlipCardsBlock";
+import BigIdeasBlock from "../block-components/BigIdeasBlock";
+import FlipCardBlock from "../block-components/FlipCardBlock";
 import CodeExampleBlock from "../block-components/CodeExampleBlock";
+import SequenceBlock from "../block-components/SequenceBlock";
+import QuizBlock from "../block-components/QuizBlock";
 
 const blockRegistry = {
-
-  ChipSelectorBlock: {
-    component: ChipSelectorBlock,
+  /*
+   * Big Ideas
+   *
+   * BigIdeasBlock is the current component name.
+   * ChipSelectorBlock is retained temporarily as a legacy alias
+   * so existing learning blocks continue to render.
+   */
+  BigIdeasBlock: {
+    component: BigIdeasBlock,
   },
 
-  FlipCardsBlock: {
-    component: FlipCardsBlock,
+  ChipSelectorBlock: {
+    component: BigIdeasBlock,
+  },
+
+  FlipCardBlock: {
+    component: FlipCardBlock,
   },
 
   CodeExampleBlock: {
     component: CodeExampleBlock,
   },
+  SequenceBlock: {
+    component: SequenceBlock,
+  },
+  QuizBlock: {
+  component: QuizBlock,
+},
 };
 
 export const getBlockComponent = (componentName) => {

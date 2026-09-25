@@ -9,6 +9,7 @@ import "./styles/global.css";
 // Keep your original index.css because it contains
 // the complete landing-page design.
 import "./index.css";
+import "./styles/learning/learning-text.css";
 
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";

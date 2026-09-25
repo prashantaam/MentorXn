@@ -1,0 +1,92 @@
+/* =========================================================
+   MentorXn - Global Learning Text
+   ========================================================= */
+
+.learning-text {
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+}
+
+/* =========================================================
+   Bold
+   ========================================================= */
+
+.learning-text-bold {
+  font-weight: 900;
+}
+
+/* =========================================================
+   Inline Code
+
+   Example:
+   Use `console.log()` to print a value.
+   ========================================================= */
+
+.learning-text-code {
+  display: inline;
+
+  margin: 0 2px;
+  padding: 0 5px;
+
+  background: #eeede7;
+  color: #141414;
+
+  border: 1.5px solid #141414;
+  border-radius: 6px;
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+
+  font-size: 0.88em;
+  font-weight: 400;
+  line-height: inherit;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Label / Chip
+
+   Example:
+   [[Algorithm]]
+   ========================================================= */
+
+.learning-text-label {
+  display: inline-flex;
+  align-items: center;
+
+  margin: 0 2px;
+  padding: 2px 8px;
+
+  background: #eeede7;
+  color: #141414;
+
+  border: 2px solid #141414;
+  border-radius: 999px;
+
+  font-family:
+    Nunito,
+    sans-serif;
+
+  font-size: 0.82em;
+  font-weight: 900;
+  line-height: 1.35;
+
+  vertical-align: baseline;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 500px) {
+  .learning-text-code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
