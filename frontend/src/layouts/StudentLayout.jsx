@@ -3,7 +3,8 @@ import { Outlet } from "react-router-dom";
 import StudentTopNav from "../components/student/StudentTopNav";
 import StudentFooter from "../components/student/StudentFooter";
 
-import "../styles/student-layout.css";
+
+import "../styles/students/student-layout.css";
 
 function StudentLayout() {
   return (

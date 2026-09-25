@@ -3,10 +3,11 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Teacher\CourseController;
 use App\Http\Controllers\Api\Teacher\LessonController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Teacher\TopicController;
 use App\Http\Controllers\Api\Teacher\LearningBlockController;
 use App\Http\Controllers\Api\Teacher\LBlockTemplateController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Student Authentication
@@ -50,6 +51,13 @@ Route::prefix('teacher')->group(function () {
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication
+    |--------------------------------------------------------------------------
+    */
+
     Route::get(
         '/user',
         [AuthController::class, 'user']
@@ -68,45 +76,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('teacher')->group(function () {
 
-        Route::get(
-    '/lblock-templates',
-    [
-        LBlockTemplateController::class,
-        'index',
-    ]
-);
-
-Route::post(
-    '/lblock-templates',
-    [
-        LBlockTemplateController::class,
-        'store',
-    ]
-);
-
-Route::get(
-    '/lblock-templates/{lblockTemplate}',
-    [
-        LBlockTemplateController::class,
-        'show',
-    ]
-);
-
-Route::put(
-    '/lblock-templates/{lblockTemplate}',
-    [
-        LBlockTemplateController::class,
-        'update',
-    ]
-);
-
-Route::delete(
-    '/lblock-templates/{lblockTemplate}',
-    [
-        LBlockTemplateController::class,
-        'destroy',
-    ]
-);
         /*
         |--------------------------------------------------------------------------
         | Courses
@@ -144,8 +113,19 @@ Route::delete(
             [LessonController::class, 'store']
         );
 
+        Route::put(
+            '/lessons/{lesson}',
+            [LessonController::class, 'update']
+        );
 
-                /*
+        Route::delete(
+            '/lessons/{lesson}',
+            [LessonController::class, 'destroy']
+        );
+
+
+
+        /*
         |--------------------------------------------------------------------------
         | Topics
         |--------------------------------------------------------------------------
@@ -159,6 +139,16 @@ Route::delete(
         Route::post(
             '/lessons/{lesson}/topics',
             [TopicController::class, 'store']
+        );
+
+        Route::put(
+            '/topics/{topic}',
+            [TopicController::class, 'update']
+        );
+
+        Route::delete(
+            '/topics/{topic}',
+            [TopicController::class, 'destroy']
         );
 
         /*
@@ -177,44 +167,35 @@ Route::delete(
             [LearningBlockController::class, 'store']
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | Learning Block Templates
+        |--------------------------------------------------------------------------
+        */
+
         Route::get(
             '/lblock-templates',
-            [
-                LBlockTemplateController::class,
-                'index',
-            ]
+            [LBlockTemplateController::class, 'index']
         );
 
         Route::post(
             '/lblock-templates',
-            [
-                LBlockTemplateController::class,
-                'store',
-            ]
+            [LBlockTemplateController::class, 'store']
         );
 
         Route::get(
             '/lblock-templates/{lblockTemplate}',
-            [
-                LBlockTemplateController::class,
-                'show',
-            ]
+            [LBlockTemplateController::class, 'show']
         );
 
         Route::put(
             '/lblock-templates/{lblockTemplate}',
-            [
-                LBlockTemplateController::class,
-                'update',
-            ]
+            [LBlockTemplateController::class, 'update']
         );
 
         Route::delete(
             '/lblock-templates/{lblockTemplate}',
-            [
-                LBlockTemplateController::class,
-                'destroy',
-            ]
+            [LBlockTemplateController::class, 'destroy']
         );
     });
 });

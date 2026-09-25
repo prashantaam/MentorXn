@@ -10,7 +10,7 @@ import {
 
 import { useAuth } from "../../../context/AuthContext";
 
-import LearningBlockRenderer from "../../../components/learning/LearningBlockRenderer";
+import LearningBlockRenderer from "../../../components/learning/block-component-settings/LearningBlockRenderer";
 
 import "../../../styles/teachers/course-playground.css";
 import "../../../styles/adventure-land.css";
@@ -44,6 +44,77 @@ const getLessonAccentColor = (lessons, selectedLesson) => {
   return LESSON_ACCENT_COLORS[
     safeIndex % LESSON_ACCENT_COLORS.length
   ];
+};
+
+
+const renderTopicIntroduction = (text = "") => {
+  const pattern =
+    /(\*\*[^*\n]+\*\*|`[^`\n]+`|\[\[[^\]\n]+\]\])/g;
+
+  return text
+    .split("\n")
+    .map((line, lineIndex) => {
+      const parts = line
+        .split(pattern)
+        .filter(Boolean);
+
+      return (
+        <span
+          key={`intro-line-${lineIndex}`}
+          className="course-playground-topic-intro-line"
+        >
+          {parts.map((part, partIndex) => {
+            const key =
+              `intro-part-${lineIndex}-${partIndex}`;
+
+            if (
+              part.startsWith("**") &&
+              part.endsWith("**")
+            ) {
+              return (
+                <strong key={key}>
+                  {part.slice(2, -2)}
+                </strong>
+              );
+            }
+
+            if (
+              part.startsWith("`") &&
+              part.endsWith("`")
+            ) {
+              return (
+                <code
+                  key={key}
+                  className="course-playground-topic-intro-code"
+                >
+                  {part.slice(1, -1)}
+                </code>
+              );
+            }
+
+            if (
+              part.startsWith("[[") &&
+              part.endsWith("]]")
+            ) {
+              return (
+                <span
+                  key={key}
+                  className="course-playground-topic-intro-label"
+                >
+                  {part.slice(2, -2)}
+                </span>
+              );
+            }
+
+            return part;
+          })}
+
+          {lineIndex < text.split("\n").length - 1 && (
+            <br />
+          )}
+        </span>
+      );
+    });
 };
 
 
@@ -142,12 +213,32 @@ function CoursePlaygroundPage() {
   });
 
   const [
+    editingLesson,
+    setEditingLesson,
+  ] = useState(null);
+
+  const [
+    deletingLesson,
+    setDeletingLesson,
+  ] = useState(null);
+
+  const [
+    editingTopic,
+    setEditingTopic,
+  ] = useState(null);
+
+  const [
+    deletingTopic,
+    setDeletingTopic,
+  ] = useState(null);
+
+  const [
     topicForm,
     setTopicForm,
   ] = useState({
     title: "",
     icon: "📑",
-    description: "",
+    introduction: "",
   });
 
   /*
@@ -582,6 +673,212 @@ function CoursePlaygroundPage() {
 
   /*
    * =========================================
+   * Edit / Delete Lesson
+   * =========================================
+   */
+
+  const handleOpenEditLesson = (
+    lesson
+  ) => {
+    setEditingLesson(lesson);
+
+    setLessonForm({
+      title: lesson.title || "",
+      icon: lesson.icon || "📖",
+      description: lesson.description || "",
+    });
+
+    setFormError("");
+    setEditorMode("edit-lesson");
+  };
+
+  const handleUpdateLesson =
+    async (event) => {
+      event.preventDefault();
+
+      if (!editingLesson) {
+        return;
+      }
+
+      const title =
+        lessonForm.title.trim();
+
+      if (!title) {
+        setFormError(
+          "Lesson title is required."
+        );
+        return;
+      }
+
+      setIsSaving(true);
+      setFormError("");
+
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/teacher/lessons/${editingLesson.id}`,
+          {
+            method: "PUT",
+            headers: getHeaders(true),
+            body: JSON.stringify({
+              title,
+              icon:
+                lessonForm.icon.trim() ||
+                "📖",
+              description:
+                lessonForm.description.trim() ||
+                null,
+              status:
+                editingLesson.status ||
+                "draft",
+            }),
+          }
+        );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+              "Unable to update lesson."
+          );
+        }
+
+        const updatedLesson = {
+          ...editingLesson,
+          ...data.lesson,
+          topics:
+            editingLesson.topics || [],
+        };
+
+        setLessons((current) =>
+          current.map((lesson) =>
+            lesson.id ===
+            updatedLesson.id
+              ? updatedLesson
+              : lesson
+          )
+        );
+
+        setSelectedLesson((current) =>
+          current?.id ===
+          updatedLesson.id
+            ? updatedLesson
+            : current
+        );
+
+        setEditingLesson(null);
+        setEditorMode(
+          selectedTopic
+            ? "topic"
+            : "lesson"
+        );
+      } catch (requestError) {
+        console.error(
+          "Update lesson error:",
+          requestError
+        );
+
+        setFormError(
+          requestError.message ||
+            "Unable to update lesson."
+        );
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+  const handleOpenDeleteLesson = (
+    lesson
+  ) => {
+    setDeletingLesson(lesson);
+    setFormError("");
+  };
+
+  const handleCloseDeleteLesson = () => {
+    if (isSaving) {
+      return;
+    }
+
+    setDeletingLesson(null);
+    setFormError("");
+  };
+
+  const handleDeleteLesson =
+    async () => {
+      if (!deletingLesson) {
+        return;
+      }
+
+      setIsSaving(true);
+      setFormError("");
+
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/teacher/lessons/${deletingLesson.id}`,
+          {
+            method: "DELETE",
+            headers: getHeaders(),
+          }
+        );
+
+        let data = {};
+
+        if (response.status !== 204) {
+          data = await response.json();
+        }
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+              "Unable to delete lesson."
+          );
+        }
+
+        const remainingLessons =
+          lessons.filter(
+            (lesson) =>
+              lesson.id !==
+              deletingLesson.id
+          );
+
+        setLessons(remainingLessons);
+
+        if (
+          selectedLesson?.id ===
+          deletingLesson.id
+        ) {
+          const nextLesson =
+            remainingLessons[0] || null;
+
+          setSelectedLesson(nextLesson);
+          setSelectedTopic(null);
+          setLearningBlocks([]);
+          setEditorMode(
+            nextLesson
+              ? "lesson"
+              : "course"
+          );
+        }
+
+        setDeletingLesson(null);
+      } catch (requestError) {
+        console.error(
+          "Delete lesson error:",
+          requestError
+        );
+
+        setFormError(
+          requestError.message ||
+            "Unable to delete lesson."
+        );
+      } finally {
+        setIsSaving(false);
+      }
+    };
+
+  /*
+   * =========================================
    * Add Topic
    * =========================================
    */
@@ -601,7 +898,7 @@ function CoursePlaygroundPage() {
       setTopicForm({
         title: "",
         icon: "📑",
-        description: "",
+        introduction: "",
       });
 
       setFormError("");
@@ -628,9 +925,20 @@ function CoursePlaygroundPage() {
       const title =
         topicForm.title.trim();
 
+      const introduction =
+        topicForm.introduction.trim();
+
       if (!title) {
         setFormError(
           "Topic title is required."
+        );
+
+        return;
+      }
+
+      if (!introduction) {
+        setFormError(
+          "Topic introduction is required."
         );
 
         return;
@@ -657,9 +965,7 @@ function CoursePlaygroundPage() {
                     topicForm.icon.trim() ||
                     "📑",
 
-                  description:
-                    topicForm.description.trim() ||
-                    null,
+                  introduction,
 
                   status:
                     "draft",
@@ -733,9 +1039,215 @@ function CoursePlaygroundPage() {
 
   /*
    * =========================================
+   * Edit / Delete Topic
+   * =========================================
+   */
+
+  const handleOpenEditTopic = (lesson, topic) => {
+    setSelectedLesson(lesson);
+    setSelectedTopic(topic);
+    setEditingTopic(topic);
+
+    setTopicForm({
+      title: topic.title || "",
+      icon: topic.icon || "📑",
+      introduction: topic.introduction || "",
+    });
+
+    setFormError("");
+    setEditorMode("edit-topic");
+  };
+
+  const handleUpdateTopic = async (event) => {
+    event.preventDefault();
+
+    if (!editingTopic) {
+      return;
+    }
+
+    const title = topicForm.title.trim();
+    const introduction = topicForm.introduction.trim();
+
+    if (!title) {
+      setFormError("Topic title is required.");
+      return;
+    }
+
+    if (!introduction) {
+      setFormError("Topic introduction is required.");
+      return;
+    }
+
+    setIsSaving(true);
+    setFormError("");
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/teacher/topics/${editingTopic.id}`,
+        {
+          method: "PUT",
+          headers: getHeaders(true),
+          body: JSON.stringify({
+            title,
+            icon: topicForm.icon.trim() || "📑",
+            introduction,
+            status: editingTopic.status || "draft",
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Unable to update topic."
+        );
+      }
+
+      const updatedTopic = {
+        ...editingTopic,
+        ...data.topic,
+      };
+
+      setLessons((current) =>
+        current.map((lesson) => ({
+          ...lesson,
+          topics: (lesson.topics || []).map((topic) =>
+            topic.id === updatedTopic.id
+              ? updatedTopic
+              : topic
+          ),
+        }))
+      );
+
+      setSelectedTopic((current) =>
+        current?.id === updatedTopic.id
+          ? updatedTopic
+          : current
+      );
+
+      setEditingTopic(null);
+      setEditorMode("topic");
+    } catch (requestError) {
+      console.error("Update topic error:", requestError);
+
+      setFormError(
+        requestError.message || "Unable to update topic."
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleOpenDeleteTopic = (lesson, topic) => {
+    setSelectedLesson(lesson);
+    setDeletingTopic(topic);
+    setFormError("");
+  };
+
+  const handleCloseDeleteTopic = () => {
+    if (isSaving) {
+      return;
+    }
+
+    setDeletingTopic(null);
+    setFormError("");
+  };
+
+  const handleDeleteTopic = async () => {
+    if (!deletingTopic) {
+      return;
+    }
+
+    setIsSaving(true);
+    setFormError("");
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/teacher/topics/${deletingTopic.id}`,
+        {
+          method: "DELETE",
+          headers: getHeaders(),
+        }
+      );
+
+      let data = {};
+
+      if (response.status !== 204) {
+        data = await response.json();
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Unable to delete topic."
+        );
+      }
+
+      const parentLesson =
+        lessons.find((lesson) =>
+          (lesson.topics || []).some(
+            (topic) => topic.id === deletingTopic.id
+          )
+        ) || selectedLesson;
+
+      const remainingTopics = (
+        parentLesson?.topics || []
+      ).filter(
+        (topic) => topic.id !== deletingTopic.id
+      );
+
+      setLessons((current) =>
+        current.map((lesson) =>
+          lesson.id === parentLesson?.id
+            ? {
+                ...lesson,
+                topics: remainingTopics,
+              }
+            : lesson
+        )
+      );
+
+      if (selectedTopic?.id === deletingTopic.id) {
+        const nextTopic = remainingTopics[0] || null;
+
+        setSelectedTopic(nextTopic);
+        setLearningBlocks([]);
+
+        if (nextTopic) {
+          setEditorMode("topic");
+          await loadLearningBlocks(nextTopic.id);
+        } else {
+          setEditorMode("lesson");
+        }
+      }
+
+      setDeletingTopic(null);
+    } catch (requestError) {
+      console.error("Delete topic error:", requestError);
+
+      setFormError(
+        requestError.message || "Unable to delete topic."
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  /*
+   * =========================================
    * Block Library
    * =========================================
    */
+
+
+  const handleCloseStructureDrawer = () => {
+    setEditingLesson(null);
+    setEditingTopic(null);
+    setFormError("");
+    setEditorMode(
+      selectedTopic ? "topic" : selectedLesson ? "lesson" : "course"
+    );
+  };
 
   const handleOpenBlockLibrary =
     async () => {
@@ -1269,33 +1781,59 @@ function CoursePlaygroundPage() {
                         ],
                     }}
                   >
-                    <button
-                      type="button"
-                      className={
-                        selectedLesson
-                          ?.id ===
-                          lesson.id &&
-                        !selectedTopic
-                          ? "course-playground-lesson-title active"
-                          : "course-playground-lesson-title"
-                      }
-                      onClick={() =>
-                        handleSelectLesson(
-                          lesson
-                        )
-                      }
-                    >
-                      <span>
-                        {lesson.icon ||
-                          "📖"}
-                      </span>
-
-                      <strong>
-                        {
-                          lesson.title
+                    <div className="course-playground-lesson-heading-row">
+                      <button
+                        type="button"
+                        className={
+                          selectedLesson
+                            ?.id ===
+                            lesson.id &&
+                          !selectedTopic
+                            ? "course-playground-lesson-title active"
+                            : "course-playground-lesson-title"
                         }
-                      </strong>
-                    </button>
+                        onClick={() =>
+                          handleSelectLesson(
+                            lesson
+                          )
+                        }
+                      >
+                        <span>
+                          {lesson.icon ||
+                            "📖"}
+                        </span>
+
+                        <strong>
+                          {lesson.title}
+                        </strong>
+                      </button>
+
+                      <div className="course-playground-lesson-actions">
+                        <button
+                          type="button"
+                          className="course-playground-lesson-action edit"
+                          aria-label={`Edit ${lesson.title}`}
+                          title="Edit lesson"
+                          onClick={() =>
+                            handleOpenEditLesson(lesson)
+                          }
+                        >
+                          ✏️
+                        </button>
+
+                        <button
+                          type="button"
+                          className="course-playground-lesson-action delete"
+                          aria-label={`Delete ${lesson.title}`}
+                          title="Delete lesson"
+                          onClick={() =>
+                            handleOpenDeleteLesson(lesson)
+                          }
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
 
                     <div className="course-playground-topics">
                       {(
@@ -1303,36 +1841,56 @@ function CoursePlaygroundPage() {
                         []
                       ).map(
                         (topic) => (
-                          <button
-                            key={
-                              topic.id
-                            }
-                            type="button"
-                            className={
-                              selectedTopic
-                                ?.id ===
-                              topic.id
-                                ? "course-playground-topic active"
-                                : "course-playground-topic"
-                            }
-                            onClick={() =>
-                              handleSelectTopic(
-                                lesson,
-                                topic
-                              )
-                            }
+                          <div
+                            key={topic.id}
+                            className="course-playground-topic-row"
                           >
-                            <span>
-                              {topic.icon ||
-                                "📑"}
-                            </span>
-
-                            <span>
-                              {
-                                topic.title
+                            <button
+                              type="button"
+                              className={
+                                selectedTopic?.id === topic.id
+                                  ? "course-playground-topic active"
+                                  : "course-playground-topic"
                               }
-                            </span>
-                          </button>
+                              onClick={() =>
+                                handleSelectTopic(lesson, topic)
+                              }
+                            >
+                              <span>
+                                {topic.icon || "📑"}
+                              </span>
+
+                              <span>
+                                {topic.title}
+                              </span>
+                            </button>
+
+                            <div className="course-playground-topic-actions">
+                              <button
+                                type="button"
+                                className="course-playground-topic-action edit"
+                                aria-label={`Edit ${topic.title}`}
+                                title="Edit topic"
+                                onClick={() =>
+                                  handleOpenEditTopic(lesson, topic)
+                                }
+                              >
+                                ✏️
+                              </button>
+
+                              <button
+                                type="button"
+                                className="course-playground-topic-action delete"
+                                aria-label={`Delete ${topic.title}`}
+                                title="Delete topic"
+                                onClick={() =>
+                                  handleOpenDeleteTopic(lesson, topic)
+                                }
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
                         )
                       )}
                     </div>
@@ -1436,6 +1994,23 @@ function CoursePlaygroundPage() {
                   </span>
                 </h1>
 
+                <div className="course-playground-topic-intro">
+                  <div
+                    className="course-playground-topic-intro-character"
+                    aria-hidden="true"
+                  >
+                    {course.icon || "🚀"}
+                  </div>
+
+                  <div className="course-playground-topic-intro-content">
+                    <p>
+                      {renderTopicIntroduction(
+                        selectedTopic.introduction
+                      )}
+                    </p>
+                  </div>
+                </div>
+
                 {isLoadingBlocks ? (
                   <div className="course-playground-preview-placeholder">
                     <p>
@@ -1514,6 +2089,423 @@ function CoursePlaygroundPage() {
         {/* ===========================
             SLIDE-OVER - Block Library
         ============================ */}
+
+        {/* ===========================
+            MODAL - Add Lesson / Topic
+        ============================ */}
+
+        {(editorMode === "add-lesson" ||
+          editorMode === "edit-lesson" ||
+          editorMode === "add-topic" ||
+          editorMode === "edit-topic") && (
+          <div
+            className="course-playground-modal-backdrop"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget && !isSaving) {
+                handleCloseStructureDrawer();
+              }
+            }}
+          >
+            <section
+              className="course-playground-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="course-structure-modal-title"
+            >
+              <div className="course-playground-modal-header">
+                <div>
+                  <span>COURSE STRUCTURE</span>
+                  <h2 id="course-structure-modal-title">
+                    {editorMode === "add-lesson"
+                      ? "📖 Add Lesson"
+                      : editorMode === "edit-lesson"
+                      ? "✏️ Edit Lesson"
+                      : editorMode === "edit-topic"
+                      ? "✏️ Edit Topic"
+                      : "📑 Add Topic"}
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  className="course-playground-modal-close"
+                  aria-label={
+                    editorMode === "add-lesson"
+                      ? "Close add lesson"
+                      : editorMode === "edit-lesson"
+                      ? "Close edit lesson"
+                      : editorMode === "edit-topic"
+                      ? "Close edit topic"
+                      : "Close add topic"
+                  }
+                  disabled={isSaving}
+                  onClick={handleCloseStructureDrawer}
+                >
+                  ×
+                </button>
+              </div>
+
+              {editorMode === "add-lesson" || editorMode === "edit-lesson" ? (
+                <form
+                  className="course-playground-form course-playground-modal-form"
+                  onSubmit={
+                    editorMode === "edit-lesson"
+                      ? handleUpdateLesson
+                      : handleCreateLesson
+                  }
+                >
+                  {formError && (
+                    <div className="course-playground-form-error course-playground-modal-error">
+                      {formError}
+                    </div>
+                  )}
+
+                  <label htmlFor="lesson-title">Lesson title *</label>
+                  <input
+                    id="lesson-title"
+                    type="text"
+                    value={lessonForm.title}
+                    onChange={(event) =>
+                      setLessonForm((current) => ({
+                        ...current,
+                        title: event.target.value,
+                      }))
+                    }
+                    placeholder="e.g. Introduction to Kubernetes"
+                    autoFocus
+                  />
+
+                  <label htmlFor="lesson-icon">Icon</label>
+                  <input
+                    id="lesson-icon"
+                    type="text"
+                    value={lessonForm.icon}
+                    onChange={(event) =>
+                      setLessonForm((current) => ({
+                        ...current,
+                        icon: event.target.value,
+                      }))
+                    }
+                    placeholder="📖"
+                  />
+
+                  <label htmlFor="lesson-description">Description</label>
+                  <textarea
+                    id="lesson-description"
+                    rows="5"
+                    value={lessonForm.description}
+                    onChange={(event) =>
+                      setLessonForm((current) => ({
+                        ...current,
+                        description: event.target.value,
+                      }))
+                    }
+                    placeholder="Describe what students will learn in this lesson."
+                  />
+
+                  <div className="course-playground-form-actions course-playground-modal-actions">
+                    <button
+                      type="button"
+                      className="course-playground-cancel-button"
+                      disabled={isSaving}
+                      onClick={handleCloseStructureDrawer}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="course-playground-save-button"
+                      disabled={isSaving}
+                    >
+                      {isSaving
+                        ? "Saving..."
+                        : editorMode === "edit-lesson"
+                        ? "Save Changes"
+                        : "Add Lesson"}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <form
+                  className="course-playground-form course-playground-modal-form"
+                  onSubmit={
+                    editorMode === "edit-topic"
+                      ? handleUpdateTopic
+                      : handleCreateTopic
+                  }
+                >
+                  <div className="course-playground-parent-info">
+                    <span>
+                      {editorMode === "edit-topic"
+                        ? "Editing topic in"
+                        : "Adding topic to"}
+                    </span>
+                    <strong>
+                      {selectedLesson?.icon || "📖"}{" "}
+                      {selectedLesson?.title || "Selected lesson"}
+                    </strong>
+                  </div>
+
+                  {formError && (
+                    <div className="course-playground-form-error course-playground-modal-error">
+                      {formError}
+                    </div>
+                  )}
+
+                  <label htmlFor="topic-title">Topic title *</label>
+                  <input
+                    id="topic-title"
+                    type="text"
+                    value={topicForm.title}
+                    onChange={(event) =>
+                      setTopicForm((current) => ({
+                        ...current,
+                        title: event.target.value,
+                      }))
+                    }
+                    placeholder="e.g. Pods and Containers"
+                    autoFocus
+                  />
+
+                  <label htmlFor="topic-icon">Icon</label>
+                  <input
+                    id="topic-icon"
+                    type="text"
+                    value={topicForm.icon}
+                    onChange={(event) =>
+                      setTopicForm((current) => ({
+                        ...current,
+                        icon: event.target.value,
+                      }))
+                    }
+                    placeholder="📑"
+                  />
+
+                  <label htmlFor="topic-introduction">
+                    Introduction *
+                  </label>
+                  <p className="course-playground-field-help">
+                    This appears at the top of the topic before the learning blocks.
+                  </p>
+
+                  <div className="course-playground-formatting-help">
+                    <span>Formatting:</span>
+                    <code>**bold**</code>
+                    <code>`code`</code>
+                    <code>[[label]]</code>
+                  </div>
+                  <textarea
+                    id="topic-introduction"
+                    rows="6"
+                    value={topicForm.introduction}
+                    onChange={(event) =>
+                      setTopicForm((current) => ({
+                        ...current,
+                        introduction: event.target.value,
+                      }))
+                    }
+                    placeholder="Introduce this topic to the student..."
+                    required
+                  />
+
+                  <div className="course-playground-form-actions course-playground-modal-actions">
+                    <button
+                      type="button"
+                      className="course-playground-cancel-button"
+                      disabled={isSaving}
+                      onClick={handleCloseStructureDrawer}
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="submit"
+                      className="course-playground-save-button"
+                      disabled={isSaving}
+                    >
+                      {isSaving
+                        ? "Saving..."
+                        : editorMode === "edit-topic"
+                        ? "Save Changes"
+                        : "Add Topic"}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </section>
+          </div>
+        )}
+
+        {deletingTopic && (
+          <div
+            className="course-playground-modal-backdrop"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (
+                event.target === event.currentTarget &&
+                !isSaving
+              ) {
+                handleCloseDeleteTopic();
+              }
+            }}
+          >
+            <section
+              className="course-playground-modal course-playground-delete-modal"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="delete-topic-modal-title"
+              aria-describedby="delete-topic-modal-description"
+            >
+              <div className="course-playground-modal-header course-playground-delete-modal-header">
+                <div>
+                  <span>COURSE STRUCTURE</span>
+                  <h2 id="delete-topic-modal-title">
+                    🗑️ Delete Topic
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  className="course-playground-modal-close"
+                  aria-label="Close delete topic confirmation"
+                  disabled={isSaving}
+                  onClick={handleCloseDeleteTopic}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="course-playground-delete-modal-body">
+                <p id="delete-topic-modal-description">
+                  Are you sure you want to delete{" "}
+                  <strong>
+                    {deletingTopic.icon || "📑"}{" "}
+                    {deletingTopic.title}
+                  </strong>
+                  ?
+                </p>
+
+                <p className="course-playground-delete-warning">
+                  This will also remove the topic's learning blocks and content. This action cannot be undone.
+                </p>
+
+                {formError && (
+                  <div className="course-playground-form-error course-playground-modal-error">
+                    {formError}
+                  </div>
+                )}
+
+                <div className="course-playground-form-actions course-playground-modal-actions">
+                  <button
+                    type="button"
+                    className="course-playground-cancel-button"
+                    disabled={isSaving}
+                    onClick={handleCloseDeleteTopic}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="button"
+                    className="course-playground-delete-button"
+                    disabled={isSaving}
+                    onClick={handleDeleteTopic}
+                  >
+                    {isSaving
+                      ? "Deleting..."
+                      : "Delete Topic"}
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {deletingLesson && (
+          <div
+            className="course-playground-modal-backdrop"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (
+                event.target === event.currentTarget &&
+                !isSaving
+              ) {
+                handleCloseDeleteLesson();
+              }
+            }}
+          >
+            <section
+              className="course-playground-modal course-playground-delete-modal"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="delete-lesson-modal-title"
+              aria-describedby="delete-lesson-modal-description"
+            >
+              <div className="course-playground-modal-header course-playground-delete-modal-header">
+                <div>
+                  <span>COURSE STRUCTURE</span>
+                  <h2 id="delete-lesson-modal-title">
+                    🗑️ Delete Lesson
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  className="course-playground-modal-close"
+                  aria-label="Close delete lesson confirmation"
+                  disabled={isSaving}
+                  onClick={handleCloseDeleteLesson}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="course-playground-delete-modal-body">
+                <p id="delete-lesson-modal-description">
+                  Are you sure you want to delete
+                  {" "}
+                  <strong>
+                    {deletingLesson.icon || "📖"}{" "}
+                    {deletingLesson.title}
+                  </strong>
+                  ?
+                </p>
+
+                <p className="course-playground-delete-warning">
+                  This will also remove the lesson's topics and their learning content. This action cannot be undone.
+                </p>
+
+                {formError && (
+                  <div className="course-playground-form-error course-playground-modal-error">
+                    {formError}
+                  </div>
+                )}
+
+                <div className="course-playground-form-actions course-playground-modal-actions">
+                  <button
+                    type="button"
+                    className="course-playground-cancel-button"
+                    disabled={isSaving}
+                    onClick={handleCloseDeleteLesson}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="button"
+                    className="course-playground-delete-confirm-button"
+                    disabled={isSaving}
+                    onClick={handleDeleteLesson}
+                  >
+                    {isSaving ? "Deleting..." : "Delete Lesson"}
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
 
         <aside
           className={`course-playground-drawer course-playground-library-drawer ${

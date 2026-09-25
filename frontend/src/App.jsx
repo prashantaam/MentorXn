@@ -17,8 +17,8 @@ import TeacherLoginPage from "./pages/teacher/auth/TeacherLoginPage";
 import TeacherRegisterPage from "./pages/teacher/auth/TeacherRegisterPage";
 import TeacherDashboard from "./pages/teacher/dashboard/TeacherDashboard";
 
-import TeacherCoursePage from "./pages/teacher/courses/TeacherCoursePage";
-import CreateCoursePage from "./pages/teacher/courses/CreateCoursePage";
+import CourseListPage from "./pages/teacher/courses/CourseListPage";
+import CourseCreatePage from "./pages/teacher/courses/CourseCreatePage";
 import CoursePlaygroundPage from "./pages/teacher/courses/CoursePlaygroundPage";
 
 /* Layouts */
@@ -132,7 +132,7 @@ function App() {
           <Route
             path="/teacher/courses"
             element={
-              <TeacherCoursePage />
+              <CourseListPage />
             }
           />
 
@@ -140,7 +140,7 @@ function App() {
           <Route
             path="/teacher/courses/create"
             element={
-              <CreateCoursePage />
+              <CourseCreatePage />
             }
           />
 

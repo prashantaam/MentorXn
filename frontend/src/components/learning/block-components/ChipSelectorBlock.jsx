@@ -1,5 +1,5 @@
 import { useState } from "react";
-import LearningBlockShell from "../LearningBlockShell";
+import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 
 function ChipSelectorBlock({ block }) {
   const [selected, setSelected] = useState(null);

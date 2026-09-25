@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('icon', 20)
                 ->nullable();
 
-            $table->text('description')
-                ->nullable();
+            $table->text('introduction');
 
             $table->unsignedInteger('position')
                 ->default(1);

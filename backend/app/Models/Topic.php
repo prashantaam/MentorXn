@@ -15,7 +15,7 @@ class Topic extends Model
         'lesson_id',
         'title',
         'icon',
-        'description',
+        'introduction',
         'position',
         'status',
     ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lesson;
+use App\Models\Topic;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -25,10 +26,6 @@ class TopicController extends Controller
             ], 403);
         }
 
-        /*
-         * Verify that this lesson belongs to
-         * a course owned by the logged-in teacher.
-         */
         if ($lesson->course->teacher_id !== $user->id) {
             return response()->json([
                 'message' => 'Lesson not found.',
@@ -66,7 +63,101 @@ class TopicController extends Controller
             ], 404);
         }
 
-        $validated = $request->validate([
+        $validated = $this->validateTopic($request);
+
+        $nextPosition =
+            ($lesson->topics()->max('position') ?? 0) + 1;
+
+        $topic = $lesson->topics()->create([
+            'title' => $validated['title'],
+            'icon' => $validated['icon'] ?? '📑',
+            'introduction' => $validated['introduction'],
+            'position' => $nextPosition,
+            'status' => $validated['status'],
+        ]);
+
+        return response()->json([
+            'message' => 'Topic created successfully.',
+            'topic' => $topic,
+        ], 201);
+    }
+
+    /**
+     * Update an existing topic.
+     */
+    public function update(
+        Request $request,
+        Topic $topic
+    ): JsonResponse {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json([
+                'message' => 'Teacher access required.',
+            ], 403);
+        }
+
+        if ($topic->lesson->course->teacher_id !== $user->id) {
+            return response()->json([
+                'message' => 'Topic not found.',
+            ], 404);
+        }
+
+        $validated = $this->validateTopic($request);
+
+        $topic->update([
+            'title' => $validated['title'],
+            'icon' => $validated['icon'] ?? '📑',
+            'introduction' => $validated['introduction'],
+            'status' => $validated['status'],
+        ]);
+
+        $topic->refresh();
+
+        return response()->json([
+            'message' => 'Topic updated successfully.',
+            'topic' => $topic,
+        ]);
+    }
+
+    /**
+     * Delete an existing topic.
+     */
+    public function destroy(
+        Request $request,
+        Topic $topic
+    ): JsonResponse {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json([
+                'message' => 'Teacher access required.',
+            ], 403);
+        }
+
+        if ($topic->lesson->course->teacher_id !== $user->id) {
+            return response()->json([
+                'message' => 'Topic not found.',
+            ], 404);
+        }
+
+        $topicId = $topic->id;
+
+        $topic->delete();
+
+        return response()->json([
+            'message' => 'Topic deleted successfully.',
+            'topic_id' => $topicId,
+        ]);
+    }
+
+    /**
+     * Shared validation for creating/updating topics.
+     */
+    private function validateTopic(
+        Request $request
+    ): array {
+        return $request->validate([
             'title' => [
                 'required',
                 'string',
@@ -79,10 +170,10 @@ class TopicController extends Controller
                 'max:20',
             ],
 
-            'description' => [
-                'nullable',
+            'introduction' => [
+                'required',
                 'string',
-                'max:1000',
+                'max:2000',
             ],
 
             'status' => [
@@ -93,34 +184,5 @@ class TopicController extends Controller
                 ]),
             ],
         ]);
-
-        /*
-         * Automatically place the new topic
-         * after the current final topic.
-         */
-        $nextPosition =
-            ($lesson->topics()->max('position') ?? 0)
-            + 1;
-
-        $topic = $lesson->topics()->create([
-            'title' => $validated['title'],
-
-            'icon' =>
-                $validated['icon'] ?? '📑',
-
-            'description' =>
-                $validated['description'] ?? null,
-
-            'position' => $nextPosition,
-
-            'status' => $validated['status'],
-        ]);
-
-        return response()->json([
-            'message' =>
-                'Topic created successfully.',
-
-            'topic' => $topic,
-        ], 201);
     }
 }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../context/AuthContext";
 
-import "../../../styles/create-course.css";
+import "../../../styles/teachers/create-course.css";
 
 function CreateCoursePage() {
   const navigate = useNavigate();

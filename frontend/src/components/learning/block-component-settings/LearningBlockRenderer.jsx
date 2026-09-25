@@ -1,5 +1,4 @@
-import "../../styles/blocks/index.css";
-
+import "../../../styles/blocks/index.css";
 import {
   getBlockComponent,
 } from "./blockRegistry";

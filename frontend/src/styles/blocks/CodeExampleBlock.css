@@ -1,0 +1,369 @@
+/* =========================================================
+   MentorXn
+   Code Example Learning Block
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   Block
+   --------------------------------------------------------- */
+
+.code-example-block {
+  width: 100%;
+}
+
+
+/* ---------------------------------------------------------
+   Description
+   --------------------------------------------------------- */
+
+.code-example-description {
+  margin: 0 0 16px;
+
+  color: #54554e;
+
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   Code Window
+   ========================================================= */
+
+.code-example-wrapper {
+  width: 100%;
+  margin-top: 16px;
+
+  overflow: hidden;
+
+  background: #1e1e1e;
+
+  border: 3px solid #141414;
+  border-radius: 16px;
+
+  box-shadow: 4px 4px 0 #141414;
+}
+
+
+/* ---------------------------------------------------------
+   Code Toolbar
+   --------------------------------------------------------- */
+
+.code-example-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  min-height: 42px;
+
+  padding: 6px 12px;
+
+  background: #141414;
+
+  border-bottom: 2px solid #343434;
+}
+
+
+/* ---------------------------------------------------------
+   Language Badge
+   --------------------------------------------------------- */
+
+.code-example-language {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 3px 10px;
+
+  background: #ffd84d;
+  color: #141414;
+
+  border: 2px solid #141414;
+  border-radius: 9px;
+
+  font-family:
+    Fredoka,
+    "Trebuchet MS",
+    system-ui,
+    sans-serif;
+
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.3;
+
+  text-transform: uppercase;
+
+  box-shadow: 2px 2px 0 #000;
+}
+
+
+/* =========================================================
+   Syntax Highlighter Container
+   ========================================================= */
+
+.code-example-syntax {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  background: #1e1e1e;
+}
+
+
+/* =========================================================
+   IMPORTANT
+   Reset MentorXn general styles inside Prism
+   ========================================================= */
+
+.code-example-syntax pre {
+  display: block;
+
+  width: 100%;
+
+  margin: 0 !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  outline: none;
+
+  background: #1e1e1e !important;
+}
+
+
+.code-example-syntax code {
+  display: block;
+
+  margin: 0;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  background: transparent !important;
+
+  font-family:
+    Consolas,
+    Monaco,
+    "Courier New",
+    monospace !important;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.65;
+
+  text-shadow: none;
+}
+
+
+/* =========================================================
+   Prism Token Protection
+
+   Prism creates many <span> elements for syntax tokens.
+   MentorXn must NOT style those spans as normal UI elements.
+   ========================================================= */
+
+.code-example-syntax pre span,
+.code-example-syntax code span {
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  outline: none !important;
+
+  padding-top: 0;
+  padding-bottom: 0;
+
+  text-shadow: none !important;
+}
+
+
+/*
+   Some existing MentorXn styles may apply a white
+   background to spans.
+
+   Prism tokens should inherit the editor background.
+*/
+
+.code-example-syntax code span {
+  background-color: transparent !important;
+}
+
+
+/* =========================================================
+   Line Numbers
+   ========================================================= */
+
+.code-example-syntax .linenumber {
+  display: inline-block !important;
+
+  min-width: 2.4em;
+
+  padding-right: 14px !important;
+
+  color: #858585 !important;
+
+  background: transparent !important;
+
+  border: 0 !important;
+
+  box-shadow: none !important;
+
+  text-align: right;
+
+  user-select: none;
+}
+
+
+/* =========================================================
+   Preserve Prism Syntax Colours
+
+   Do NOT set "color" on Prism token classes here.
+   vscDarkPlus supplies those colours from React.
+   ========================================================= */
+
+.code-example-syntax .token {
+  background: transparent !important;
+
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow: none !important;
+
+  font-family: inherit;
+
+  text-shadow: none !important;
+}
+
+
+/* =========================================================
+   Explanation
+   ========================================================= */
+
+.code-example-explanation {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  margin-top: 18px;
+
+  padding: 12px 14px;
+
+  background: #eeede6;
+  color: #141414;
+
+  border: 2.5px dashed #141414;
+  border-radius: 14px;
+
+  line-height: 1.55;
+}
+
+
+.code-example-explanation-icon {
+  flex: 0 0 auto;
+
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+
+.code-example-explanation p {
+  margin: 0;
+
+  color: #141414;
+
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+
+/* =========================================================
+   Scrollbar
+   ========================================================= */
+
+.code-example-syntax::-webkit-scrollbar {
+  height: 9px;
+}
+
+
+.code-example-syntax::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+
+.code-example-syntax::-webkit-scrollbar-thumb {
+  background: #555;
+
+  border: 2px solid #1e1e1e;
+  border-radius: 999px;
+}
+
+
+.code-example-syntax::-webkit-scrollbar-thumb:hover {
+  background: #707070;
+}
+
+
+/* Firefox */
+
+.code-example-syntax {
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1e1e1e;
+}
+
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .code-example-wrapper {
+    margin-top: 12px;
+
+    border-radius: 14px;
+
+    box-shadow: 3px 3px 0 #141414;
+  }
+
+
+  .code-example-toolbar {
+    min-height: 38px;
+
+    padding: 5px 9px;
+  }
+
+
+  .code-example-language {
+    font-size: 0.72rem;
+
+    padding: 2px 8px;
+  }
+
+
+  .code-example-syntax pre {
+    font-size: 13px !important;
+  }
+
+
+  .code-example-syntax code {
+    font-size: 13px !important;
+  }
+
+
+  .code-example-explanation {
+    margin-top: 14px;
+
+    padding: 10px 12px;
+  }
+}

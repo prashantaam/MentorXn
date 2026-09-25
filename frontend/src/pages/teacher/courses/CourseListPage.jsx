@@ -14,7 +14,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 import "../../../styles/teachers/teacher-courses.css";
 
-function TeacherCoursePage() {
+function CourseListPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -566,4 +566,4 @@ function TeacherCoursePage() {
   );
 }
 
-export default TeacherCoursePage;
+export default CourseListPage;
