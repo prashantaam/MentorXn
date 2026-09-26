@@ -1,4 +1,3 @@
-
 function LearningBlockShell({
   title,
   icon,
@@ -12,7 +11,7 @@ function LearningBlockShell({
 
   return (
     <section
-      className={`card ${className}`.trim()}
+      className={`card learning-block ${className}`.trim()}
     >
       {hasHeading && (
         <h2>

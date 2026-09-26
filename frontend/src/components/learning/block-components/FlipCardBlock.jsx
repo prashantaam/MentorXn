@@ -4,7 +4,7 @@ import {
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 
-function FlipCardsBlock({
+function FlipCardBlock({
   block,
 }) {
   const [
@@ -121,4 +121,4 @@ function FlipCardsBlock({
   );
 }
 
-export default FlipCardsBlock;
+export default FlipCardBlock;

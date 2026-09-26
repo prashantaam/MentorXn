@@ -1,15 +1,30 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 import LearningText from "../shared/LearningText";
 
-function BigIdeasBlock({ block }) {
-  const [selected, setSelected] = useState(null);
 
-  const data = block?.data || {};
+function BigIdeasBlock({
+  block,
+}) {
+  const [
+    selected,
+    setSelected,
+  ] = useState(null);
 
-  const items = Array.isArray(data.items)
-    ? data.items
-    : [];
+
+  const data =
+    block?.data || {};
+
+
+  const items =
+    Array.isArray(data.items)
+      ? data.items
+      : [];
+
 
   /*
    * Support both the new snake_case configuration
@@ -20,16 +35,19 @@ function BigIdeasBlock({ block }) {
     data.displayStyle ||
     "cards";
 
+
   const rawShowFlow =
     data.show_flow ??
     data.showFlow ??
     false;
+
 
   const showFlow =
     rawShowFlow === true ||
     rawShowFlow === 1 ||
     rawShowFlow === "1" ||
     rawShowFlow === "true";
+
 
   /*
    * If the items change and the currently selected
@@ -42,9 +60,16 @@ function BigIdeasBlock({ block }) {
     ) {
       setSelected(null);
     }
-  }, [items, selected]);
+  }, [
+    items,
+    selected,
+  ]);
 
-  const getItemTitle = (item, index) => {
+
+  const getItemTitle = (
+    item,
+    index
+  ) => {
     return (
       item?.title ||
       item?.label ||
@@ -52,22 +77,52 @@ function BigIdeasBlock({ block }) {
     );
   };
 
-  const renderIdea = (item, index) => {
-    const title = getItemTitle(item, index);
-    const isSelected = selected === index;
 
-    if (displayStyle === "buttons") {
+  const handleSelect = (
+    index
+  ) => {
+    setSelected(index);
+  };
+
+
+  const renderIdea = (
+    item,
+    index
+  ) => {
+    const title =
+      getItemTitle(
+        item,
+        index
+      );
+
+    const isSelected =
+      selected === index;
+
+
+    /* =====================================================
+       Button Display
+       ===================================================== */
+
+    if (
+      displayStyle === "buttons"
+    ) {
       return (
         <button
           key={`idea-${index}`}
           type="button"
           className={
             `big-ideas-button${
-              isSelected ? " on" : ""
+              isSelected
+                ? " on"
+                : ""
             }`
           }
-          aria-pressed={isSelected}
-          onClick={() => setSelected(index)}
+          aria-pressed={
+            isSelected
+          }
+          onClick={() =>
+            handleSelect(index)
+          }
         >
           {item?.icon && (
             <span
@@ -78,10 +133,17 @@ function BigIdeasBlock({ block }) {
             </span>
           )}
 
-          <span>{title}</span>
+          <LearningText
+            text={title}
+          />
         </button>
       );
     }
+
+
+    /* =====================================================
+       Card Display
+       ===================================================== */
 
     return (
       <button
@@ -89,11 +151,17 @@ function BigIdeasBlock({ block }) {
         type="button"
         className={
           `big-ideas-card${
-            isSelected ? " on" : ""
+            isSelected
+              ? " on"
+              : ""
           }`
         }
-        aria-pressed={isSelected}
-        onClick={() => setSelected(index)}
+        aria-pressed={
+          isSelected
+        }
+        onClick={() =>
+          handleSelect(index)
+        }
       >
         {item?.icon && (
           <span
@@ -104,12 +172,14 @@ function BigIdeasBlock({ block }) {
           </span>
         )}
 
-        <span className="big-ideas-card-title">
-          {title}
-        </span>
+        <LearningText
+          text={title}
+          className="big-ideas-card-title"
+        />
       </button>
     );
   };
+
 
   return (
     <LearningBlockShell
@@ -118,47 +188,82 @@ function BigIdeasBlock({ block }) {
       subtitle={data.subtitle}
       className="big-ideas-block"
     >
-      <div
-        className={
-          `big-ideas-items ` +
-          `big-ideas-items--${displayStyle}` +
-          `${showFlow ? " has-flow" : ""}`
-        }
-      >
-        {items.map((item, index) => (
+      {items.length > 0 ? (
+        <>
+          {/* ===============================================
+              Ideas
+              =============================================== */}
+
           <div
-            key={`idea-wrapper-${index}`}
-            className="big-ideas-item-wrapper"
+            className={
+              `big-ideas-items ` +
+              `big-ideas-items--${displayStyle}` +
+              `${
+                showFlow
+                  ? " has-flow"
+                  : ""
+              }`
+            }
           >
-            {renderIdea(item, index)}
-
-            {showFlow &&
-              index < items.length - 1 && (
-                <span
-                  className="big-ideas-flow-arrow"
-                  aria-hidden="true"
+            {items.map(
+              (
+                item,
+                index
+              ) => (
+                <div
+                  key={`idea-wrapper-${index}`}
+                  className="big-ideas-item-wrapper"
                 >
-                  ➜
-                </span>
-              )}
-          </div>
-        ))}
-      </div>
+                  {renderIdea(
+                    item,
+                    index
+                  )}
 
-      <div
-        className="big-ideas-panel"
-        aria-live="polite"
-      >
-        {selected === null ? (
-          "👆 Select an idea to explore it."
-        ) : (
-          <LearningText
-            text={items[selected]?.content}
-          />
-        )}
-      </div>
+                  {showFlow &&
+                    index <
+                      items.length -
+                        1 && (
+                      <span
+                        className="big-ideas-flow-arrow"
+                        aria-hidden="true"
+                      >
+                        ➜
+                      </span>
+                    )}
+                </div>
+              )
+            )}
+          </div>
+
+
+          {/* ===============================================
+              Explanation
+              =============================================== */}
+
+          <div
+            className="big-ideas-panel"
+            aria-live="polite"
+          >
+            {selected === null ? (
+              "👆 Select an idea to explore it."
+            ) : (
+              <LearningText
+                text={
+                  items[selected]
+                    ?.content
+                }
+              />
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="block-empty">
+          No ideas have been configured yet.
+        </div>
+      )}
     </LearningBlockShell>
   );
 }
+
 
 export default BigIdeasBlock;

@@ -2,121 +2,114 @@
    MentorXn - Quiz Block
    ========================================================= */
 
+
+/* =========================================================
+   Block
+   ========================================================= */
+
 .quiz-block {
   width: 100%;
 }
+
 
 /* =========================================================
    Instructions
    ========================================================= */
 
-.quiz-block .quiz-block-instructions {
+.quiz-block
+  .quiz-block-instructions {
   margin: 0 0 16px;
 
-  color: var(
-    --text,
-    #141414
-  );
+  color: var(--text);
 
   line-height: 1.55;
 }
+
 
 /* =========================================================
    Question Card
    ========================================================= */
 
-.quiz-block .quiz-block-question {
+.quiz-block
+  .quiz-block-question {
   padding: 18px;
 
-  background: #eeede7;
+  background: var(--surface2);
 
-  color: var(
-    --text,
-    #141414
-  );
+  color: var(--text);
 
   border: 2.5px solid
-    var(
-      --ink,
-      #141414
-    );
+    var(--ink);
 
   border-radius: 16px;
 }
+
 
 /* =========================================================
    Progress
    ========================================================= */
 
-.quiz-block .quiz-block-progress {
+.quiz-block
+  .quiz-block-progress {
   margin: 0 0 12px;
 
-  color: var(
-    --muted,
-    #54554e
-  );
+  color: var(--muted);
 
   font-size: 0.92rem;
   font-weight: 900;
 }
 
+
 /* =========================================================
    Question
    ========================================================= */
 
-.quiz-block .quiz-block-question-text {
+.quiz-block
+  .quiz-block-question-text {
   margin: 0 0 16px;
 
-  color: var(
-    --text,
-    #141414
-  );
+  color: var(--text);
 
   font-size: 1.05rem;
   font-weight: 900;
   line-height: 1.5;
 }
 
+
 /* =========================================================
    Answers
    ========================================================= */
 
-.quiz-block .quiz-block-options {
+.quiz-block
+  .quiz-block-options {
   display: flex;
   flex-direction: column;
 
   gap: 9px;
 }
 
-.quiz-block .quiz-block-option {
-  width: 100%;
-
+.quiz-block
+  .quiz-block-option {
   display: flex;
   align-items: center;
 
+  width: 100%;
   min-height: 48px;
 
   padding: 10px 13px;
 
-  background: #ffffff;
+  background: var(--surface);
 
-  color: var(
-    --text,
-    #141414
-  );
+  color: var(--text);
 
   border: 2px solid
-    var(
-      --ink,
-      #141414
-    );
+    var(--ink);
 
   border-radius: 10px;
 
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 800;
-
   text-align: left;
 
   cursor: pointer;
@@ -136,22 +129,17 @@
 
   box-shadow:
     2px 2px 0
-    var(
-      --shadow-c,
-      #141414
-    );
+    var(--shadow-c);
 }
 
 .quiz-block
   .quiz-block-option:focus-visible {
   outline: 3px solid
-    var(
-      --w,
-      #ffd84d
-    );
+    var(--w);
 
   outline-offset: 2px;
 }
+
 
 /* =========================================================
    Correct Answer
@@ -159,28 +147,17 @@
 
 .quiz-block
   .quiz-block-option.is-correct {
-  background: var(
-    --good-bg,
-    #cdf5e4
-  );
+  background: var(--good-bg);
 
-  color: var(
-    --good,
-    #0b7a55
-  );
+  color: var(--good);
 
-  border-color: var(
-    --good,
-    #0b7a55
-  );
+  border-color: var(--good);
 
   box-shadow:
     2px 2px 0
-    var(
-      --good,
-      #0b7a55
-    );
+    var(--good);
 }
+
 
 /* =========================================================
    Wrong Answer
@@ -188,21 +165,17 @@
 
 .quiz-block
   .quiz-block-option.is-wrong {
-  background: var(
-    --warn-bg,
-    #ffefb8
-  );
+  background: var(--warn-bg);
 
-  color: var(
-    --warn,
-    #7a5200
-  );
+  color: var(--warn);
 
-  border-color: var(
-    --warn,
-    #7a5200
-  );
+  border-color: var(--warn);
 }
+
+
+/* =========================================================
+   Disabled Answer
+   ========================================================= */
 
 .quiz-block
   .quiz-block-option:disabled {
@@ -218,20 +191,19 @@
   opacity: 0.62;
 }
 
+
 /* =========================================================
    Feedback
    ========================================================= */
 
-.quiz-block .quiz-block-feedback {
+.quiz-block
+  .quiz-block-feedback {
   margin-top: 14px;
 
   padding: 11px 13px;
 
   border: 2px solid
-    var(
-      --ink,
-      #141414
-    );
+    var(--ink);
 
   border-radius: 10px;
 
@@ -241,168 +213,62 @@
 
 .quiz-block
   .quiz-block-feedback--correct {
-  background: var(
-    --good-bg,
-    #cdf5e4
-  );
+  background: var(--good-bg);
 
-  color: var(
-    --good,
-    #0b7a55
-  );
+  color: var(--good);
 
-  border-color: var(
-    --good,
-    #0b7a55
-  );
+  border-color: var(--good);
 }
 
 .quiz-block
   .quiz-block-feedback--incorrect {
-  background: var(
-    --warn-bg,
-    #ffefb8
-  );
+  background: var(--warn-bg);
 
-  color: var(
-    --warn,
-    #7a5200
-  );
+  color: var(--warn);
 
-  border-color: var(
-    --warn,
-    #7a5200
-  );
+  border-color: var(--warn);
 }
+
 
 /* =========================================================
    Explanation
    ========================================================= */
 
-.quiz-block .quiz-block-explanation {
+.quiz-block
+  .quiz-block-explanation {
   margin-top: 7px;
 
   font-weight: 700;
 }
 
+
 /* =========================================================
    Navigation
    ========================================================= */
 
-.quiz-block .quiz-block-navigation {
+.quiz-block
+  .quiz-block-navigation {
   display: flex;
   justify-content: flex-end;
 
   margin-top: 16px;
 }
 
-.quiz-block .quiz-block-next-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 44px;
-
-  padding: 9px 16px;
-
-  background: var(
-    --w,
-    #ffd84d
-  );
-
-  color: var(
-    --on-w,
-    #141414
-  );
-
-  border: 2.5px solid
-    var(
-      --ink,
-      #141414
-    );
-
-  border-radius: 10px;
-
-  box-shadow:
-    3px 3px 0
-    var(
-      --shadow-c,
-      #141414
-    );
-
-  font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 900;
-
-  cursor: pointer;
-
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease;
-}
-
-.quiz-block
-  .quiz-block-next-button:hover {
-  transform:
-    translateY(-1px);
-
-  box-shadow:
-    4px 4px 0
-    var(
-      --shadow-c,
-      #141414
-    );
-}
-
-.quiz-block
-  .quiz-block-next-button:active {
-  transform:
-    translate(
-      2px,
-      2px
-    );
-
-  box-shadow:
-    1px 1px 0
-    var(
-      --shadow-c,
-      #141414
-    );
-}
-
-.quiz-block
-  .quiz-block-next-button:focus-visible {
-  outline: 3px solid
-    var(
-      --ink,
-      #141414
-    );
-
-  outline-offset: 3px;
-}
 
 /* =========================================================
    Complete
    ========================================================= */
 
-.quiz-block .quiz-block-complete {
+.quiz-block
+  .quiz-block-complete {
   padding: 16px;
 
-  background: var(
-    --good-bg,
-    #cdf5e4
-  );
+  background: var(--good-bg);
 
-  color: var(
-    --good,
-    #0b7a55
-  );
+  color: var(--good);
 
   border: 2.5px solid
-    var(
-      --good,
-      #0b7a55
-    );
+    var(--good);
 
   border-radius: 12px;
 
@@ -411,40 +277,22 @@
 
   box-shadow:
     3px 3px 0
-    var(
-      --shadow-c,
-      #141414
-    );
+    var(--shadow-c);
 }
 
+
 /* =========================================================
-   Empty
+   Result Actions
    ========================================================= */
 
-.quiz-block .quiz-block-empty {
-  padding: 14px;
-
-  background: #eeede7;
-
-  color: var(
-    --muted,
-    #54554e
-  );
-
-  border: 2px dashed
-    var(
-      --ink,
-      #141414
-    );
-
-  border-radius: 12px;
-
-  font-weight: 700;
-  text-align: center;
+.quiz-block
+  .quiz-block-result-actions {
+  margin-top: 22px;
 }
 
+
 /* =========================================================
-   Mobile
+   Responsive
    ========================================================= */
 
 @media (
@@ -464,15 +312,10 @@
     .quiz-block-option {
     min-height: 44px;
 
-    padding:
-      9px 10px;
-  }
-
-  .quiz-block
-    .quiz-block-next-button {
-    width: 100%;
+    padding: 9px 10px;
   }
 }
+
 
 @media (
   max-width: 420px

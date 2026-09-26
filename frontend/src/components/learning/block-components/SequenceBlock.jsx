@@ -7,8 +7,7 @@ import {
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 import LearningText from "../shared/LearningText";
 
-
-/*
+/**
  * =========================================================
  * MentorXn - Sequence Block
  * =========================================================
@@ -25,8 +24,7 @@ import LearningText from "../shared/LearningText";
  * =========================================================
  */
 
-
-/*
+/**
  * Fisher-Yates shuffle.
  *
  * Returns a new array and does not modify the original.
@@ -34,7 +32,11 @@ import LearningText from "../shared/LearningText";
 const shuffleArray = (items) => {
   const shuffled = [...items];
 
-  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+  for (
+    let i = shuffled.length - 1;
+    i > 0;
+    i -= 1
+  ) {
     const randomIndex = Math.floor(
       Math.random() * (i + 1)
     );
@@ -51,8 +53,7 @@ const shuffleArray = (items) => {
   return shuffled;
 };
 
-
-/*
+/**
  * Create the starting order.
  *
  * If shuffle is enabled, we try to avoid starting with the
@@ -73,14 +74,19 @@ const createStartingOrder = (
     return indexes;
   }
 
-  let shuffled = shuffleArray(indexes);
+  let shuffled =
+    shuffleArray(indexes);
 
-  const isCorrectOrder = shuffled.every(
-    (itemIndex, position) =>
-      itemIndex === position
-  );
+  const isCorrectOrder =
+    shuffled.every(
+      (
+        itemIndex,
+        position
+      ) =>
+        itemIndex === position
+    );
 
-  /*
+  /**
    * If the random shuffle happens to produce the correct
    * sequence, rotate the items once so the activity does
    * not start already solved.
@@ -95,20 +101,23 @@ const createStartingOrder = (
   return shuffled;
 };
 
-
-function SequenceBlock({ block }) {
-  const data = block?.data || {};
+function SequenceBlock({
+  block,
+}) {
+  const data =
+    block?.data || {};
 
   const items = useMemo(
     () =>
-      Array.isArray(data.items)
+      Array.isArray(
+        data.items
+      )
         ? data.items
         : [],
     [data.items]
   );
 
-
-  /*
+  /**
    * Support boolean values coming from either JSON booleans
    * or database/form values such as 1 and "true".
    */
@@ -123,7 +132,6 @@ function SequenceBlock({ block }) {
     rawShuffle === "1" ||
     rawShuffle === "true";
 
-
   const rawShowNumbers =
     data.show_numbers ??
     data.showNumbers ??
@@ -135,8 +143,7 @@ function SequenceBlock({ block }) {
     rawShowNumbers === "1" ||
     rawShowNumbers === "true";
 
-
-  /*
+  /**
    * order contains indexes pointing back to items.
    *
    * Example:
@@ -149,19 +156,22 @@ function SequenceBlock({ block }) {
    * order:
    * [2, 0, 1]
    */
-  const [order, setOrder] =
-    useState(() =>
-      createStartingOrder(
-        items,
-        shouldShuffle
-      )
-    );
+  const [
+    order,
+    setOrder,
+  ] = useState(() =>
+    createStartingOrder(
+      items,
+      shouldShuffle
+    )
+  );
 
-  const [feedback, setFeedback] =
-    useState(null);
+  const [
+    feedback,
+    setFeedback,
+  ] = useState(null);
 
-
-  /*
+  /**
    * Reset the activity whenever the block content changes.
    *
    * This is important in Course Playground because a teacher
@@ -181,8 +191,7 @@ function SequenceBlock({ block }) {
     shouldShuffle,
   ]);
 
-
-  /*
+  /**
    * Move one item up or down.
    */
   const moveItem = (
@@ -190,56 +199,72 @@ function SequenceBlock({ block }) {
     direction
   ) => {
     const targetPosition =
-      currentPosition + direction;
+      currentPosition +
+      direction;
 
     if (
       targetPosition < 0 ||
-      targetPosition >= order.length
+      targetPosition >=
+        order.length
     ) {
       return;
     }
 
-    setOrder((currentOrder) => {
-      const nextOrder = [
-        ...currentOrder,
-      ];
+    setOrder(
+      (currentOrder) => {
+        const nextOrder = [
+          ...currentOrder,
+        ];
 
-      [
-        nextOrder[currentPosition],
-        nextOrder[targetPosition],
-      ] = [
-        nextOrder[targetPosition],
-        nextOrder[currentPosition],
-      ];
+        [
+          nextOrder[
+            currentPosition
+          ],
+          nextOrder[
+            targetPosition
+          ],
+        ] = [
+          nextOrder[
+            targetPosition
+          ],
+          nextOrder[
+            currentPosition
+          ],
+        ];
 
-      return nextOrder;
-    });
+        return nextOrder;
+      }
+    );
 
-    /*
+    /**
      * Remove old feedback after the learner changes
      * the sequence.
      */
     setFeedback(null);
   };
 
-
-  /*
+  /**
    * Check how many items are in their correct position.
    */
   const handleCheck = () => {
     const correctCount =
       order.filter(
-        (itemIndex, position) =>
+        (
+          itemIndex,
+          position
+        ) =>
           itemIndex === position
       ).length;
 
     const isCorrect =
-      correctCount === items.length &&
+      correctCount ===
+        items.length &&
       items.length > 0;
 
     if (isCorrect) {
       setFeedback({
         type: "correct",
+
         message:
           data.correct_message ||
           data.correctMessage ||
@@ -262,8 +287,17 @@ function SequenceBlock({ block }) {
     });
   };
 
+  const handleShuffle = () => {
+  setOrder(
+    createStartingOrder(
+      items,
+      true
+    )
+  );
 
-  /*
+  setFeedback(null);
+};
+  /**
    * Nothing to arrange.
    */
   if (items.length === 0) {
@@ -271,16 +305,18 @@ function SequenceBlock({ block }) {
       <LearningBlockShell
         title={block?.title}
         icon={block?.icon}
-        subtitle={data.subtitle}
+        subtitle={
+          data.subtitle
+        }
         className="sequence-block"
       >
         <div className="sequence-block-empty">
-          No sequence items have been added yet.
+          No sequence items have
+          been added yet.
         </div>
       </LearningBlockShell>
     );
   }
-
 
   return (
     <LearningBlockShell
@@ -290,11 +326,12 @@ function SequenceBlock({ block }) {
     >
       {data.subtitle && (
         <LearningText
-          text={data.subtitle}
+          text={
+            data.subtitle
+          }
           className="sequence-block-instructions"
         />
       )}
-
 
       {/* ===============================================
           Sequence Items
@@ -302,7 +339,10 @@ function SequenceBlock({ block }) {
 
       <div className="sequence-block-list">
         {order.map(
-          (itemIndex, position) => {
+          (
+            itemIndex,
+            position
+          ) => {
             const item =
               items[itemIndex];
 
@@ -332,18 +372,20 @@ function SequenceBlock({ block }) {
                   </span>
                 )}
 
-
                 <LearningText
-                  text={itemText}
+                  text={
+                    itemText
+                  }
                   className="sequence-block-item-text"
                 />
-
 
                 <div className="sequence-block-controls">
                   <button
                     type="button"
                     className="sequence-block-move-button"
-                    disabled={isFirst}
+                    disabled={
+                      isFirst
+                    }
                     aria-label={
                       `Move ${itemText} up`
                     }
@@ -360,7 +402,9 @@ function SequenceBlock({ block }) {
                   <button
                     type="button"
                     className="sequence-block-move-button"
-                    disabled={isLast}
+                    disabled={
+                      isLast
+                    }
                     aria-label={
                       `Move ${itemText} down`
                     }
@@ -380,21 +424,31 @@ function SequenceBlock({ block }) {
         )}
       </div>
 
-
       {/* ===============================================
           Check
           =============================================== */}
 
       <div className="sequence-block-actions">
         <button
-          type="button"
-          className="sequence-block-check-button"
-          onClick={handleCheck}
+            type="button"
+            className="block-button block-button--primary"
+            onClick={
+            handleCheck
+            }
         >
-          ✅ Check my order
+            ✅ Check my order
+        </button>
+
+        <button
+            type="button"
+            className="block-button block-button--white"
+            onClick={
+            handleShuffle
+            }
+        >
+            🔀 Shuffle / Play again
         </button>
       </div>
-
 
       {/* ===============================================
           Feedback
@@ -409,13 +463,14 @@ function SequenceBlock({ block }) {
           aria-live="polite"
         >
           <LearningText
-            text={feedback.message}
+            text={
+              feedback.message
+            }
           />
         </div>
       )}
     </LearningBlockShell>
   );
 }
-
 
 export default SequenceBlock;

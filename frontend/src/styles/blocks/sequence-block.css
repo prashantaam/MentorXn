@@ -2,6 +2,11 @@
    MentorXn - Sequence Block
    ========================================================= */
 
+
+/* =========================================================
+   Block
+   ========================================================= */
+
 .sequence-block {
   width: 100%;
 }
@@ -11,9 +16,12 @@
    Instructions
    ========================================================= */
 
-.sequence-block .sequence-block-instructions {
+.sequence-block
+  .sequence-block-instructions {
   margin: 0 0 16px;
+
   color: var(--text);
+
   line-height: 1.55;
 }
 
@@ -22,10 +30,13 @@
    Sequence List
    ========================================================= */
 
-.sequence-block .sequence-block-list {
+.sequence-block
+  .sequence-block-list {
   display: flex;
   flex-direction: column;
+
   gap: 8px;
+
   margin: 12px 0 16px;
 }
 
@@ -34,9 +45,11 @@
    Sequence Item
    ========================================================= */
 
-.sequence-block .sequence-block-item {
+.sequence-block
+  .sequence-block-item {
   display: flex;
   align-items: center;
+
   gap: 10px;
 
   width: 100%;
@@ -44,10 +57,13 @@
 
   padding: 8px 10px;
 
-  background: #eeede7;
-  color: var(--text, #141414);
+  background: var(--surface2);
 
-  border: 2.5px solid var(--ink, #141414);
+  color: var(--text);
+
+  border: 2.5px solid
+    var(--ink);
+
   border-radius: 12px;
 
   box-sizing: border-box;
@@ -57,11 +73,14 @@
     box-shadow 0.15s ease;
 }
 
-.sequence-block .sequence-block-item:hover {
-  transform: translateY(-1px);
+.sequence-block
+  .sequence-block-item:hover {
+  transform:
+    translateY(-1px);
 
   box-shadow:
-    2px 2px 0 var(--shadow-c, #141414);
+    2px 2px 0
+    var(--shadow-c);
 }
 
 
@@ -69,7 +88,8 @@
    Position Number
    ========================================================= */
 
-.sequence-block .sequence-block-number {
+.sequence-block
+  .sequence-block-number {
   flex: 0 0 34px;
 
   width: 34px;
@@ -79,10 +99,13 @@
   align-items: center;
   justify-content: center;
 
-  background: var(--w, #ffd84d);
-  color: var(--on-w, #141414);
+  background: var(--w);
 
-  border: 2px solid var(--ink, #141414);
+  color: var(--on-w);
+
+  border: 2px solid
+    var(--ink);
+
   border-radius: 50%;
 
   font-size: 0.95rem;
@@ -97,8 +120,10 @@
    Item Text
    ========================================================= */
 
-.sequence-block .sequence-block-item-text {
+.sequence-block
+  .sequence-block-item-text {
   flex: 1;
+
   min-width: 0;
 
   font-weight: 800;
@@ -110,28 +135,34 @@
    Move Controls
    ========================================================= */
 
-.sequence-block .sequence-block-controls {
+.sequence-block
+  .sequence-block-controls {
   flex: 0 0 auto;
 
   display: flex;
   align-items: center;
+
   gap: 6px;
 }
 
-.sequence-block .sequence-block-move-button {
-  width: 38px;
-  height: 36px;
-
+.sequence-block
+  .sequence-block-move-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
+  width: 38px;
+  height: 36px;
+
   padding: 0;
 
-  background: var(--surface, #ffffff);
-  color: var(--ink, #141414);
+  background: var(--surface);
 
-  border: 2px solid var(--ink, #141414);
+  color: var(--ink);
+
+  border: 2px solid
+    var(--ink);
+
   border-radius: 9px;
 
   font-family: inherit;
@@ -147,22 +178,35 @@
     background 0.12s ease;
 }
 
-.sequence-block .sequence-block-move-button:hover:not(:disabled) {
-  background: var(--surface2, #eeede7);
+.sequence-block
+  .sequence-block-move-button:hover:not(
+    :disabled
+  ) {
+  background: var(--surface2);
 
-  transform: translateY(-1px);
+  transform:
+    translateY(-1px);
 
   box-shadow:
-    2px 2px 0 var(--shadow-c, #141414);
+    2px 2px 0
+    var(--shadow-c);
 }
 
-.sequence-block .sequence-block-move-button:active:not(:disabled) {
-  transform: translateY(1px);
+.sequence-block
+  .sequence-block-move-button:active:not(
+    :disabled
+  ) {
+  transform:
+    translateY(1px);
+
   box-shadow: none;
 }
 
-.sequence-block .sequence-block-move-button:focus-visible {
-  outline: 3px solid var(--w, #ffd84d);
+.sequence-block
+  .sequence-block-move-button:focus-visible {
+  outline: 3px solid
+    var(--w);
+
   outline-offset: 2px;
 }
 
@@ -171,9 +215,12 @@
    Disabled Move Button
    ========================================================= */
 
-.sequence-block .sequence-block-move-button:disabled {
+.sequence-block
+  .sequence-block-move-button:disabled {
   opacity: 0.3;
+
   cursor: not-allowed;
+
   box-shadow: none;
 }
 
@@ -182,9 +229,12 @@
    Actions
    ========================================================= */
 
-.sequence-block .sequence-block-actions {
+.sequence-block
+  .sequence-block-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+
   gap: 10px;
 
   margin-top: 14px;
@@ -192,70 +242,18 @@
 
 
 /* =========================================================
-   Check Button
-   ========================================================= */
-
-.sequence-block .sequence-block-check-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 42px;
-
-  padding: 8px 16px;
-
-  background: var(--w, #ffd84d);
-  color: var(--on-w, #141414);
-
-  border: 2.5px solid var(--ink, #141414);
-  border-radius: 10px;
-
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 900;
-
-  cursor: pointer;
-
-  box-shadow:
-    3px 3px 0 var(--shadow-c, #141414);
-
-  transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease,
-    filter 0.12s ease;
-}
-
-.sequence-block .sequence-block-check-button:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    4px 4px 0 var(--shadow-c, #141414);
-
-  filter: brightness(1.03);
-}
-
-.sequence-block .sequence-block-check-button:active {
-  transform: translate(2px, 2px);
-
-  box-shadow:
-    1px 1px 0 var(--shadow-c, #141414);
-}
-
-.sequence-block .sequence-block-check-button:focus-visible {
-  outline: 3px solid var(--ink, #141414);
-  outline-offset: 3px;
-}
-
-
-/* =========================================================
    Feedback
    ========================================================= */
 
-.sequence-block .sequence-block-feedback {
+.sequence-block
+  .sequence-block-feedback {
   margin-top: 14px;
+
   padding: 11px 14px;
 
-  border: 2px solid var(--ink, #141414);
+  border: 2px solid
+    var(--ink);
+
   border-radius: 10px;
 
   font-weight: 800;
@@ -269,8 +267,9 @@
 
 .sequence-block
   .sequence-block-feedback--correct {
-  background: var(--good-bg, #cdf5e4);
-  color: var(--good, #0b7a55);
+  background: var(--good-bg);
+
+  color: var(--good);
 }
 
 
@@ -280,26 +279,9 @@
 
 .sequence-block
   .sequence-block-feedback--incorrect {
-  background: var(--warn-bg, #ffefb8);
-  color: var(--warn, #7a5200);
-}
+  background: var(--warn-bg);
 
-
-/* =========================================================
-   Empty State
-   ========================================================= */
-
-.sequence-block .sequence-block-empty {
-  padding: 14px;
-
-  background: var(--surface2, #eeede7);
-  color: var(--muted, #54554e);
-
-  border: 2px dashed var(--ink, #141414);
-  border-radius: 12px;
-
-  font-weight: 700;
-  text-align: center;
+  color: var(--warn);
 }
 
 
@@ -307,13 +289,18 @@
    Responsive
    ========================================================= */
 
-@media (max-width: 600px) {
-  .sequence-block .sequence-block-item {
+@media (
+  max-width: 600px
+) {
+  .sequence-block
+    .sequence-block-item {
     gap: 8px;
+
     padding: 8px;
   }
 
-  .sequence-block .sequence-block-number {
+  .sequence-block
+    .sequence-block-number {
     flex-basis: 30px;
 
     width: 30px;
@@ -322,35 +309,45 @@
     font-size: 0.85rem;
   }
 
-  .sequence-block .sequence-block-controls {
+  .sequence-block
+    .sequence-block-controls {
     gap: 4px;
   }
 
-  .sequence-block .sequence-block-move-button {
+  .sequence-block
+    .sequence-block-move-button {
     width: 34px;
     height: 34px;
   }
 
-  .sequence-block .sequence-block-check-button {
+  .sequence-block
+    .sequence-block-actions
+    .block-button {
     width: 100%;
   }
 }
 
 
-@media (max-width: 420px) {
-  .sequence-block .sequence-block-item {
+@media (
+  max-width: 420px
+) {
+  .sequence-block
+    .sequence-block-item {
     align-items: flex-start;
     flex-wrap: wrap;
   }
 
-  .sequence-block .sequence-block-item-text {
+  .sequence-block
+    .sequence-block-item-text {
     flex:
       1 1
       calc(100% - 48px);
   }
 
-  .sequence-block .sequence-block-controls {
+  .sequence-block
+    .sequence-block-controls {
     width: 100%;
+
     justify-content: flex-end;
   }
 }

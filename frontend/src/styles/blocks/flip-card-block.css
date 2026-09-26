@@ -1,33 +1,72 @@
 /* =========================================================
-   Flip Cards Block
+   MentorXn - Flip Cards Block
    ========================================================= */
 
-.flip-cards-block .flip-cards-grid {
+
+/* =========================================================
+   Block
+   ========================================================= */
+
+.flip-cards-block {
+  width: 100%;
+}
+
+
+/* =========================================================
+   Cards Grid
+   ========================================================= */
+
+.flip-cards-block
+  .flip-cards-grid {
   display: grid;
+
   grid-template-columns:
     repeat(
       auto-fit,
       minmax(180px, 1fr)
     );
+
   gap: 18px;
+
   margin-top: 20px;
 }
 
-.flip-cards-block .flip-card {
+
+/* =========================================================
+   Flip Card
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card {
   appearance: none;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
+
   min-height: 190px;
-  perspective: 1000px;
+
+  padding: 0;
+
+  background: transparent;
+
+  border: 0;
+
   font: inherit;
   text-align: inherit;
+
+  cursor: pointer;
+
+  perspective: 1000px;
 }
 
-.flip-cards-block .flip-card-inner {
+
+/* =========================================================
+   Card Inner
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-inner {
   position: relative;
+
   display: block;
+
   width: 100%;
   height: 100%;
   min-height: 190px;
@@ -39,14 +78,27 @@
     preserve-3d;
 }
 
+
+/* =========================================================
+   Flipped State
+   ========================================================= */
+
 .flip-cards-block
-.flip-card.is-flipped
-.flip-card-inner {
-  transform: rotateY(180deg);
+  .flip-card.is-flipped
+  .flip-card-inner {
+  transform:
+    rotateY(180deg);
 }
 
-.flip-cards-block .flip-card-face {
+
+/* =========================================================
+   Card Faces
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-face {
   position: absolute;
+
   inset: 0;
 
   display: flex;
@@ -58,78 +110,156 @@
 
   padding: 22px;
 
+  background: var(--surface2);
+
   border: 2px solid
-    var(--lesson-accent, #8fd9a8);
+    var(--w);
 
   border-radius: 18px;
 
-  background: #ffffff;
-
   box-shadow:
     0 8px 20px
-    rgba(0, 0, 0, 0.08);
+    rgba(
+      0,
+      0,
+      0,
+      0.08
+    );
 
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  backface-visibility:
+    hidden;
+
+  -webkit-backface-visibility:
+    hidden;
 }
 
-.flip-cards-block .flip-card-front {
+
+/* =========================================================
+   Front
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-front {
   text-align: center;
 }
 
-.flip-cards-block .flip-card-back {
-  transform: rotateY(180deg);
+
+/* =========================================================
+   Back
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-back {
+  transform:
+    rotateY(180deg);
+
   text-align: center;
 }
 
-.flip-cards-block .flip-card-icon {
+
+/* =========================================================
+   Icon
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-icon {
   display: block;
+
   font-size: 2.4rem;
   line-height: 1;
 }
 
-.flip-cards-block .flip-card-face strong {
+
+/* =========================================================
+   Card Title
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-title {
+  color: var(--text);
+
   font-size: 1.05rem;
+  font-weight: 900;
   line-height: 1.3;
 }
 
-.flip-cards-block .flip-card-face small {
-  opacity: 0.65;
-  font-size: 0.78rem;
-}
 
-.flip-cards-block .flip-card-back > span {
+/* =========================================================
+   Back Text
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-back-text {
+  color: var(--text);
+
   line-height: 1.6;
 }
 
-.flip-cards-block .flip-card:hover
-.flip-card-inner {
-  transform: translateY(-3px);
+
+/* =========================================================
+   Hint
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card-hint {
+  color: var(--muted);
+
+  font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   Hover
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card:hover
+  .flip-card-inner {
+  transform:
+    translateY(-3px);
 }
 
 .flip-cards-block
-.flip-card.is-flipped:hover
-.flip-card-inner {
+  .flip-card.is-flipped:hover
+  .flip-card-inner {
   transform:
     translateY(-3px)
     rotateY(180deg);
 }
 
-.flip-cards-block .flip-card:focus-visible {
+
+/* =========================================================
+   Focus
+   ========================================================= */
+
+.flip-cards-block
+  .flip-card:focus-visible {
   outline: 3px solid
-    var(--lesson-accent, #8fd9a8);
+    var(--w);
 
   outline-offset: 4px;
+
   border-radius: 18px;
 }
 
-@media (max-width: 700px) {
-  .flip-cards-block .flip-cards-grid {
-    grid-template-columns: 1fr;
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (
+  max-width: 700px
+) {
+  .flip-cards-block
+    .flip-cards-grid {
+    grid-template-columns:
+      1fr;
   }
 
-  .flip-cards-block .flip-card,
-  .flip-cards-block .flip-card-inner {
+  .flip-cards-block
+    .flip-card,
+  .flip-cards-block
+    .flip-card-inner {
     min-height: 170px;
   }
 }

@@ -1,15 +1,35 @@
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import LearningText from "../shared/LearningText";
 
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+  Prism as SyntaxHighlighter,
+} from "react-syntax-highlighter";
 
-function CodeExampleBlock({ block }) {
-  const data = block?.data || {};
+import {
+  vscDarkPlus,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 
-  const code = String(data.code || "");
-  const language = data.language || "text";
-  const description = data.description || "";
-  const explanation = data.explanation || "";
+
+function CodeExampleBlock({
+  block,
+}) {
+  const data =
+    block?.data || {};
+
+  const code =
+    String(
+      data.code || ""
+    );
+
+  const language =
+    data.language || "text";
+
+  const description =
+    data.description || "";
+
+  const explanation =
+    data.explanation || "";
+
 
   return (
     <LearningBlockShell
@@ -18,19 +38,35 @@ function CodeExampleBlock({ block }) {
       subtitle={data.subtitle}
       className="code-example-block"
     >
+      {/* ===================================================
+          Description
+          =================================================== */}
+
       {description && (
-        <p className="code-example-description">
-          {description}
-        </p>
+        <LearningText
+          text={description}
+          className="code-example-description"
+        />
       )}
+
+
+      {/* ===================================================
+          Code Example
+          =================================================== */}
 
       {code ? (
         <div className="code-example-wrapper">
+
+          {/* Toolbar */}
+
           <div className="code-example-toolbar">
             <span className="code-example-language">
               {language}
             </span>
           </div>
+
+
+          {/* Syntax Highlighted Code */}
 
           <div className="code-example-syntax">
             <SyntaxHighlighter
@@ -42,7 +78,8 @@ function CodeExampleBlock({ block }) {
                 margin: 0,
                 padding: "18px",
                 background: "#1e1e1e",
-                borderRadius: "0 0 14px 14px",
+                borderRadius:
+                  "0 0 14px 14px",
                 fontSize: "14px",
                 lineHeight: "1.65",
               }}
@@ -58,10 +95,15 @@ function CodeExampleBlock({ block }) {
           </div>
         </div>
       ) : (
-        <div className="panel">
+        <div className="block-empty">
           No code example has been configured yet.
         </div>
       )}
+
+
+      {/* ===================================================
+          Explanation
+          =================================================== */}
 
       {explanation && (
         <div className="code-example-explanation">
@@ -72,11 +114,15 @@ function CodeExampleBlock({ block }) {
             💡
           </span>
 
-          <p>{explanation}</p>
+          <LearningText
+            text={explanation}
+            className="code-example-explanation-text"
+          />
         </div>
       )}
     </LearningBlockShell>
   );
 }
+
 
 export default CodeExampleBlock;

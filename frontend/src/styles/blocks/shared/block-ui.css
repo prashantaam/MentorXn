@@ -1,0 +1,223 @@
+/* =========================================================
+   MentorXn - Learning Block UI
+   =========================================================
+   Reusable UI components shared across learning blocks.
+
+   Theme values are defined in:
+   block-theme.css
+   ========================================================= */
+
+
+/* =========================================================
+   Button - Base
+   ========================================================= */
+
+.block-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  min-height: 44px;
+
+  padding: 9px 16px;
+
+  color: var(--on-w);
+
+  border: 2.5px solid
+    var(--ink);
+
+  border-radius: 10px;
+
+  box-shadow:
+    3px 3px 0
+    var(--shadow-c);
+
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 900;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+
+/* =========================================================
+   Button - Primary
+   =========================================================
+   Uses the current lesson colour.
+   --w is supplied by the lesson.
+   ========================================================= */
+
+.block-button--primary {
+  background: var(--w);
+}
+
+
+/* =========================================================
+   Button - Pink
+   =========================================================
+   Used for actions such as Play Again.
+   ========================================================= */
+
+.block-button--pink {
+  background: var(--pink);
+}
+
+
+/* =========================================================
+   Button - White
+   =========================================================
+   Secondary action.
+   ========================================================= */
+
+.block-button--white {
+  background: var(--surface);
+}
+
+
+/* =========================================================
+   Button - Success
+   ========================================================= */
+
+.block-button--success {
+  background: var(--good-bg);
+
+  color: var(--good);
+}
+
+
+/* =========================================================
+   Button - Hover
+   ========================================================= */
+
+.block-button:hover:not(
+  :disabled
+) {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    4px 4px 0
+    var(--shadow-c);
+}
+
+
+/* =========================================================
+   Button - Active
+   ========================================================= */
+
+.block-button:active:not(
+  :disabled
+) {
+  transform:
+    translate(
+      2px,
+      2px
+    );
+
+  box-shadow:
+    1px 1px 0
+    var(--shadow-c);
+}
+
+
+/* =========================================================
+   Button - Focus
+   ========================================================= */
+
+.block-button:focus-visible {
+  outline: 3px solid
+    var(--ink);
+
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   Button - Disabled
+   ========================================================= */
+
+.block-button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  box-shadow:
+    2px 2px 0
+    var(--shadow-c);
+}
+
+
+/* =========================================================
+   Button - Full Width
+   ========================================================= */
+
+.block-button--full {
+  width: 100%;
+}
+
+
+/* =========================================================
+   Button Group
+   ========================================================= */
+
+.block-button-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
+
+/* =========================================================
+   Empty State
+   ========================================================= */
+
+.block-empty {
+  padding: 14px;
+
+  background:
+    var(--surface2);
+
+  color:
+    var(--muted);
+
+  border: 2px dashed
+    var(--ink);
+
+  border-radius: 12px;
+
+  font-weight: 700;
+  text-align: center;
+}
+
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (
+  max-width: 600px
+) {
+  .block-button-group--mobile-stack {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .block-button-group--mobile-stack
+    .block-button {
+    width: 100%;
+  }
+}

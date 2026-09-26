@@ -288,6 +288,76 @@ function QuizBlock({ block }) {
 
   /*
    * =========================================
+   * Score
+   * =========================================
+   *
+   * A question receives one point only when
+   * it was answered correctly without a
+   * previous wrong attempt.
+   * =========================================
+   */
+
+  const score =
+    sourceQuestions.reduce(
+      (
+        total,
+        _question,
+        questionIndex
+      ) => {
+        const state =
+          questionStates[
+            questionIndex
+          ];
+
+        if (!state?.solved) {
+          return total;
+        }
+
+        const previousWrongAnswers =
+          Array.isArray(
+            state.wrongAnswers
+          )
+            ? state.wrongAnswers
+            : [];
+
+        if (
+          previousWrongAnswers.length ===
+          0
+        ) {
+          return total + 1;
+        }
+
+        return total;
+      },
+      0
+    );
+
+  const percentage =
+    totalQuestions > 0
+      ? Math.round(
+          (
+            score /
+            totalQuestions
+          ) * 100
+        )
+      : 0;
+
+  /*
+   * Default pass mark = 70%.
+   *
+   * If we later add this to the Quiz
+   * configuration, this can simply read
+   * from data.pass_percentage.
+   */
+
+  const passPercentage = 70;
+
+  const passed =
+    percentage >=
+    passPercentage;
+
+  /*
+   * =========================================
    * Answer Question
    * =========================================
    */
@@ -418,6 +488,87 @@ function QuizBlock({ block }) {
 
   /*
    * =========================================
+   * Play Again
+   * =========================================
+   */
+
+  const handlePlayAgain =
+    () => {
+      /*
+       * Rebuild question order.
+       */
+
+      let questionIndexes =
+        sourceQuestions.map(
+          (_, index) => index
+        );
+
+      if (shuffleQuestions) {
+        questionIndexes =
+          shuffleArray(
+            questionIndexes
+          );
+      }
+
+      /*
+       * Rebuild answer order.
+       */
+
+      const newAnswerOrders =
+        {};
+
+      sourceQuestions.forEach(
+        (
+          question,
+          questionIndex
+        ) => {
+          const questionAnswers =
+            Array.isArray(
+              question?.answers
+            )
+              ? question.answers
+              : [];
+
+          let answerIndexes =
+            questionAnswers.map(
+              (_, index) =>
+                index
+            );
+
+          if (shuffleAnswers) {
+            answerIndexes =
+              shuffleArray(
+                answerIndexes
+              );
+          }
+
+          newAnswerOrders[
+            questionIndex
+          ] = answerIndexes;
+        }
+      );
+
+      /*
+       * Reset quiz.
+       */
+
+      setQuestionOrder(
+        questionIndexes
+      );
+
+      setAnswerOrders(
+        newAnswerOrders
+      );
+
+      setQuestionStates({});
+
+      setCurrentPosition(0);
+
+      setQuizComplete(false);
+    };
+
+  /*
+   * =========================================
    * Empty Quiz
    * =========================================
    */
@@ -442,7 +593,7 @@ function QuizBlock({ block }) {
 
   /*
    * =========================================
-   * Completed Quiz
+   * Completed Quiz / Result
    * =========================================
    */
 
@@ -453,13 +604,66 @@ function QuizBlock({ block }) {
         icon={block?.icon}
         className="quiz-block"
       >
-        <div className="quiz-block-complete">
-          <LearningText
-            text={
-              data.complete_message ||
-              "🎉 Great work! You completed all the questions."
-            }
-          />
+        <div className="quiz-block-result">
+          <h3 className="quiz-block-result-title">
+            {passed
+              ? "🎉 You did it!"
+              : "Good try!"}
+          </h3>
+
+          <div className="quiz-block-result-accent" />
+
+          <p className="quiz-block-result-score">
+            You got{" "}
+            <strong>
+              {score} /{" "}
+              {totalQuestions}
+            </strong>
+          </p>
+
+          <div className="quiz-block-result-message">
+            {passed ? (
+              <LearningText
+                text={
+                  data.complete_message ||
+                  "Great work! You completed the quiz."
+                }
+              />
+            ) : (
+              <LearningText
+                text={
+                  "Revisit a few questions and try again. You will get it! 💪"
+                }
+              />
+            )}
+          </div>
+
+          <div className="block-button-group block-button-group--mobile-stack quiz-block-result-actions">
+                <button
+                    type="button"
+                    className="block-button block-button--pink"
+                    onClick={
+                    handlePlayAgain
+                    }
+                >
+                    🔁 Play again
+                </button>
+
+                <button
+                    type="button"
+                    className="block-button block-button--white"
+                   onClick={() => {
+                                    handlePlayAgain();
+
+                                    window.scrollTo({
+                                        top: 0,
+                                        behavior: "smooth",
+                                    });
+                                    }}
+                >
+                    Back to lesson
+                </button>
+                </div>
         </div>
       </LearningBlockShell>
     );
@@ -694,7 +898,7 @@ function QuizBlock({ block }) {
 
         {/*
          * =====================================
-         * Next / Finish
+         * Next / Result
          * =====================================
          */}
 
@@ -702,13 +906,13 @@ function QuizBlock({ block }) {
           <div className="quiz-block-navigation">
             <button
               type="button"
-              className="quiz-block-next-button"
+              className="block-button block-button--primary"
               onClick={
                 handleNextQuestion
               }
             >
               {isLastQuestion
-                ? "Finish quiz ✓"
+                ? "See my result"
                 : "Next question →"}
             </button>
           </div>

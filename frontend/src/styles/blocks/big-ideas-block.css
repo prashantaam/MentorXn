@@ -2,6 +2,11 @@
    MentorXn - Big Ideas Block
    ========================================================= */
 
+
+/* =========================================================
+   Block
+   ========================================================= */
+
 .big-ideas-block {
   width: 100%;
 }
@@ -11,7 +16,8 @@
    Ideas
    ========================================================= */
 
-.big-ideas-block .big-ideas-items {
+.big-ideas-block
+  .big-ideas-items {
   margin: 10px 0;
 }
 
@@ -20,23 +26,35 @@
    Card Style
    ========================================================= */
 
-.big-ideas-block .big-ideas-items--cards {
+.big-ideas-block
+  .big-ideas-items--cards {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
+
   gap: 12px;
 }
+
 
 .big-ideas-block
   .big-ideas-items--cards
   .big-ideas-item-wrapper {
   display: flex;
-  flex: 1 1 130px;
   align-items: center;
+
+  flex: 1 1 130px;
+
   gap: 12px;
 }
 
-.big-ideas-block .big-ideas-card {
+
+.big-ideas-block
+  .big-ideas-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   flex: 1;
 
   min-width: 120px;
@@ -44,21 +62,20 @@
 
   padding: 12px 8px;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
   gap: 4px;
 
-  background: #eeede7;
+  background: var(--surface2);
+
   color: var(--text);
 
-  border: 2.5px solid var(--ink);
+  border: 2.5px solid
+    var(--ink);
+
   border-radius: 16px;
 
   font-family: inherit;
   font-weight: 800;
+
   text-align: center;
 
   cursor: pointer;
@@ -69,29 +86,50 @@
     background 0.15s ease;
 }
 
-.big-ideas-block .big-ideas-card:hover {
-  transform: translateY(-2px);
+
+.big-ideas-block
+  .big-ideas-card:hover {
+  transform:
+    translateY(-2px);
 
   box-shadow:
-    3px 3px 0 var(--shadow-c);
+    3px 3px 0
+    var(--shadow-c);
 }
 
-.big-ideas-block .big-ideas-card.on {
+
+.big-ideas-block
+  .big-ideas-card:focus-visible {
+  outline: 3px solid
+    var(--w);
+
+  outline-offset: 3px;
+}
+
+
+.big-ideas-block
+  .big-ideas-card.on {
   background: var(--w);
+
   color: var(--on-w);
 
   box-shadow:
-    3px 3px 0 var(--shadow-c);
+    3px 3px 0
+    var(--shadow-c);
 }
 
-.big-ideas-block .big-ideas-card-icon {
+
+.big-ideas-block
+  .big-ideas-card-icon {
   display: block;
 
   font-size: 2rem;
   line-height: 1;
 }
 
-.big-ideas-block .big-ideas-card-title {
+
+.big-ideas-block
+  .big-ideas-card-title {
   display: block;
 
   font-weight: 800;
@@ -103,22 +141,28 @@
    Button Style
    ========================================================= */
 
-.big-ideas-block .big-ideas-items--buttons {
+.big-ideas-block
+  .big-ideas-items--buttons {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+
   gap: 8px;
 }
+
 
 .big-ideas-block
   .big-ideas-items--buttons
   .big-ideas-item-wrapper {
   display: flex;
   align-items: center;
+
   gap: 8px;
 }
 
-.big-ideas-block .big-ideas-button {
+
+.big-ideas-block
+  .big-ideas-button {
   display: inline-flex;
   align-items: center;
 
@@ -127,9 +171,12 @@
   padding: 3px 13px;
 
   background: var(--surface);
+
   color: var(--text);
 
-  border: 2.5px solid var(--ink);
+  border: 2.5px solid
+    var(--ink);
+
   border-radius: 999px;
 
   font-family: inherit;
@@ -143,19 +190,36 @@
     transform 0.15s ease;
 }
 
-.big-ideas-block .big-ideas-button:hover {
+
+.big-ideas-block
+  .big-ideas-button:hover {
   background: var(--surface2);
 }
 
-.big-ideas-block .big-ideas-button.on {
+
+.big-ideas-block
+  .big-ideas-button:focus-visible {
+  outline: 3px solid
+    var(--w);
+
+  outline-offset: 3px;
+}
+
+
+.big-ideas-block
+  .big-ideas-button.on {
   background: var(--w);
+
   color: var(--on-w);
 
   box-shadow:
-    3px 3px 0 var(--shadow-c);
+    3px 3px 0
+    var(--shadow-c);
 }
 
-.big-ideas-block .big-ideas-button-icon {
+
+.big-ideas-block
+  .big-ideas-button-icon {
   line-height: 1;
 }
 
@@ -164,7 +228,8 @@
    Flow
    ========================================================= */
 
-.big-ideas-block .big-ideas-flow-arrow {
+.big-ideas-block
+  .big-ideas-flow-arrow {
   flex: 0 0 auto;
 
   display: inline-flex;
@@ -185,14 +250,19 @@
    Explanation Panel
    ========================================================= */
 
-.big-ideas-block .big-ideas-panel {
+.big-ideas-block
+  .big-ideas-panel {
   margin-top: 12px;
 
   padding: 12px 14px;
 
   background: var(--surface2);
 
-  border: 2.5px dashed var(--ink);
+  color: var(--text);
+
+  border: 2.5px dashed
+    var(--ink);
+
   border-radius: 14px;
 
   line-height: 1.5;
@@ -203,23 +273,31 @@
    Responsive
    ========================================================= */
 
-@media (max-width: 700px) {
+@media (
+  max-width: 700px
+) {
   .big-ideas-block
     .big-ideas-items--cards
     .big-ideas-item-wrapper {
-    flex-basis: calc(50% - 6px);
+    flex-basis:
+      calc(50% - 6px);
   }
 
-  .big-ideas-block .big-ideas-card {
+  .big-ideas-block
+    .big-ideas-card {
     min-height: 100px;
   }
 
-  .big-ideas-block .big-ideas-flow-arrow {
+  .big-ideas-block
+    .big-ideas-flow-arrow {
     font-size: 1.15rem;
   }
 }
 
-@media (max-width: 440px) {
+
+@media (
+  max-width: 440px
+) {
   .big-ideas-block
     .big-ideas-items--cards
     .big-ideas-item-wrapper {

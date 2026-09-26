@@ -1,0 +1,35 @@
+/* =========================================================
+   MentorXn - Learning Block Theme
+   ========================================================= */
+
+.learning-block {
+  /* Surfaces */
+  --surface: #ffffff;
+  --surface2: #eeede7;
+
+  /* Text / Ink */
+  --text: #141414;
+  --muted: #54554e;
+  --ink: #141414;
+
+  /* Shadow */
+  --shadow-c: #141414;
+
+  /* Text displayed on lesson accent */
+  --on-w: #141414;
+
+  /* Action Colours */
+  --pink: #f5a3d5;
+
+  /* Success */
+  --good: #0b7a55;
+  --good-bg: #cdf5e4;
+
+  /* Warning */
+  --warn: #7a5200;
+  --warn-bg: #ffefb8;
+
+  /* Error */
+  --bad: #a3141b;
+  --bad-bg: #ffd9d6;
+}
