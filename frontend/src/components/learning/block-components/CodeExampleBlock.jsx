@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useMemo,
   useState,
 } from "react";
 
@@ -15,12 +14,17 @@ import {
   vscDarkPlus,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-
 function CodeExampleBlock({
   block,
 }) {
   const data =
     block?.data || {};
+
+  /*
+   * =========================================
+   * Examples
+   * =========================================
+   */
 
   const examples =
     Array.isArray(data.examples)
@@ -35,8 +39,54 @@ function CodeExampleBlock({
         )
       : [];
 
-  const hasMultipleExamples =
-    examples.length > 0;
+  /*
+   * Backward compatibility
+   *
+   * Older CodeExampleBlocks may still contain
+   * language/code/etc. directly in block.data.
+   * Convert that structure into one example.
+   */
+  const legacyExample =
+    data.code
+      ? {
+          label:
+            data.language ||
+            "Code",
+
+          language:
+            data.language ||
+            "text",
+
+          code:
+            data.code ||
+            "",
+
+          command:
+            data.command ||
+            "",
+
+          output:
+            data.output ||
+            "",
+
+          explanation:
+            data.explanation ||
+            "",
+        }
+      : null;
+
+  const availableExamples =
+    examples.length > 0
+      ? examples
+      : legacyExample
+      ? [legacyExample]
+      : [];
+
+  /*
+   * =========================================
+   * State
+   * =========================================
+   */
 
   const [
     selectedIndex,
@@ -44,83 +94,149 @@ function CodeExampleBlock({
   ] = useState(0);
 
   const [
-    showOutput,
-    setShowOutput,
+    hasRun,
+    setHasRun,
   ] = useState(false);
 
   /*
-   * =========================================================
-   * Reset interactive state when block changes
-   * =========================================================
+   * =========================================
+   * Configuration
+   * =========================================
    */
+
+  const showTabs =
+    availableExamples.length > 1;
+
+  /*
+   * New blocks use show_run_button.
+   *
+   * For older blocks where the setting does
+   * not exist, preserve the previous behaviour
+   * when command/output has been configured.
+   */
+  const configuredShowRun =
+    data.show_run_button;
+
+  const currentExample =
+    availableExamples[
+      selectedIndex
+    ] ||
+    availableExamples[0] ||
+    null;
+
+  const showRun =
+    configuredShowRun !==
+    undefined
+      ? Boolean(
+          configuredShowRun
+        )
+      : Boolean(
+          currentExample?.command ||
+          currentExample?.output
+        );
+
+  const runButtonLabel =
+    data.run_button_label ||
+    "▶ Run it";
+
+  const outputPlaceholder =
+    data.output_placeholder ||
+    "Press run!";
+
+  /*
+   * =========================================
+   * Keep selected example valid
+   * =========================================
+   */
+
   useEffect(() => {
-    setSelectedIndex(0);
-    setShowOutput(false);
+    if (
+      selectedIndex >=
+      availableExamples.length
+    ) {
+      setSelectedIndex(0);
+    }
   }, [
-    block?.id,
-    examples.length,
+    selectedIndex,
+    availableExamples.length,
   ]);
 
   /*
-   * =========================================================
-   * Current example
-   * =========================================================
-   *
-   * New mode:
-   * data.examples[]
-   *
-   * Existing mode:
-   * data.code
-   * data.language
-   * data.explanation
-   *
-   * This keeps old CodeExampleBlock records working.
-   * =========================================================
+   * Reset when a different learning block
+   * is rendered.
    */
-  const currentExample =
-    useMemo(() => {
-      if (
-        hasMultipleExamples
-      ) {
-        return (
-          examples[
-            selectedIndex
-          ] ||
-          examples[0]
-        );
-      }
+  useEffect(() => {
+    setSelectedIndex(0);
+    setHasRun(false);
+  }, [block?.id]);
 
-      return {
-        label:
-          data.language ||
-          "Code",
+  /*
+   * =========================================
+   * Select example
+   * =========================================
+   */
 
-        language:
-          data.language ||
-          "text",
+  const handleSelectExample = (
+    index
+  ) => {
+    setSelectedIndex(index);
 
-        code:
-          data.code ||
-          "",
+    /*
+     * Code Quest behaviour:
+     * changing language resets the terminal.
+     */
+    setHasRun(false);
+  };
 
-        command:
-          data.command ||
-          "",
+  /*
+   * =========================================
+   * Run simulated example
+   * =========================================
+   */
 
-        output:
-          data.output ||
-          "",
+  const handleRun = () => {
+    setHasRun(true);
+  };
 
-        explanation:
-          data.explanation ||
-          "",
-      };
-    }, [
-      data,
-      examples,
-      hasMultipleExamples,
-      selectedIndex,
-    ]);
+  /*
+   * =========================================
+   * Empty state
+   * =========================================
+   */
+
+  if (
+    availableExamples.length ===
+    0
+  ) {
+    return (
+      <LearningBlockShell
+        title={block?.title}
+        icon={block?.icon}
+        subtitle={data.subtitle}
+        className="code-example-block"
+      >
+        {data.description && (
+          <LearningText
+            text={
+              data.description
+            }
+            className="code-example-description"
+          />
+        )}
+
+        <div className="block-empty">
+          No code example has
+          been configured yet.
+        </div>
+      </LearningBlockShell>
+    );
+  }
+
+  /*
+   * =========================================
+   * Current example
+   * =========================================
+   */
 
   const code =
     String(
@@ -134,105 +250,50 @@ function CodeExampleBlock({
 
   const languageLabel =
     currentExample?.label ||
-    language;
+    currentExample?.language ||
+    "Code";
 
-  const description =
-    data.description ||
+  const command =
+    currentExample?.command ||
+    "";
+
+  const output =
+    currentExample?.output ||
     "";
 
   const explanation =
     currentExample?.explanation ||
-    data.explanation ||
     "";
-
-  const command =
-    String(
-      currentExample?.command ||
-      ""
-    );
-
-  const output =
-    String(
-      currentExample?.output ||
-      ""
-    );
-
-  const hasRunnableOutput =
-    Boolean(
-      command ||
-      output
-    );
-
-  const runButtonLabel =
-    data.run_button_label ||
-    "▶ Run it";
-
-  const outputPlaceholder =
-    data.output_placeholder ||
-    "Press run!";
-
-  /*
-   * =========================================================
-   * Select example
-   * =========================================================
-   */
-  const handleSelectExample =
-    (index) => {
-      setSelectedIndex(index);
-
-      /*
-       * Match Code Quest behaviour:
-       * changing language resets the output.
-       */
-      setShowOutput(false);
-    };
-
-  /*
-   * =========================================================
-   * Run
-   * =========================================================
-   *
-   * This intentionally simulates the output.
-   * It does NOT execute arbitrary learner/teacher code.
-   * =========================================================
-   */
-  const handleRun = () => {
-    setShowOutput(true);
-  };
 
   return (
     <LearningBlockShell
       title={block?.title}
       icon={block?.icon}
-      subtitle={
-        data.subtitle
-      }
+      subtitle={data.subtitle}
       className="code-example-block"
     >
-      {/* ===================================================
-          Description
-          =================================================== */}
-
-      {description && (
+      {data.description && (
         <LearningText
           text={
-            description
+            data.description
           }
           className="code-example-description"
         />
       )}
 
-      {/* ===================================================
-          Example / Language Tabs
-          =================================================== */}
+      {/* =====================================
+          Example Tabs
+          Only shown when there is more
+          than one example.
+      ====================================== */}
 
-      {hasMultipleExamples && (
+      {showTabs && (
         <div
           className="code-example-tabs"
           role="tablist"
           aria-label="Code examples"
         >
-          {examples.map(
+          {availableExamples.map(
             (
               example,
               index
@@ -242,13 +303,15 @@ function CodeExampleBlock({
                 selectedIndex;
 
               const label =
-                example?.label ||
-                example?.language ||
-                `Example ${index + 1}`;
+                example.label ||
+                example.language ||
+                `Example ${
+                  index + 1
+                }`;
 
               return (
                 <button
-                  key={`code-example-tab-${index}`}
+                  key={index}
                   type="button"
                   role="tab"
                   aria-selected={
@@ -275,127 +338,107 @@ function CodeExampleBlock({
         </div>
       )}
 
-      {/* ===================================================
-          Code Example
-          =================================================== */}
+      {/* =====================================
+          Code
+      ====================================== */}
 
-      {code ? (
-        <>
-          <div className="code-example-wrapper">
-            {/* Toolbar */}
+      <div className="code-example-wrapper">
+        <div className="code-example-toolbar">
+          <span className="code-example-language">
+            {languageLabel}
+          </span>
+        </div>
 
-            <div className="code-example-toolbar">
-              <span className="code-example-language">
-                {languageLabel}
-              </span>
-            </div>
+        <div className="code-example-syntax">
+          <SyntaxHighlighter
+            language={language}
+            style={vscDarkPlus}
+            showLineNumbers={true}
+            wrapLongLines={false}
+            customStyle={{
+              margin: 0,
+              padding: "18px",
+              background:
+                "#1e1e1e",
+              borderRadius:
+                "0 0 14px 14px",
+              fontSize: "14px",
+              lineHeight: "1.65",
+            }}
+            codeTagProps={{
+              style: {
+                fontFamily:
+                  'Consolas, Monaco, "Courier New", monospace',
+              },
+            }}
+          >
+            {code}
+          </SyntaxHighlighter>
+        </div>
+      </div>
 
-            {/* Syntax Highlighted Code */}
+      {/* =====================================
+          Simulated Run / Output
+      ====================================== */}
 
-            <div className="code-example-syntax">
-              <SyntaxHighlighter
-                language={
-                  language
-                }
-                style={
-                  vscDarkPlus
-                }
-                showLineNumbers={
-                  true
-                }
-                wrapLongLines={
-                  false
-                }
-                customStyle={{
-                  margin: 0,
-                  padding:
-                    "18px",
-                  background:
-                    "#1e1e1e",
-                  borderRadius:
-                    "0 0 14px 14px",
-                  fontSize:
-                    "14px",
-                  lineHeight:
-                    "1.65",
-                }}
-                codeTagProps={{
-                  style: {
-                    fontFamily:
-                      'Consolas, Monaco, "Courier New", monospace',
-                  },
-                }}
-              >
-                {code}
-              </SyntaxHighlighter>
-            </div>
+      {showRun && (
+        <div className="code-example-run-section">
+          <div className="code-example-run-actions">
+            <button
+              type="button"
+              className="block-button block-button--primary"
+              onClick={
+                handleRun
+              }
+            >
+              {runButtonLabel}
+            </button>
           </div>
 
-          {/* =================================================
-              Run Button + Terminal
-              ================================================= */}
-
-          {hasRunnableOutput && (
-            <div className="code-example-run-section">
-              <div className="code-example-run-actions">
-                <button
-                  type="button"
-                  className="block-button block-button--primary"
-                  onClick={
-                    handleRun
-                  }
-                >
-                  {runButtonLabel}
-                </button>
-              </div>
-
-              <div
-                className="code-example-terminal"
-                aria-live="polite"
-              >
-                {!showOutput ? (
-                  <span className="code-example-terminal-placeholder">
-                    {
-                      outputPlaceholder
-                    }
-                  </span>
-                ) : (
-                  <>
-                    {command && (
-                      <div className="code-example-terminal-command">
-                        <span
-                          className="code-example-terminal-prompt"
-                          aria-hidden="true"
-                        >
-                          $
-                        </span>
-
-                        <span>
-                          {command}
-                        </span>
-                      </div>
-                    )}
-
-                    {output && (
-                      <pre className="code-example-terminal-output">
-                        {output}
-                      </pre>
-                    )}
-                  </>
+          <div
+            className="code-example-terminal"
+            aria-live="polite"
+          >
+            {!hasRun ? (
+              <span className="code-example-terminal-placeholder">
+                {
+                  outputPlaceholder
+                }
+              </span>
+            ) : (
+              <>
+                {command && (
+                  <div className="code-example-terminal-command">
+                    <span className="code-example-terminal-prompt">
+                      $
+                    </span>{" "}
+                    {command}
+                  </div>
                 )}
-              </div>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="block-empty">
-          No code example has been configured yet.
+
+                {output && (
+                  <div className="code-example-terminal-output">
+                    {output}
+                  </div>
+                )}
+
+                {!command &&
+                  !output && (
+                    <div className="code-example-terminal-placeholder">
+                      No simulated
+                      output has been
+                      configured.
+                    </div>
+                  )}
+              </>
+            )}
+          </div>
         </div>
       )}
 
-      {/* ===================================================
+      {/* =====================================
           Explanation
-          =================================================== */}
+      ====================================== */}
 
       {explanation && (
         <div className="code-example-explanation">
@@ -407,9 +450,7 @@ function CodeExampleBlock({
           </span>
 
           <LearningText
-            text={
-              explanation
-            }
+            text={explanation}
             className="code-example-explanation-text"
           />
         </div>
