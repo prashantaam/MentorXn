@@ -3,6 +3,7 @@ import FlipCardBlock from "../block-components/FlipCardBlock";
 import CodeExampleBlock from "../block-components/CodeExampleBlock";
 import SequenceBlock from "../block-components/SequenceBlock";
 import QuizBlock from "../block-components/QuizBlock";
+import ProcessFlowBlock from "../block-components/ProcessFlowBlock";
 
 const blockRegistry = {
   /*
@@ -32,7 +33,10 @@ const blockRegistry = {
   },
   QuizBlock: {
   component: QuizBlock,
-},
+  },
+  ProcessFlowBlock: {
+  component: ProcessFlowBlock,
+  },
 };
 
 export const getBlockComponent = (componentName) => {

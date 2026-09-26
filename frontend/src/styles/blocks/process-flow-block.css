@@ -1,0 +1,252 @@
+/* =========================================================
+   MentorXn - Process Flow Block
+   ========================================================= */
+
+.process-flow-block
+  .process-flow {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 14px;
+}
+
+
+/* =========================================================
+   Flow Item
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-item {
+  display: flex;
+  align-items: stretch;
+
+  flex: 1 1 150px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   Stage
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-stage {
+  display: flex;
+  flex: 1;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  min-width: 0;
+  min-height: 126px;
+
+  padding: 12px 10px;
+
+  background:
+    var(--surface2);
+
+  color:
+    var(--text);
+
+  border: 2.5px solid
+    var(--ink);
+
+  border-radius: 16px;
+
+  text-align: center;
+
+  opacity: 0.55;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+/* =========================================================
+   Current Stage
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-stage.is-current {
+  background:
+    var(--w);
+
+  color:
+    var(--on-w);
+
+  opacity: 1;
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    4px 4px 0
+    var(--shadow-c);
+}
+
+
+/* =========================================================
+   Previous Stages
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-stage.is-past {
+  opacity: 1;
+}
+
+
+/* =========================================================
+   Stage Content
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-stage-icon {
+  display: block;
+
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.process-flow-block
+  .process-flow-stage-title {
+  margin: 0;
+
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.process-flow-block
+  .process-flow-stage-caption {
+  margin: 0;
+
+  color:
+    var(--muted);
+
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.process-flow-block
+  .process-flow-stage.is-current
+  .process-flow-stage-caption {
+  color:
+    var(--on-w);
+}
+
+
+/* =========================================================
+   Arrow
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-arrow {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex: none;
+
+  padding: 0 4px;
+
+  color:
+    var(--text);
+
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   Actions
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-actions {
+  margin-top: 18px;
+}
+
+
+/* =========================================================
+   Information Panel
+   ========================================================= */
+
+.process-flow-block
+  .process-flow-info {
+  margin-top: 14px;
+
+  padding: 14px 16px;
+
+  background:
+    var(--surface2);
+
+  color:
+    var(--text);
+
+  border: 2.5px dashed
+    var(--ink);
+
+  border-radius: 14px;
+}
+
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (
+  max-width: 700px
+) {
+  .process-flow-block
+    .process-flow {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .process-flow-block
+    .process-flow-item {
+    flex: none;
+
+    flex-direction: column;
+  }
+
+  .process-flow-block
+    .process-flow-stage {
+    min-height: 110px;
+  }
+
+  .process-flow-block
+    .process-flow-arrow {
+    padding: 5px 0;
+
+    transform:
+      rotate(90deg);
+  }
+
+  .process-flow-block
+    .process-flow-actions {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .process-flow-block
+    .process-flow-actions
+    .block-button {
+    width: 100%;
+  }
+}
