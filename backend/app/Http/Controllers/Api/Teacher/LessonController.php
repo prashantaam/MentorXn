@@ -12,7 +12,8 @@ use Illuminate\Validation\Rule;
 class LessonController extends Controller
 {
     /**
-     * Return lessons for a teacher's course.
+     * Return lessons for a teacher's course,
+     * including their topics.
      */
     public function index(
         Request $request,
@@ -32,7 +33,18 @@ class LessonController extends Controller
             ], 404);
         }
 
+        /*
+         * Load lessons and their topics in one API request.
+         *
+         * Eloquent eager loading prevents the frontend from
+         * needing a separate HTTP request for every lesson.
+         */
         $lessons = $course->lessons()
+            ->with([
+                'topics' => function ($query) {
+                    $query->orderBy('position');
+                },
+            ])
             ->orderBy('position')
             ->get();
 

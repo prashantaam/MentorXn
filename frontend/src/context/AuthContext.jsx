@@ -90,7 +90,7 @@ export function AuthProvider({ children }) {
     try {
       if (token) {
         await fetch(
-          "http://127.0.0.1:8000/api/logout",
+          "/api/logout",
           {
             method: "POST",
             headers: {
@@ -116,7 +116,7 @@ export function AuthProvider({ children }) {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/user",
+          "/api/user",
           {
             headers: {
               Accept: "application/json",

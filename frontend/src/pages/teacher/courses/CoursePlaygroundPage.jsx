@@ -229,7 +229,7 @@ function CoursePlaygroundPage() {
       try {
         const response =
           await fetch(
-            `http://127.0.0.1:8000/api/teacher/topics/${topicId}/learning-blocks`,
+            `/api/teacher/topics/${topicId}/learning-blocks`,
             {
               headers:
                 getHeaders(),
@@ -286,7 +286,7 @@ function CoursePlaygroundPage() {
         try {
           const courseResponse =
             await fetch(
-              `http://127.0.0.1:8000/api/teacher/courses/${courseId}`,
+              `/api/teacher/courses/${courseId}`,
               {
                 headers:
                   getHeaders(),
@@ -307,7 +307,7 @@ function CoursePlaygroundPage() {
 
           const lessonsResponse =
             await fetch(
-              `http://127.0.0.1:8000/api/teacher/courses/${courseId}/lessons`,
+              `/api/teacher/courses/${courseId}/lessons`,
               {
                 headers:
                   getHeaders(),
@@ -326,47 +326,18 @@ function CoursePlaygroundPage() {
             );
           }
 
-          const loadedLessons =
-            lessonsData.lessons ||
-            [];
-
           const lessonsWithTopics =
-            await Promise.all(
-              loadedLessons.map(
-                async (
-                  lesson
-                ) => {
-                  const topicsResponse =
-                    await fetch(
-                      `http://127.0.0.1:8000/api/teacher/lessons/${lesson.id}/topics`,
-                      {
-                        headers:
-                          getHeaders(),
-                      }
-                    );
-
-                  const topicsData =
-                    await topicsResponse.json();
-
-                  if (
-                    !topicsResponse.ok
-                  ) {
-                    throw new Error(
-                      topicsData.message ||
-                        `Unable to load topics for ${lesson.title}.`
-                    );
-                  }
-
-                  return {
-                    ...lesson,
-
-                    topics:
-                      topicsData.topics ||
-                      [],
-                  };
-                }
-              )
-            );
+            (lessonsData.lessons || []).map(
+              (lesson) => ({
+                ...lesson,
+                topics:
+                  Array.isArray(
+                    lesson.topics
+                  )
+                    ? lesson.topics
+                    : [],
+              })
+          );
 
           setCourse(
             courseData.course
@@ -540,7 +511,7 @@ function CoursePlaygroundPage() {
       try {
         const response =
           await fetch(
-            `http://127.0.0.1:8000/api/teacher/courses/${courseId}/lessons`,
+            `/api/teacher/courses/${courseId}/lessons`,
             {
               method: "POST",
 
@@ -659,7 +630,7 @@ function CoursePlaygroundPage() {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/teacher/lessons/${editingLesson.id}`,
+          `/api/teacher/lessons/${editingLesson.id}`,
           {
             method: "PUT",
             headers: getHeaders(true),
@@ -759,7 +730,7 @@ function CoursePlaygroundPage() {
 
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/teacher/lessons/${deletingLesson.id}`,
+          `/api/teacher/lessons/${deletingLesson.id}`,
           {
             method: "DELETE",
             headers: getHeaders(),
@@ -894,7 +865,7 @@ function CoursePlaygroundPage() {
       try {
         const response =
           await fetch(
-            `http://127.0.0.1:8000/api/teacher/lessons/${selectedLesson.id}/topics`,
+            `/api/teacher/lessons/${selectedLesson.id}/topics`,
             {
               method: "POST",
 
@@ -1027,7 +998,7 @@ function CoursePlaygroundPage() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/teacher/topics/${editingTopic.id}`,
+        `/api/teacher/topics/${editingTopic.id}`,
         {
           method: "PUT",
           headers: getHeaders(true),
@@ -1108,7 +1079,7 @@ function CoursePlaygroundPage() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/teacher/topics/${deletingTopic.id}`,
+        `/api/teacher/topics/${deletingTopic.id}`,
         {
           method: "DELETE",
           headers: getHeaders(),
@@ -1213,7 +1184,7 @@ function CoursePlaygroundPage() {
       try {
         const response =
           await fetch(
-            "http://127.0.0.1:8000/api/teacher/lblock-templates",
+            "/api/teacher/lblock-templates",
             {
               headers:
                 getHeaders(),
@@ -1436,7 +1407,7 @@ function CoursePlaygroundPage() {
       try {
         const response =
           await fetch(
-            `http://127.0.0.1:8000/api/teacher/topics/${selectedTopic.id}/learning-blocks`,
+            `/api/teacher/topics/${selectedTopic.id}/learning-blocks`,
             {
               method:
                 "POST",
@@ -1687,7 +1658,7 @@ function CoursePlaygroundPage() {
       try {
         const response =
           await fetch(
-            `http://127.0.0.1:8000/api/teacher/learning-blocks/${editingLearningBlock.id}`,
+            `/api/teacher/learning-blocks/${editingLearningBlock.id}`,
             {
               method: "PUT",
               headers: getHeaders(true),
@@ -1784,7 +1755,7 @@ function CoursePlaygroundPage() {
       try {
         const response =
           await fetch(
-            `http://127.0.0.1:8000/api/teacher/learning-blocks/${learningBlockPendingDelete.id}`,
+            `/api/teacher/learning-blocks/${learningBlockPendingDelete.id}`,
             {
               method: "DELETE",
               headers: getHeaders(),
