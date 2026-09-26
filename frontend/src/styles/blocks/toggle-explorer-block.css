@@ -1,0 +1,284 @@
+/* =========================================================
+   MentorXn - Toggle Explorer Block
+   ========================================================= */
+
+
+.toggle-explorer-block
+  .toggle-explorer-description {
+  margin-bottom: 16px;
+}
+
+
+/* =========================================================
+   Toggle Items
+   ========================================================= */
+
+.toggle-explorer-block
+  .toggle-explorer-items {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin: 14px 0;
+}
+
+
+/* =========================================================
+   Toggle Item
+   ========================================================= */
+
+.toggle-explorer-block
+  .toggle-explorer-item {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  flex: 1 1 90px;
+
+  min-width: 80px;
+  min-height: 94px;
+
+  padding: 10px;
+
+  background:
+    var(--surface2);
+
+  color:
+    var(--text);
+
+  border: 2.5px solid
+    var(--ink);
+
+  border-radius: 14px;
+
+  font-family: inherit;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-item:hover {
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    3px 3px 0
+    var(--shadow-c);
+}
+
+.toggle-explorer-block
+  .toggle-explorer-item:focus-visible {
+  outline: 3px solid
+    var(--ink);
+
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
+   Active Toggle
+   ========================================================= */
+
+.toggle-explorer-block
+  .toggle-explorer-item.is-active {
+  background:
+    var(--w);
+
+  color:
+    var(--on-w);
+
+  box-shadow:
+    4px 4px 0
+    var(--shadow-c);
+}
+
+
+/* =========================================================
+   Icon / Label
+   ========================================================= */
+
+.toggle-explorer-block
+  .toggle-explorer-icon {
+  font-size: 2rem;
+
+  line-height: 1.1;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-label {
+  font-size: 0.92rem;
+
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   Number Input
+   ========================================================= */
+
+.toggle-explorer-block
+  .toggle-explorer-input-row {
+  display: flex;
+
+  align-items: center;
+
+  margin-top: 16px;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-input-label {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  font-weight: 900;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-input {
+  width: 110px;
+
+  min-height: 42px;
+
+  padding: 7px 10px;
+
+  background:
+    var(--surface);
+
+  color:
+    var(--text);
+
+  border: 2.5px solid
+    var(--ink);
+
+  border-radius: 10px;
+
+  font: inherit;
+  font-weight: 800;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-input:focus-visible {
+  outline: 3px solid
+    var(--w);
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   Result
+   ========================================================= */
+
+.toggle-explorer-block
+  .toggle-explorer-result {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 14px;
+
+  padding: 13px 15px;
+
+  background:
+    var(--surface2);
+
+  color:
+    var(--text);
+
+  border: 2.5px dashed
+    var(--ink);
+
+  border-radius: 14px;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-result-item {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-result-label {
+  font-weight: 800;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-binary {
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+
+  letter-spacing: 0.08em;
+}
+
+.toggle-explorer-block
+  .toggle-explorer-equals {
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (
+  max-width: 600px
+) {
+  .toggle-explorer-block
+    .toggle-explorer-items {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .toggle-explorer-block
+    .toggle-explorer-item {
+    min-width: 0;
+  }
+
+  .toggle-explorer-block
+    .toggle-explorer-result {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .toggle-explorer-block
+    .toggle-explorer-equals {
+    display: none;
+  }
+}

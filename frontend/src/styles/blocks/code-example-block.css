@@ -4,23 +4,24 @@
    ========================================================= */
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    Block
-   --------------------------------------------------------- */
+   ========================================================= */
 
 .code-example-block {
   width: 100%;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    Description
-   --------------------------------------------------------- */
+   ========================================================= */
 
-.code-example-description {
+.code-example-block
+  .code-example-description {
   margin: 0 0 16px;
 
-  color: #54554e;
+  color: var(--muted);
 
   font-size: 1rem;
   font-weight: 600;
@@ -29,30 +30,117 @@
 
 
 /* =========================================================
+   Example Tabs
+   ========================================================= */
+
+.code-example-block
+  .code-example-tabs {
+  display: flex;
+
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin: 14px 0;
+}
+
+.code-example-block
+  .code-example-tab {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 38px;
+
+  padding: 5px 13px;
+
+  background: var(--surface);
+
+  color: var(--text);
+
+  border: 2.5px solid
+    var(--ink);
+
+  border-radius: 999px;
+
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+.code-example-block
+  .code-example-tab:hover {
+  background:
+    var(--surface2);
+
+  transform:
+    translateY(-1px);
+}
+
+.code-example-block
+  .code-example-tab.is-active {
+  background:
+    var(--w);
+
+  color:
+    var(--on-w);
+
+  box-shadow:
+    3px 3px 0
+    var(--shadow-c);
+}
+
+.code-example-block
+  .code-example-tab:focus-visible {
+  outline: 3px solid
+    var(--ink);
+
+  outline-offset: 3px;
+}
+
+
+/* =========================================================
    Code Window
    ========================================================= */
 
-.code-example-wrapper {
+.code-example-block
+  .code-example-wrapper {
   width: 100%;
+
   margin-top: 16px;
 
   overflow: hidden;
 
   background: #1e1e1e;
 
-  border: 3px solid #141414;
+  border: 3px solid
+    var(--ink);
+
   border-radius: 16px;
 
-  box-shadow: 4px 4px 0 #141414;
+  box-shadow:
+    4px 4px 0
+    var(--shadow-c);
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    Code Toolbar
-   --------------------------------------------------------- */
+   ========================================================= */
 
-.code-example-toolbar {
+.code-example-block
+  .code-example-toolbar {
   display: flex;
+
   align-items: center;
   justify-content: flex-end;
 
@@ -62,25 +150,33 @@
 
   background: #141414;
 
-  border-bottom: 2px solid #343434;
+  border-bottom:
+    2px solid #343434;
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    Language Badge
-   --------------------------------------------------------- */
+   ========================================================= */
 
-.code-example-language {
+.code-example-block
+  .code-example-language {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
 
   padding: 3px 10px;
 
-  background: #ffd84d;
-  color: #141414;
+  background:
+    var(--w);
 
-  border: 2px solid #141414;
+  color:
+    var(--on-w);
+
+  border: 2px solid
+    var(--ink);
+
   border-radius: 9px;
 
   font-family:
@@ -95,7 +191,9 @@
 
   text-transform: uppercase;
 
-  box-shadow: 2px 2px 0 #000;
+  box-shadow:
+    2px 2px 0
+    var(--shadow-c);
 }
 
 
@@ -103,7 +201,8 @@
    Syntax Highlighter Container
    ========================================================= */
 
-.code-example-syntax {
+.code-example-block
+  .code-example-syntax {
   display: block;
 
   width: 100%;
@@ -121,7 +220,9 @@
    Reset MentorXn general styles inside Prism
    ========================================================= */
 
-.code-example-syntax pre {
+.code-example-block
+  .code-example-syntax
+  pre {
   display: block;
 
   width: 100%;
@@ -131,15 +232,18 @@
   border: 0 !important;
   border-radius: 0 !important;
 
-  box-shadow: none !important;
+  box-shadow:
+    none !important;
 
   outline: none;
 
-  background: #1e1e1e !important;
+  background:
+    #1e1e1e !important;
 }
 
-
-.code-example-syntax code {
+.code-example-block
+  .code-example-syntax
+  code {
   display: block;
 
   margin: 0;
@@ -147,9 +251,11 @@
   border: 0 !important;
   border-radius: 0 !important;
 
-  box-shadow: none !important;
+  box-shadow:
+    none !important;
 
-  background: transparent !important;
+  background:
+    transparent !important;
 
   font-family:
     Consolas,
@@ -167,36 +273,35 @@
 
 /* =========================================================
    Prism Token Protection
-
-   Prism creates many <span> elements for syntax tokens.
-   MentorXn must NOT style those spans as normal UI elements.
    ========================================================= */
 
-.code-example-syntax pre span,
-.code-example-syntax code span {
-  border: 0 !important;
-  border-radius: 0 !important;
-
-  box-shadow: none !important;
-
-  outline: none !important;
-
+.code-example-block
+  .code-example-syntax
+  pre span,
+.code-example-block
+  .code-example-syntax
+  code span {
   padding-top: 0;
   padding-bottom: 0;
 
-  text-shadow: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+
+  box-shadow:
+    none !important;
+
+  outline:
+    none !important;
+
+  text-shadow:
+    none !important;
 }
 
-
-/*
-   Some existing MentorXn styles may apply a white
-   background to spans.
-
-   Prism tokens should inherit the editor background.
-*/
-
-.code-example-syntax code span {
-  background-color: transparent !important;
+.code-example-block
+  .code-example-syntax
+  code span {
+  background-color:
+    transparent !important;
 }
 
 
@@ -204,20 +309,28 @@
    Line Numbers
    ========================================================= */
 
-.code-example-syntax .linenumber {
-  display: inline-block !important;
+.code-example-block
+  .code-example-syntax
+  .linenumber {
+  display:
+    inline-block !important;
 
   min-width: 2.4em;
 
-  padding-right: 14px !important;
+  padding-right:
+    14px !important;
 
-  color: #858585 !important;
+  color:
+    #858585 !important;
 
-  background: transparent !important;
+  background:
+    transparent !important;
 
-  border: 0 !important;
+  border:
+    0 !important;
 
-  box-shadow: none !important;
+  box-shadow:
+    none !important;
 
   text-align: right;
 
@@ -226,23 +339,140 @@
 
 
 /* =========================================================
-   Preserve Prism Syntax Colours
-
-   Do NOT set "color" on Prism token classes here.
-   vscDarkPlus supplies those colours from React.
+   Prism Tokens
    ========================================================= */
 
-.code-example-syntax .token {
-  background: transparent !important;
+.code-example-block
+  .code-example-syntax
+  .token {
+  background:
+    transparent !important;
 
-  border: 0 !important;
-  border-radius: 0 !important;
+  border:
+    0 !important;
 
-  box-shadow: none !important;
+  border-radius:
+    0 !important;
+
+  box-shadow:
+    none !important;
 
   font-family: inherit;
 
-  text-shadow: none !important;
+  text-shadow:
+    none !important;
+}
+
+
+/* =========================================================
+   Run Section
+   ========================================================= */
+
+.code-example-block
+  .code-example-run-section {
+  margin-top: 16px;
+}
+
+.code-example-block
+  .code-example-run-actions {
+  display: flex;
+
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin-bottom: 12px;
+}
+
+
+/* =========================================================
+   Simulated Terminal
+   ========================================================= */
+
+.code-example-block
+  .code-example-terminal {
+  width: 100%;
+
+  min-height: 74px;
+
+  padding: 13px 15px;
+
+  overflow-x: auto;
+
+  background: #141414;
+
+  color: #eef0ea;
+
+  border: 3px solid
+    var(--ink);
+
+  border-radius: 14px;
+
+  box-shadow:
+    3px 3px 0
+    var(--shadow-c);
+
+  font-family:
+    Consolas,
+    Monaco,
+    "Courier New",
+    monospace;
+
+  font-size: 14px;
+  line-height: 1.65;
+
+  white-space: pre-wrap;
+}
+
+.code-example-block
+  .code-example-terminal-placeholder {
+  color: #b8b8b8;
+}
+
+.code-example-block
+  .code-example-terminal-command {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 8px;
+
+  color: #eef0ea;
+}
+
+.code-example-block
+  .code-example-terminal-prompt {
+  flex: 0 0 auto;
+
+  color: var(--w);
+
+  font-weight: 900;
+}
+
+.code-example-block
+  .code-example-terminal-output {
+  margin: 4px 0 0;
+
+  padding: 0;
+
+  overflow: visible;
+
+  background:
+    transparent;
+
+  color: #eef0ea;
+
+  border: 0;
+
+  border-radius: 0;
+
+  box-shadow: none;
+
+  font: inherit;
+
+  white-space:
+    pre-wrap;
 }
 
 
@@ -250,8 +480,10 @@
    Explanation
    ========================================================= */
 
-.code-example-explanation {
+.code-example-block
+  .code-example-explanation {
   display: flex;
+
   align-items: flex-start;
 
   gap: 10px;
@@ -260,28 +492,35 @@
 
   padding: 12px 14px;
 
-  background: #eeede6;
-  color: #141414;
+  background:
+    var(--surface2);
 
-  border: 2.5px dashed #141414;
+  color:
+    var(--text);
+
+  border: 2.5px dashed
+    var(--ink);
+
   border-radius: 14px;
 
   line-height: 1.55;
 }
 
-
-.code-example-explanation-icon {
+.code-example-block
+  .code-example-explanation-icon {
   flex: 0 0 auto;
 
   font-size: 1.25rem;
   line-height: 1.4;
 }
 
-
-.code-example-explanation p {
+.code-example-block
+  .code-example-explanation
+  p {
   margin: 0;
 
-  color: #141414;
+  color:
+    var(--text);
 
   font-size: 1rem;
   line-height: 1.55;
@@ -292,76 +531,127 @@
    Scrollbar
    ========================================================= */
 
-.code-example-syntax::-webkit-scrollbar {
+.code-example-block
+  .code-example-syntax::-webkit-scrollbar,
+.code-example-block
+  .code-example-terminal::-webkit-scrollbar {
   height: 9px;
 }
 
-
-.code-example-syntax::-webkit-scrollbar-track {
+.code-example-block
+  .code-example-syntax::-webkit-scrollbar-track,
+.code-example-block
+  .code-example-terminal::-webkit-scrollbar-track {
   background: #1e1e1e;
 }
 
-
-.code-example-syntax::-webkit-scrollbar-thumb {
+.code-example-block
+  .code-example-syntax::-webkit-scrollbar-thumb,
+.code-example-block
+  .code-example-terminal::-webkit-scrollbar-thumb {
   background: #555;
 
-  border: 2px solid #1e1e1e;
+  border:
+    2px solid #1e1e1e;
+
   border-radius: 999px;
 }
 
-
-.code-example-syntax::-webkit-scrollbar-thumb:hover {
+.code-example-block
+  .code-example-syntax::-webkit-scrollbar-thumb:hover,
+.code-example-block
+  .code-example-terminal::-webkit-scrollbar-thumb:hover {
   background: #707070;
 }
 
-
-/* Firefox */
-
-.code-example-syntax {
+.code-example-block
+  .code-example-syntax,
+.code-example-block
+  .code-example-terminal {
   scrollbar-width: thin;
-  scrollbar-color: #555 #1e1e1e;
+
+  scrollbar-color:
+    #555 #1e1e1e;
 }
 
 
 /* =========================================================
-   Mobile
+   Responsive
    ========================================================= */
 
-@media (max-width: 640px) {
-  .code-example-wrapper {
+@media (
+  max-width: 640px
+) {
+  .code-example-block
+    .code-example-tabs {
+    gap: 7px;
+  }
+
+  .code-example-block
+    .code-example-tab {
+    min-height: 36px;
+
+    padding: 4px 11px;
+
+    font-size: 0.84rem;
+  }
+
+  .code-example-block
+    .code-example-wrapper {
     margin-top: 12px;
 
     border-radius: 14px;
 
-    box-shadow: 3px 3px 0 #141414;
+    box-shadow:
+      3px 3px 0
+      var(--shadow-c);
   }
 
-
-  .code-example-toolbar {
+  .code-example-block
+    .code-example-toolbar {
     min-height: 38px;
 
     padding: 5px 9px;
   }
 
-
-  .code-example-language {
-    font-size: 0.72rem;
-
+  .code-example-block
+    .code-example-language {
     padding: 2px 8px;
+
+    font-size: 0.72rem;
   }
 
-
-  .code-example-syntax pre {
-    font-size: 13px !important;
+  .code-example-block
+    .code-example-syntax
+    pre {
+    font-size:
+      13px !important;
   }
 
-
-  .code-example-syntax code {
-    font-size: 13px !important;
+  .code-example-block
+    .code-example-syntax
+    code {
+    font-size:
+      13px !important;
   }
 
+  .code-example-block
+    .code-example-run-actions
+    .block-button {
+    width: 100%;
+  }
 
-  .code-example-explanation {
+  .code-example-block
+    .code-example-terminal {
+    min-height: 68px;
+
+    padding: 11px 12px;
+
+    font-size: 13px;
+  }
+
+  .code-example-block
+    .code-example-explanation {
     margin-top: 14px;
 
     padding: 10px 12px;
