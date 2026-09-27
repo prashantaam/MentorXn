@@ -28,6 +28,7 @@ class BigIdeasBlockSeeder extends Seeder
          * If the legacy template does not exist, look for the
          * new template. This makes the seeder safe to run again.
          */
+
         if (!$template) {
             $template = LBlockTemplate::query()
                 ->where('component', 'BigIdeasBlock')
@@ -38,6 +39,7 @@ class BigIdeasBlockSeeder extends Seeder
         /*
          * If neither exists, create a new template.
          */
+
         if (!$template) {
             $template = new LBlockTemplate();
         }
@@ -50,18 +52,18 @@ class BigIdeasBlockSeeder extends Seeder
 
         $template->name = 'Big Ideas';
         $template->component = 'BigIdeasBlock';
-
         $template->icon = '💡';
 
         $template->description =
-            'Interactive ideas displayed as cards or buttons. '
-            . 'Students select an idea to reveal its explanation.';
+            'Display ideas as interactive cards, buttons, or static information cards.';
 
         $template->tags = [
             'concepts',
             'interactive',
             'reveal',
             'cards',
+            'information',
+            'comparison',
             'flow',
         ];
 
@@ -77,6 +79,7 @@ class BigIdeasBlockSeeder extends Seeder
                 /*
                  * Block title
                  */
+
                 [
                     'name' => 'title',
                     'label' => 'Block title',
@@ -87,6 +90,7 @@ class BigIdeasBlockSeeder extends Seeder
                 /*
                  * Block icon
                  */
+
                 [
                     'name' => 'icon',
                     'label' => 'Icon',
@@ -97,6 +101,7 @@ class BigIdeasBlockSeeder extends Seeder
                 /*
                  * Instructions shown under the block heading
                  */
+
                 [
                     'name' => 'subtitle',
                     'label' => 'Instructions',
@@ -107,6 +112,7 @@ class BigIdeasBlockSeeder extends Seeder
                 /*
                  * Display style
                  */
+
                 [
                     'name' => 'display_style',
                     'label' => 'Display style',
@@ -123,14 +129,20 @@ class BigIdeasBlockSeeder extends Seeder
                             'value' => 'buttons',
                             'label' => 'Buttons',
                         ],
+                        [
+                            'value' => 'info_cards',
+                            'label' => 'Info Cards',
+                        ],
                     ],
                 ],
 
                 /*
                  * Optional visual flow arrows.
                  *
-                 * Default is OFF.
+                 * Can also be used with Info Cards when the
+                 * concepts represent a sequence or flow.
                  */
+
                 [
                     'name' => 'show_flow',
                     'label' => 'Show flow symbols',
@@ -142,14 +154,13 @@ class BigIdeasBlockSeeder extends Seeder
                 /*
                  * Unlimited ideas
                  */
+
                 [
                     'name' => 'items',
                     'label' => 'Ideas',
                     'type' => 'repeater',
                     'required' => true,
-
                     'item_label' => 'Idea',
-
                     'min_items' => 1,
 
                     'fields' => [
@@ -157,6 +168,7 @@ class BigIdeasBlockSeeder extends Seeder
                         /*
                          * Idea icon
                          */
+
                         [
                             'name' => 'icon',
                             'label' => 'Icon',
@@ -168,6 +180,7 @@ class BigIdeasBlockSeeder extends Seeder
                         /*
                          * Idea title
                          */
+
                         [
                             'name' => 'title',
                             'label' => 'Title',
@@ -176,8 +189,15 @@ class BigIdeasBlockSeeder extends Seeder
                         ],
 
                         /*
-                         * Explanation revealed when selected
+                         * Explanation
+                         *
+                         * Cards / Buttons:
+                         * revealed when selected.
+                         *
+                         * Info Cards:
+                         * always visible.
                          */
+
                         [
                             'name' => 'content',
                             'label' => 'Explanation',
@@ -193,16 +213,12 @@ class BigIdeasBlockSeeder extends Seeder
         /*
          * =====================================================
          * Example / Default Configuration
-         *
-         * Teachers can add or remove as many ideas as required.
          * =====================================================
          */
 
         $template->example_data = [
             'title' => 'Big Ideas',
-
             'icon' => '💡',
-
             'subtitle' =>
                 'Select an idea to explore it.',
 
@@ -243,6 +259,7 @@ class BigIdeasBlockSeeder extends Seeder
         /*
          * Keep the existing catalogue position.
          */
+
         $template->position = 10;
 
         $template->save();

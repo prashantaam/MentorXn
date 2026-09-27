@@ -2,6 +2,7 @@ import {
   useState,
 } from "react";
 
+
 function BlockConfigField({
   field,
   value,
@@ -13,16 +14,20 @@ function BlockConfigField({
     setAnswerInput,
   ] = useState("");
 
+
   if (!field?.name) {
     return null;
   }
 
+
   const fieldId =
     `template-${field.name}`;
+
 
   const fieldLabel =
     field.label ||
     field.name;
+
 
   /*
    * =========================================
@@ -42,12 +47,14 @@ function BlockConfigField({
       return targetField.default;
     }
 
+
     if (
       targetField.type ===
       "boolean"
     ) {
       return false;
     }
+
 
     if (
       targetField.type ===
@@ -58,12 +65,14 @@ function BlockConfigField({
       return [];
     }
 
+
     if (
       targetField.type ===
       "select"
     ) {
       const firstOption =
         targetField.options?.[0];
+
 
       return typeof firstOption ===
         "string"
@@ -72,8 +81,66 @@ function BlockConfigField({
             "";
     }
 
+
     return "";
   };
+
+
+  /*
+   * =========================================
+   * Conditional field visibility
+   * =========================================
+   *
+   * Used mainly by fields inside repeaters.
+   *
+   * Example:
+   *
+   * show_when: {
+   *   field: "type",
+   *   equals: "range"
+   * }
+   */
+
+  const shouldShowField = (
+    targetField,
+    siblingValues = {}
+  ) => {
+    const condition =
+      targetField?.show_when;
+
+
+    if (!condition) {
+      return true;
+    }
+
+
+    if (!condition.field) {
+      return true;
+    }
+
+
+    const currentValue =
+      siblingValues?.[
+        condition.field
+      ];
+
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        condition,
+        "equals"
+      )
+    ) {
+      return (
+        currentValue ===
+        condition.equals
+      );
+    }
+
+
+    return true;
+  };
+
 
   /*
    * =========================================
@@ -90,29 +157,36 @@ function BlockConfigField({
         ? value
         : [];
 
+
     const minimumItems =
       Number(
         field.min_items ?? 0
       );
 
-    const handleAddAnswer = () => {
-      const text =
-        answerInput.trim();
 
-      if (!text) {
-        return;
-      }
+    const handleAddAnswer =
+      () => {
+        const text =
+          answerInput.trim();
 
-      onChange([
-        ...answers,
-        {
-          text,
-          correct: false,
-        },
-      ]);
 
-      setAnswerInput("");
-    };
+        if (!text) {
+          return;
+        }
+
+
+        onChange([
+          ...answers,
+          {
+            text,
+            correct: false,
+          },
+        ]);
+
+
+        setAnswerInput("");
+      };
+
 
     const handleAnswerKeyDown = (
       event
@@ -123,17 +197,23 @@ function BlockConfigField({
         return;
       }
 
+
       event.preventDefault();
+
 
       handleAddAnswer();
     };
+
 
     const handleCorrectAnswer = (
       selectedIndex
     ) => {
       onChange(
         answers.map(
-          (answer, index) => ({
+          (
+            answer,
+            index
+          ) => ({
             ...answer,
 
             correct:
@@ -143,6 +223,7 @@ function BlockConfigField({
         )
       );
     };
+
 
     const handleRemoveAnswer = (
       answerIndex
@@ -154,6 +235,7 @@ function BlockConfigField({
         return;
       }
 
+
       onChange(
         answers.filter(
           (_, index) =>
@@ -162,6 +244,7 @@ function BlockConfigField({
         )
       );
     };
+
 
     return (
       <div className="course-playground-template-field">
@@ -174,11 +257,13 @@ function BlockConfigField({
           </label>
         )}
 
+
         {field.help && (
           <p className="course-playground-field-help">
             {field.help}
           </p>
         )}
+
 
         <div className="course-playground-answer-builder">
           <div className="course-playground-answer-add-row">
@@ -204,6 +289,7 @@ function BlockConfigField({
               }
             />
 
+
             <button
               type="button"
               className="course-playground-small-add-button course-playground-answer-add-button"
@@ -220,6 +306,7 @@ function BlockConfigField({
             </button>
           </div>
 
+
           {answers.length ===
             0 && (
             <div className="course-playground-answer-empty">
@@ -229,6 +316,7 @@ function BlockConfigField({
               answers.
             </div>
           )}
+
 
           {answers.length >
             0 && (
@@ -268,10 +356,12 @@ function BlockConfigField({
                         }
                       />
 
+
                       <span className="course-playground-answer-text">
                         {answer.text}
                       </span>
                     </label>
+
 
                     <button
                       type="button"
@@ -303,6 +393,7 @@ function BlockConfigField({
             </div>
           )}
 
+
           {answers.length >
             0 &&
             !answers.some(
@@ -322,6 +413,7 @@ function BlockConfigField({
     );
   }
 
+
   /*
    * =========================================
    * Repeater
@@ -329,12 +421,14 @@ function BlockConfigField({
    */
 
   if (
-    field.type === "repeater"
+    field.type ===
+    "repeater"
   ) {
     const items =
       Array.isArray(value)
         ? value
         : [];
+
 
     const itemFields =
       Array.isArray(
@@ -343,9 +437,48 @@ function BlockConfigField({
         ? field.fields
         : [];
 
+
+    /*
+     * IMPORTANT:
+     *
+     * Use ?? instead of ||.
+     *
+     * min_items: 0 must remain 0.
+     *
+     * Examples:
+     *
+     * Inputs:
+     * min_items = 1
+     *
+     * Actions:
+     * min_items = 0
+     *
+     * Rules:
+     * min_items = 0
+     *
+     * Output boxes:
+     * min_items = 0
+     */
+
+    const minimumItems =
+      Math.max(
+        0,
+        Number(
+          field.min_items ??
+            0
+        )
+      );
+
+
+    const canRemoveItem =
+      items.length >
+      minimumItems;
+
+
     const handleAddItem =
       () => {
         const newItem = {};
+
 
         itemFields.forEach(
           (itemField) => {
@@ -354,6 +487,7 @@ function BlockConfigField({
             ) {
               return;
             }
+
 
             newItem[
               itemField.name
@@ -364,15 +498,27 @@ function BlockConfigField({
           }
         );
 
+
         onChange([
           ...items,
           newItem,
         ]);
       };
 
+
     const handleRemoveItem = (
       itemIndex
     ) => {
+      /*
+       * Protect the minimum at the
+       * data level as well as the UI.
+       */
+
+      if (!canRemoveItem) {
+        return;
+      }
+
+
       onChange(
         items.filter(
           (_, index) =>
@@ -382,6 +528,7 @@ function BlockConfigField({
       );
     };
 
+
     const handleItemChange = (
       itemIndex,
       itemFieldName,
@@ -389,8 +536,12 @@ function BlockConfigField({
     ) => {
       onChange(
         items.map(
-          (item, index) =>
-            index === itemIndex
+          (
+            item,
+            index
+          ) =>
+            index ===
+            itemIndex
               ? {
                   ...item,
 
@@ -402,6 +553,7 @@ function BlockConfigField({
       );
     };
 
+
     return (
       <div className="course-playground-template-field">
         {showLabel && (
@@ -412,6 +564,14 @@ function BlockConfigField({
               " *"}
           </label>
         )}
+
+
+        {field.help && (
+          <p className="course-playground-field-help">
+            {field.help}
+          </p>
+        )}
+
 
         <div className="course-playground-repeater">
           {items.map(
@@ -432,9 +592,8 @@ function BlockConfigField({
                     {itemIndex + 1}
                   </strong>
 
-                  {items.length >
-                    (field.min_items ||
-                      1) && (
+
+                  {canRemoveItem && (
                     <button
                       type="button"
                       className="course-playground-question-remove"
@@ -449,38 +608,50 @@ function BlockConfigField({
                   )}
                 </div>
 
-                {itemFields.map(
-                  (
-                    itemField
-                  ) => (
-                    <BlockConfigField
-                      key={
-                        itemField.name
-                      }
-                      field={
-                        itemField
-                      }
-                      value={
-                        item?.[
-                          itemField
-                            .name
-                        ]
-                      }
-                      onChange={(
-                        newValue
-                      ) =>
-                        handleItemChange(
-                          itemIndex,
-                          itemField.name,
-                          newValue
-                        )
-                      }
-                    />
+
+                {itemFields
+                  .filter(
+                    (
+                      itemField
+                    ) =>
+                      shouldShowField(
+                        itemField,
+                        item
+                      )
                   )
-                )}
+                  .map(
+                    (
+                      itemField
+                    ) => (
+                      <BlockConfigField
+                        key={
+                          itemField.name
+                        }
+                        field={
+                          itemField
+                        }
+                        value={
+                          item?.[
+                            itemField
+                              .name
+                          ]
+                        }
+                        onChange={(
+                          newValue
+                        ) =>
+                          handleItemChange(
+                            itemIndex,
+                            itemField.name,
+                            newValue
+                          )
+                        }
+                      />
+                    )
+                  )}
               </section>
             )
           )}
+
 
           <button
             type="button"
@@ -497,6 +668,7 @@ function BlockConfigField({
       </div>
     );
   }
+
 
   /*
    * =========================================
@@ -522,6 +694,14 @@ function BlockConfigField({
         </label>
       )}
 
+
+      {field.help && (
+        <p className="course-playground-field-help">
+          {field.help}
+        </p>
+      )}
+
+
       {field.type ===
       "textarea" ? (
         <textarea
@@ -536,7 +716,9 @@ function BlockConfigField({
             field.placeholder ||
             ""
           }
-          onChange={(event) =>
+          onChange={(
+            event
+          ) =>
             onChange(
               event.target.value
             )
@@ -558,7 +740,9 @@ function BlockConfigField({
             field.placeholder ||
             ""
           }
-          onChange={(event) =>
+          onChange={(
+            event
+          ) =>
             onChange(
               event.target.value
             )
@@ -573,13 +757,16 @@ function BlockConfigField({
             checked={
               Boolean(value)
             }
-            onChange={(event) =>
+            onChange={(
+              event
+            ) =>
               onChange(
                 event.target
                   .checked
               )
             }
           />
+
 
           <span>
             Enabled
@@ -594,7 +781,9 @@ function BlockConfigField({
             field.default ??
             ""
           }
-          onChange={(event) =>
+          onChange={(
+            event
+          ) =>
             onChange(
               event.target.value
             )
@@ -609,12 +798,14 @@ function BlockConfigField({
                   ? option
                   : option.value;
 
+
               const optionLabel =
                 typeof option ===
                 "string"
                   ? option
                   : option.label ??
                     option.value;
+
 
               return (
                 <option
@@ -647,10 +838,18 @@ function BlockConfigField({
             field.placeholder ||
             ""
           }
-          min={field.min}
-          max={field.max}
-          step={field.step}
-          onChange={(event) =>
+          min={
+            field.min
+          }
+          max={
+            field.max
+          }
+          step={
+            field.step
+          }
+          onChange={(
+            event
+          ) =>
             onChange(
               event.target.value
             )
@@ -660,5 +859,6 @@ function BlockConfigField({
     </div>
   );
 }
+
 
 export default BlockConfigField;

@@ -5,6 +5,7 @@ import SequenceBlock from "../block-components/SequenceBlock";
 import QuizBlock from "../block-components/QuizBlock";
 import ProcessFlowBlock from "../block-components/ProcessFlowBlock";
 import ToggleExplorerBlock from "../block-components/ToggleExplorerBlock";
+import CodeActionBlock from "../block-components/CodeActionBlock";
 
 const blockRegistry = {
   /*
@@ -40,6 +41,9 @@ const blockRegistry = {
   },
    ToggleExplorerBlock: {
   component: ToggleExplorerBlock,
+  },
+  CodeActionBlock: {
+  component: CodeActionBlock,
   },
 };
 

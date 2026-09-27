@@ -6,7 +6,6 @@ import {
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 import LearningText from "../shared/LearningText";
 
-
 function BigIdeasBlock({
   block,
 }) {
@@ -15,16 +14,13 @@ function BigIdeasBlock({
     setSelected,
   ] = useState(null);
 
-
   const data =
     block?.data || {};
-
 
   const items =
     Array.isArray(data.items)
       ? data.items
       : [];
-
 
   /*
    * Support both the new snake_case configuration
@@ -35,12 +31,10 @@ function BigIdeasBlock({
     data.displayStyle ||
     "cards";
 
-
   const rawShowFlow =
     data.show_flow ??
     data.showFlow ??
     false;
-
 
   const showFlow =
     rawShowFlow === true ||
@@ -48,6 +42,9 @@ function BigIdeasBlock({
     rawShowFlow === "1" ||
     rawShowFlow === "true";
 
+  const isInfoCards =
+    displayStyle ===
+    "info_cards";
 
   /*
    * If the items change and the currently selected
@@ -65,6 +62,23 @@ function BigIdeasBlock({
     selected,
   ]);
 
+  /*
+   * Info Cards do not use selection.
+   *
+   * This also clears an old selection when switching
+   * from Cards/Buttons to Info Cards.
+   */
+  useEffect(() => {
+    if (
+      isInfoCards &&
+      selected !== null
+    ) {
+      setSelected(null);
+    }
+  }, [
+    isInfoCards,
+    selected,
+  ]);
 
   const getItemTitle = (
     item,
@@ -77,13 +91,11 @@ function BigIdeasBlock({
     );
   };
 
-
   const handleSelect = (
     index
   ) => {
     setSelected(index);
   };
-
 
   const renderIdea = (
     item,
@@ -98,13 +110,57 @@ function BigIdeasBlock({
     const isSelected =
       selected === index;
 
+    /*
+     * =====================================================
+     * Info Card Display
+     *
+     * Static card:
+     * icon + title on one line
+     * explanation always visible
+     * =====================================================
+     */
 
-    /* =====================================================
-       Button Display
-       ===================================================== */
+    if (isInfoCards) {
+      return (
+        <article
+          key={`idea-${index}`}
+          className="big-ideas-info-card"
+        >
+          <div className="big-ideas-info-card-heading">
+            {item?.icon && (
+              <span
+                className="big-ideas-info-card-icon"
+                aria-hidden="true"
+              >
+                {item.icon}
+              </span>
+            )}
+
+            <LearningText
+              text={title}
+              className="big-ideas-info-card-title"
+            />
+          </div>
+
+          {item?.content && (
+            <LearningText
+              text={item.content}
+              className="big-ideas-info-card-content"
+            />
+          )}
+        </article>
+      );
+    }
+
+    /*
+     * =====================================================
+     * Button Display
+     * =====================================================
+     */
 
     if (
-      displayStyle === "buttons"
+      displayStyle ===
+      "buttons"
     ) {
       return (
         <button
@@ -140,10 +196,11 @@ function BigIdeasBlock({
       );
     }
 
-
-    /* =====================================================
-       Card Display
-       ===================================================== */
+    /*
+     * =====================================================
+     * Card Display
+     * =====================================================
+     */
 
     return (
       <button
@@ -180,7 +237,6 @@ function BigIdeasBlock({
     );
   };
 
-
   return (
     <LearningBlockShell
       title={block?.title}
@@ -192,7 +248,7 @@ function BigIdeasBlock({
         <>
           {/* ===============================================
               Ideas
-              =============================================== */}
+          =============================================== */}
 
           <div
             className={
@@ -235,26 +291,32 @@ function BigIdeasBlock({
             )}
           </div>
 
-
           {/* ===============================================
               Explanation
-              =============================================== */}
 
-          <div
-            className="big-ideas-panel"
-            aria-live="polite"
-          >
-            {selected === null ? (
-              "👆 Select an idea to explore it."
-            ) : (
-              <LearningText
-                text={
-                  items[selected]
-                    ?.content
-                }
-              />
-            )}
-          </div>
+              Cards and Buttons reveal content here.
+
+              Info Cards already show their content directly,
+              so they do not need this panel.
+          =============================================== */}
+
+          {!isInfoCards && (
+            <div
+              className="big-ideas-panel"
+              aria-live="polite"
+            >
+              {selected === null ? (
+                "👆 Select an idea to explore it."
+              ) : (
+                <LearningText
+                  text={
+                    items[selected]
+                      ?.content
+                  }
+                />
+              )}
+            </div>
+          )}
         </>
       ) : (
         <div className="block-empty">
@@ -264,6 +326,5 @@ function BigIdeasBlock({
     </LearningBlockShell>
   );
 }
-
 
 export default BigIdeasBlock;
