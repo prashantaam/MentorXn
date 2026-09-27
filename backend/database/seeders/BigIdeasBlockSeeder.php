@@ -70,12 +70,17 @@ class BigIdeasBlockSeeder extends Seeder
         /*
          * =====================================================
          * Configuration Schema
+         *
+         * "visual" metadata tells the generic Visual Block
+         * Editor which rendered element represents a field.
+         *
+         * The editor does not need to know that this is a
+         * BigIdeasBlock.
          * =====================================================
          */
 
         $template->configuration_schema = [
             'fields' => [
-
                 /*
                  * Block title
                  */
@@ -85,10 +90,19 @@ class BigIdeasBlockSeeder extends Seeder
                     'label' => 'Block title',
                     'type' => 'text',
                     'required' => true,
+
+                    'visual' => [
+                        'selector' => '.learning-block > h2',
+                    ],
                 ],
 
                 /*
                  * Block icon
+                 *
+                 * The icon is part of the same heading.
+                 * Clicking the heading therefore selects the
+                 * title group. Both title and icon can be shown
+                 * together in the properties panel.
                  */
 
                 [
@@ -96,6 +110,11 @@ class BigIdeasBlockSeeder extends Seeder
                     'label' => 'Icon',
                     'type' => 'text',
                     'required' => false,
+
+                    'visual' => [
+                        'selector' => '.learning-block > h2',
+                        'group' => 'heading',
+                    ],
                 ],
 
                 /*
@@ -107,10 +126,17 @@ class BigIdeasBlockSeeder extends Seeder
                     'label' => 'Instructions',
                     'type' => 'textarea',
                     'required' => false,
+
+                    'visual' => [
+                        'selector' => '.learning-block > .sub',
+                    ],
                 ],
 
                 /*
                  * Display style
+                 *
+                 * This is a setting rather than a visually
+                 * selectable content region.
                  */
 
                 [
@@ -139,8 +165,8 @@ class BigIdeasBlockSeeder extends Seeder
                 /*
                  * Optional visual flow arrows.
                  *
-                 * Can also be used with Info Cards when the
-                 * concepts represent a sequence or flow.
+                 * This remains a block setting rather than a
+                 * selectable visual content region.
                  */
 
                 [
@@ -153,6 +179,9 @@ class BigIdeasBlockSeeder extends Seeder
 
                 /*
                  * Unlimited ideas
+                 *
+                 * The nth rendered element matching selector
+                 * corresponds to the nth item in data.items.
                  */
 
                 [
@@ -163,12 +192,12 @@ class BigIdeasBlockSeeder extends Seeder
                     'item_label' => 'Idea',
                     'min_items' => 1,
 
+                    'visual' => [
+                        'selector' => '.big-ideas-item-wrapper',
+                        'selection_type' => 'repeater',
+                    ],
+
                     'fields' => [
-
-                        /*
-                         * Idea icon
-                         */
-
                         [
                             'name' => 'icon',
                             'label' => 'Icon',
@@ -177,26 +206,12 @@ class BigIdeasBlockSeeder extends Seeder
                             'default' => '💡',
                         ],
 
-                        /*
-                         * Idea title
-                         */
-
                         [
                             'name' => 'title',
                             'label' => 'Title',
                             'type' => 'text',
                             'required' => true,
                         ],
-
-                        /*
-                         * Explanation
-                         *
-                         * Cards / Buttons:
-                         * revealed when selected.
-                         *
-                         * Info Cards:
-                         * always visible.
-                         */
 
                         [
                             'name' => 'content',
@@ -219,11 +234,11 @@ class BigIdeasBlockSeeder extends Seeder
         $template->example_data = [
             'title' => 'Big Ideas',
             'icon' => '💡',
+
             'subtitle' =>
                 'Select an idea to explore it.',
 
             'display_style' => 'cards',
-
             'show_flow' => false,
 
             'items' => [

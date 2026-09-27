@@ -362,6 +362,7 @@ function SequenceBlock({
               <div
                 key={`sequence-${itemIndex}`}
                 className="sequence-block-item"
+                data-visual-index={itemIndex}
               >
                 {showNumbers && (
                   <span

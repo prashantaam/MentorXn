@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import {
+  useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom";
@@ -16,7 +17,6 @@ import LearningText from "../../../components/learning/shared/LearningText";
 
 import "../../../styles/teachers/course-playground.css";
 import "../../../styles/adventure-land.css";
-import BlockConfigField from "./BlockConfigField";
 
 const LESSON_ACCENT_COLORS = [
   "#8fd9a8", // Mint Green
@@ -59,6 +59,9 @@ function CoursePlaygroundPage() {
   const navigate =
     useNavigate();
 
+  const location =
+    useLocation();
+
   const { token } =
     useAuth();
 
@@ -88,34 +91,9 @@ function CoursePlaygroundPage() {
   ] = useState([]);
 
   const [
-    blockTemplates,
-    setBlockTemplates,
-  ] = useState([]);
-
-  const [
-    selectedBlockTemplate,
-    setSelectedBlockTemplate,
-  ] = useState(null);
-
-  const [
-    templateForm,
-    setTemplateForm,
-  ] = useState({});
-
-  const [
-    editingLearningBlock,
-    setEditingLearningBlock,
-  ] = useState(null);
-
-  const [
     learningBlockPendingDelete,
     setLearningBlockPendingDelete,
   ] = useState(null);
-
-  const [
-    isLoadingTemplates,
-    setIsLoadingTemplates,
-  ] = useState(false);
 
   const [
     editorMode,
@@ -347,34 +325,51 @@ function CoursePlaygroundPage() {
             lessonsWithTopics
           );
 
-          const firstLesson =
-            lessonsWithTopics[0] ||
-            null;
+          const requestedTopicId =
+            location.state?.selectedTopicId;
 
-          const firstTopic =
-            lessonsWithTopics
-              .flatMap(
+          let initialLesson =
+            lessonsWithTopics[0] || null;
+
+          let initialTopic = null;
+
+          if (requestedTopicId) {
+            initialLesson =
+              lessonsWithTopics.find(
                 (lesson) =>
-                  lesson.topics ||
-                  []
-              )
-              .at(0);
+                  (lesson.topics || []).some(
+                    (topic) =>
+                      Number(topic.id) ===
+                      Number(requestedTopicId)
+                  )
+              ) || initialLesson;
 
-          setSelectedLesson(
-            firstLesson
-          );
+            initialTopic =
+              initialLesson?.topics?.find(
+                (topic) =>
+                  Number(topic.id) ===
+                  Number(requestedTopicId)
+              ) || null;
+          }
 
-          setSelectedTopic(
-            firstTopic || null
-          );
+          if (!initialTopic) {
+            for (const lesson of lessonsWithTopics) {
+              if ((lesson.topics || []).length > 0) {
+                initialLesson = lesson;
+                initialTopic = lesson.topics[0];
+                break;
+              }
+            }
+          }
 
-          if (firstTopic) {
-            setEditorMode(
-              "topic"
-            );
+          setSelectedLesson(initialLesson);
+          setSelectedTopic(initialTopic);
+
+          if (initialTopic) {
+            setEditorMode("topic");
 
             await loadLearningBlocks(
-              firstTopic.id
+              initialTopic.id
             );
           } else {
             setLearningBlocks(
@@ -382,7 +377,7 @@ function CoursePlaygroundPage() {
             );
 
             setEditorMode(
-              firstLesson
+              initialLesson
                 ? "lesson"
                 : "course"
             );
@@ -413,6 +408,7 @@ function CoursePlaygroundPage() {
   }, [
     courseId,
     token,
+    location.state?.selectedTopicId,
   ]);
 
   /*
@@ -1164,570 +1160,20 @@ function CoursePlaygroundPage() {
     );
   };
 
-  const handleOpenBlockLibrary =
-    async () => {
-      if (!selectedTopic) {
-        setFormError(
-          "Select a topic first."
-        );
-
-        return;
-      }
-
-      setFormError("");
-      setIsLoadingTemplates(true);
-
-      setEditorMode(
-        "block-library"
-      );
-
-      try {
-        const response =
-          await fetch(
-            "/api/teacher/lblock-templates",
-            {
-              headers:
-                getHeaders(),
-            }
-          );
-
-        const data =
-          await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.message ||
-              "Unable to load learning block templates."
-          );
-        }
-
-        setBlockTemplates(
-          data.lblock_templates ||
-            []
-        );
-      } catch (
-        requestError
-      ) {
-        console.error(
-          "Load block templates error:",
-          requestError
-        );
-
-        setFormError(
-          requestError.message ||
-            "Unable to load learning block templates."
-        );
-
-        setBlockTemplates([]);
-      } finally {
-        setIsLoadingTemplates(
-          false
-        );
-      }
-    };
-
-  const handleSelectBlockTemplate =
-    (template) => {
-      const exampleData =
-        template.example_data ||
-        {};
-
-      const fields =
-        template
-          .configuration_schema
-          ?.fields ||
-        [];
-
-      const initialForm = {};
-
-      fields.forEach(
-        (field) => {
-          const fieldName =
-            field.name;
-
-          if (!fieldName) {
-            return;
-          }
-
-          if (
-            Object.prototype.hasOwnProperty.call(
-              exampleData,
-              fieldName
-            )
-          ) {
-            initialForm[fieldName] =
-              exampleData[fieldName];
-
-            return;
-          }
-
-            switch (field.type) {
-              case "boolean":
-                initialForm[fieldName] =
-                  field.default ?? false;
-                break;
-
-              case "select":
-                initialForm[fieldName] =
-                  field.default ??
-                  field.options?.[0]?.value ??
-                  "";
-                break;
-
-              case "repeater":
-                initialForm[fieldName] = [];
-                break;
-
-              default:
-                initialForm[fieldName] =
-                  field.default ?? "";
-                break;
-            }
-        }
-      );
-
-      setSelectedBlockTemplate(
-        template
-      );
-
-      setTemplateForm(
-        initialForm
-      );
-
-      setFormError("");
-
-      setEditorMode(
-        "add-template-block"
-      );
-    };
-
-  const handleTemplateFieldChange =
-    (
-      fieldName,
-      value
-    ) => {
-      setTemplateForm(
-        (current) => ({
-          ...current,
-
-          [fieldName]:
-            value,
-        })
-      );
-    };
-
-  const handleCreateTemplateBlock =
-    async (event) => {
-      event.preventDefault();
-
-      if (!selectedTopic) {
-        setFormError(
-          "Select a topic first."
-        );
-
-        return;
-      }
-
-      if (!selectedBlockTemplate) {
-        setFormError(
-          "Select a learning block template."
-        );
-
-        return;
-      }
-
-      const fields =
-        selectedBlockTemplate
-          .configuration_schema
-          ?.fields ||
-        [];
-
-      for (const field of fields) {
-        if (!field.required) {
-          continue;
-        }
-
-        const value =
-          templateForm[
-            field.name
-          ];
-
-        if (
-          value === undefined ||
-          value === null ||
-          (
-            typeof value ===
-              "string" &&
-            !value.trim()
-          )
-        ) {
-          setFormError(
-            `${field.label || field.name} is required.`
-          );
-
-          return;
-        }
-      }
-
-      const blockData = {};
-
-      fields.forEach(
-        (field) => {
-          if (
-            field.name ===
-              "title" ||
-            field.name ===
-              "icon"
-          ) {
-            return;
-          }
-
-          let value =
-            templateForm[
-              field.name
-            ];
-
-          if (
-            typeof value ===
-            "string"
-          ) {
-            value =
-              value.trim();
-          }
-
-          blockData[
-            field.name
-          ] = value;
-        }
-      );
-
-      setIsSaving(true);
-      setFormError("");
-
-      try {
-        const response =
-          await fetch(
-            `/api/teacher/topics/${selectedTopic.id}/learning-blocks`,
-            {
-              method:
-                "POST",
-
-              headers:
-                getHeaders(true),
-
-              body:
-                JSON.stringify({
-                  lblock_template_id:
-                    selectedBlockTemplate.id,
-
-                  title:
-                    typeof templateForm.title ===
-                      "string"
-                      ? templateForm.title.trim() ||
-                        null
-                      : null,
-
-                  icon:
-                    typeof templateForm.icon ===
-                      "string"
-                      ? templateForm.icon.trim() ||
-                        null
-                      : null,
-
-                  data:
-                    blockData,
-
-                  status:
-                    "draft",
-                }),
-            }
-          );
-
-        const data =
-          await response.json();
-
-        if (!response.ok) {
-          const firstError =
-            data.errors
-              ? Object.values(
-                  data.errors
-                )?.[0]?.[0]
-              : null;
-
-          throw new Error(
-            firstError ||
-              data.message ||
-              "Unable to create learning block."
-          );
-        }
-
-        setLearningBlocks(
-          (current) => [
-            ...current,
-            data.learning_block,
-          ]
-        );
-
-        setSelectedBlockTemplate(
-          null
-        );
-
-        setTemplateForm({});
-
-        setEditorMode(
-          "topic"
-        );
-      } catch (
-        requestError
-      ) {
-        console.error(
-          "Create template block error:",
-          requestError
-        );
-
-        setFormError(
-          requestError.message ||
-            "Unable to create learning block."
-        );
-      } finally {
-        setIsSaving(false);
-      }
-    };
-
-  /*
-   * =========================================
-   * Edit / Delete Learning Blocks
-   * =========================================
-   */
-
-  const handleEditLearningBlock = (block) => {
-    const template =
-      block?.lblock_template ||
-      block?.lblockTemplate ||
-      blockTemplates.find(
-        (item) =>
-          Number(item.id) ===
-          Number(block?.lblock_template_id)
-      );
-
-    if (!template) {
+ const handleOpenBlockLibrary =
+  () => {
+    if (!selectedTopic) {
       setFormError(
-        "Unable to find the learning block template."
+        "Select a topic first."
       );
+
       return;
     }
 
-    const fields =
-      template.configuration_schema?.fields ||
-      [];
-
-    const initialForm = {};
-
-    fields.forEach((field) => {
-      if (!field?.name) {
-        return;
-      }
-
-      if (field.name === "title") {
-        initialForm.title =
-          block?.title ?? "";
-        return;
-      }
-
-      if (field.name === "icon") {
-        initialForm.icon =
-          block?.icon ?? "";
-        return;
-      }
-
-      if (
-        Object.prototype.hasOwnProperty.call(
-          block?.data || {},
-          field.name
-        )
-      ) {
-        initialForm[field.name] =
-          block.data[field.name];
-        return;
-      }
-
-      if (
-        Object.prototype.hasOwnProperty.call(
-          field,
-          "default"
-        )
-      ) {
-        initialForm[field.name] =
-          field.default;
-        return;
-      }
-
-      if (field.type === "boolean") {
-        initialForm[field.name] = false;
-      } else if (field.type === "repeater") {
-        initialForm[field.name] = [];
-      } else if (field.type === "select") {
-        const firstOption =
-          field.options?.[0];
-
-        initialForm[field.name] =
-          typeof firstOption === "string"
-            ? firstOption
-            : firstOption?.value ?? "";
-      } else {
-        initialForm[field.name] = "";
-      }
-    });
-
-    setEditingLearningBlock(block);
-    setSelectedBlockTemplate(template);
-    setTemplateForm(initialForm);
-    setFormError("");
-    setEditorMode("edit-template-block");
+    navigate(
+      `/teacher/courses/${courseId}/topics/${selectedTopic.id}/blocks/create`
+    );
   };
-
-  const handleSaveTemplateBlock =
-    async (event) => {
-      event.preventDefault();
-
-      if (!editingLearningBlock) {
-        setFormError(
-          "No learning block is selected for editing."
-        );
-        return;
-      }
-
-      if (!selectedBlockTemplate) {
-        setFormError(
-          "Unable to find the learning block template."
-        );
-        return;
-      }
-
-      const fields =
-        selectedBlockTemplate
-          .configuration_schema
-          ?.fields || [];
-
-      for (const field of fields) {
-        if (!field.required) {
-          continue;
-        }
-
-        const value =
-          templateForm[field.name];
-
-        if (
-          value === undefined ||
-          value === null ||
-          (
-            typeof value === "string" &&
-            !value.trim()
-          )
-        ) {
-          setFormError(
-            `${field.label || field.name} is required.`
-          );
-          return;
-        }
-      }
-
-      const blockData = {};
-
-      fields.forEach((field) => {
-        if (
-          field.name === "title" ||
-          field.name === "icon"
-        ) {
-          return;
-        }
-
-        let value =
-          templateForm[field.name];
-
-        if (typeof value === "string") {
-          value = value.trim();
-        }
-
-        blockData[field.name] = value;
-      });
-
-      setIsSaving(true);
-      setFormError("");
-
-      try {
-        const response =
-          await fetch(
-            `/api/teacher/learning-blocks/${editingLearningBlock.id}`,
-            {
-              method: "PUT",
-              headers: getHeaders(true),
-              body: JSON.stringify({
-                title:
-                  typeof templateForm.title ===
-                  "string"
-                    ? templateForm.title.trim() ||
-                      null
-                    : null,
-                icon:
-                  typeof templateForm.icon ===
-                  "string"
-                    ? templateForm.icon.trim() ||
-                      null
-                    : null,
-                data: blockData,
-                status:
-                  editingLearningBlock.status ||
-                  "draft",
-              }),
-            }
-          );
-
-        const data =
-          await response.json();
-
-        if (!response.ok) {
-          const firstError =
-            data.errors
-              ? Object.values(
-                  data.errors
-                )?.[0]?.[0]
-              : null;
-
-          throw new Error(
-            firstError ||
-              data.message ||
-              "Unable to update learning block."
-          );
-        }
-
-        setLearningBlocks((current) =>
-          current.map((block) =>
-            Number(block.id) ===
-            Number(data.learning_block.id)
-              ? data.learning_block
-              : block
-          )
-        );
-
-        setEditingLearningBlock(null);
-        setSelectedBlockTemplate(null);
-        setTemplateForm({});
-        setEditorMode("topic");
-      } catch (requestError) {
-        console.error(
-          "Update learning block error:",
-          requestError
-        );
-
-        setFormError(
-          requestError.message ||
-            "Unable to update learning block."
-        );
-      } finally {
-        setIsSaving(false);
-      }
-    };
 
   const handleRequestDeleteLearningBlock =
     (block) => {
@@ -1782,18 +1228,6 @@ function CoursePlaygroundPage() {
           )
         );
 
-        if (
-          Number(editingLearningBlock?.id) ===
-          Number(
-            learningBlockPendingDelete.id
-          )
-        ) {
-          setEditingLearningBlock(null);
-          setSelectedBlockTemplate(null);
-          setTemplateForm({});
-          setEditorMode("topic");
-        }
-
         setLearningBlockPendingDelete(null);
       } catch (requestError) {
         console.error(
@@ -1809,42 +1243,6 @@ function CoursePlaygroundPage() {
         setIsSaving(false);
       }
     };
-
-  /*
-   * =========================================
-   * Learning Block Drawers
-   * =========================================
-   */
-
-  const handleCloseBlockLibrary = () => {
-    setSelectedBlockTemplate(null);
-    setTemplateForm({});
-    setFormError("");
-
-    setEditorMode(
-      selectedTopic
-        ? "topic"
-        : selectedLesson
-        ? "lesson"
-        : "course"
-    );
-  };
-
-  const handleCloseTemplateDrawer = () => {
-    const wasEditing =
-      editorMode === "edit-template-block";
-
-    setEditingLearningBlock(null);
-    setSelectedBlockTemplate(null);
-    setTemplateForm({});
-    setFormError("");
-
-    setEditorMode(
-      wasEditing
-        ? "topic"
-        : "block-library"
-    );
-  };
 
   /*
    * =========================================
@@ -2232,20 +1630,6 @@ function CoursePlaygroundPage() {
                           <div className="course-playground-learning-block-actions">
                             <button
                               type="button"
-                              className="course-playground-block-action-button"
-                              onClick={() =>
-                                handleEditLearningBlock(
-                                  block
-                                )
-                              }
-                              aria-label={`Edit ${block.title || "learning block"}`}
-                              title="Edit learning block"
-                            >
-                              ✏️ Edit
-                            </button>
-
-                            <button
-                              type="button"
                               className="course-playground-block-action-button danger"
                               onClick={() =>
                                 handleRequestDeleteLearningBlock(
@@ -2312,14 +1696,6 @@ function CoursePlaygroundPage() {
             )}
           </div>
         </main>
-
-        {/* ===========================
-            RIGHT - Editor
-        ============================ */}
-
-        {/* ===========================
-            SLIDE-OVER - Block Library
-        ============================ */}
 
         {/* ===========================
             MODAL - Add Lesson / Topic
@@ -2737,253 +2113,6 @@ function CoursePlaygroundPage() {
             </section>
           </div>
         )}
-
-        <aside
-          className={`course-playground-drawer course-playground-library-drawer ${
-            editorMode === "block-library" ||
-            editorMode === "add-template-block"
-              ? "open"
-              : ""
-          }`}
-        >
-          <div className="course-playground-drawer-header">
-            <div>
-              <span>LEARNING BLOCKS</span>
-              <h2>Add Learning Block</h2>
-            </div>
-
-            <button
-              type="button"
-              className="course-playground-drawer-close"
-              aria-label="Close learning block library"
-              onClick={handleCloseBlockLibrary}
-            >
-              ×
-            </button>
-          </div>
-
-          <div className="course-playground-drawer-scroll">
-            <div className="course-playground-block-library">
-              <p className="course-playground-library-intro">
-                Choose a developer-managed
-                learning block to add to:
-              </p>
-
-              <strong className="course-playground-library-topic">
-                {selectedTopic
-                  ?.icon ||
-                  "📑"}{" "}
-
-                {
-                  selectedTopic
-                    ?.title
-                }
-              </strong>
-
-              {isLoadingTemplates ? (
-                <div className="course-playground-library-loading">
-                  Loading learning blocks...
-                </div>
-              ) : blockTemplates.length > 0 ? (
-                <>
-                  <div className="course-playground-library-section-title">
-                    Available Learning Blocks
-                  </div>
-
-                  {blockTemplates.map(
-                    (template) => (
-                      <button
-                        key={
-                          template.id
-                        }
-                        type="button"
-                        className="course-playground-block-option"
-                        onClick={() =>
-                          handleSelectBlockTemplate(
-                            template
-                          )
-                        }
-                      >
-                        <span className="course-playground-block-option-icon">
-                          {template.icon ||
-                            "🧩"}
-                        </span>
-
-                        <span>
-                          <strong>
-                            {
-                              template.name
-                            }
-                          </strong>
-
-                          <small>
-                            {template.description ||
-                              "Reusable MentorXn learning block."}
-                          </small>
-
-                          {Array.isArray(
-                            template.tags
-                          ) &&
-                            template.tags
-                              .length >
-                              0 && (
-                              <span className="course-playground-template-tags">
-                                {template.tags.map(
-                                  (
-                                    tag
-                                  ) => (
-                                    <span
-                                      key={
-                                        tag
-                                      }
-                                      className="course-playground-template-tag"
-                                    >
-                                      {
-                                        tag
-                                      }
-                                    </span>
-                                  )
-                                )}
-                              </span>
-                            )}
-                        </span>
-                      </button>
-                    )
-                  )}
-                </>
-              ) : (
-                <div className="course-playground-library-loading">
-                  No active learning block
-                  templates found.
-                </div>
-              )}
-            </div>
-          </div>
-        </aside>
-
-        {/* ===========================
-            SLIDE-OVER - Block Configuration
-        ============================ */}
-
-        <aside
-          className={`course-playground-drawer course-playground-config-drawer ${
-            (
-              editorMode === "add-template-block" ||
-              editorMode === "edit-template-block"
-            ) &&
-            selectedBlockTemplate
-              ? "open"
-              : ""
-          }`}
-        >
-          {selectedBlockTemplate && (
-            <>
-              <div className="course-playground-drawer-header">
-                <div>
-                  <span>
-                    {editorMode === "edit-template-block"
-                      ? "EDIT BLOCK"
-                      : "CONFIGURE BLOCK"}
-                  </span>
-                  <h2>
-                    {selectedBlockTemplate.icon || "🧩"}{" "}
-                    {selectedBlockTemplate.name}
-                  </h2>
-                </div>
-
-                <button
-                  type="button"
-                  className="course-playground-drawer-close"
-                  aria-label="Close learning block configuration"
-                  onClick={handleCloseTemplateDrawer}
-                >
-                  ×
-                </button>
-              </div>
-
-              <form
-              className="course-playground-form course-playground-drawer-form"
-              onSubmit={
-                editorMode === "edit-template-block"
-                  ? handleSaveTemplateBlock
-                  : handleCreateTemplateBlock
-              }
-            >
-              <div className="course-playground-parent-info">
-                <span>
-                  {editorMode === "edit-template-block"
-                    ? "Editing "
-                    : "Adding "}
-                  {
-                    selectedBlockTemplate.name
-                  }{" "}
-                  to
-                </span>
-
-                <strong>
-                  {selectedTopic
-                    ?.icon ||
-                    "📑"}{" "}
-
-                  {
-                    selectedTopic
-                      ?.title
-                  }
-                </strong>
-              </div>
-
-              {(
-  selectedBlockTemplate
-    .configuration_schema
-    ?.fields || []
-).map((field) => (
-  <BlockConfigField
-    key={field.name}
-    field={field}
-    value={
-      templateForm[
-        field.name
-      ]
-    }
-    onChange={(value) =>
-      handleTemplateFieldChange(
-        field.name,
-        value
-      )
-    }
-  />
-))}
-
-              <div className="course-playground-form-actions course-playground-drawer-footer">
-                <button
-                  type="button"
-                  className="course-playground-cancel-button"
-                  disabled={
-                    isSaving
-                  }
-                  onClick={handleCloseTemplateDrawer}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="course-playground-save-button"
-                  disabled={
-                    isSaving
-                  }
-                >
-                  {isSaving
-                    ? "Saving..."
-                    : editorMode === "edit-template-block"
-                    ? "Save Changes"
-                    : "Add Learning Block"}
-                </button>
-              </div>
-            </form>
-            </>
-          )}
-        </aside>
 
         {learningBlockPendingDelete && (
           <div

@@ -342,7 +342,7 @@ function CodeExampleBlock({
           Code
       ====================================== */}
 
-      <div className="code-example-wrapper">
+      <div className="code-example-wrapper" data-visual-index={selectedIndex}>
         <div className="code-example-toolbar">
           <span className="code-example-language">
             {languageLabel}

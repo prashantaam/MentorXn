@@ -42,6 +42,14 @@ class CodeExampleBlockSeeder extends Seeder
                             'label' => 'Block title',
                             'type' => 'text',
                             'required' => true,
+
+                            'visual' => [
+                                'selector' =>
+                                    '.code-example-block > h2',
+
+                                'group' =>
+                                    'heading',
+                            ],
                         ],
 
                         [
@@ -49,6 +57,23 @@ class CodeExampleBlockSeeder extends Seeder
                             'label' => 'Icon',
                             'type' => 'text',
                             'required' => false,
+
+                            /*
+                             * Title and icon use the same
+                             * LearningBlockShell heading.
+                             *
+                             * Sharing the selector means the
+                             * generic visual editor can expose
+                             * both fields when the teacher clicks
+                             * the heading.
+                             */
+                            'visual' => [
+                                'selector' =>
+                                    '.code-example-block > h2',
+
+                                'group' =>
+                                    'heading',
+                            ],
                         ],
 
                         [
@@ -57,6 +82,11 @@ class CodeExampleBlockSeeder extends Seeder
                             'type' => 'textarea',
                             'rows' => 3,
                             'required' => false,
+
+                            'visual' => [
+                                'selector' =>
+                                    '.code-example-block > .sub',
+                            ],
                         ],
 
                         [
@@ -65,11 +95,24 @@ class CodeExampleBlockSeeder extends Seeder
                             'type' => 'textarea',
                             'rows' => 3,
                             'required' => false,
+
+                            'visual' => [
+                                'selector' =>
+                                    '.code-example-description',
+                            ],
                         ],
 
                         /*
                          * =========================================
                          * Run / Output
+                         * =========================================
+                         *
+                         * These remain normal configuration
+                         * settings.
+                         *
+                         * They control behaviour rather than
+                         * representing one specific editable
+                         * content region.
                          * =========================================
                          */
 
@@ -79,6 +122,7 @@ class CodeExampleBlockSeeder extends Seeder
                             'type' => 'boolean',
                             'default' => false,
                             'required' => false,
+
                             'help' =>
                                 'Enable this to let the student reveal the configured simulated terminal output.',
                         ],
@@ -109,6 +153,13 @@ class CodeExampleBlockSeeder extends Seeder
                          *
                          * Multiple items:
                          *   tabbed code examples
+                         *
+                         * The component displays one selected
+                         * example at a time.
+                         *
+                         * Clicking the visible code example
+                         * selects that example in the generic
+                         * visual editor.
                          * =========================================
                          */
 
@@ -123,22 +174,50 @@ class CodeExampleBlockSeeder extends Seeder
                             'help' =>
                                 'Add one example for a single code display. Add multiple examples to automatically show tabs.',
 
+                            /*
+                             * The CodeExampleBlock renders the
+                             * currently selected example inside
+                             * this wrapper.
+                             *
+                             * We will expose the source example
+                             * index from CodeExampleBlock.jsx
+                             * using data-visual-index.
+                             */
+                            'visual' => [
+                                'selector' =>
+                                    '.code-example-wrapper',
+
+                                'selection_type' =>
+                                    'repeater',
+
+                                'index_attribute' =>
+                                    'data-visual-index',
+                            ],
+
                             'fields' => [
 
                                 [
                                     'name' => 'label',
-                                    'label' => 'Tab / display label',
+                                    'label' =>
+                                        'Tab / display label',
+
                                     'type' => 'text',
                                     'required' => true,
-                                    'placeholder' => 'e.g. Python',
+
+                                    'placeholder' =>
+                                        'e.g. Python',
                                 ],
 
                                 [
                                     'name' => 'language',
-                                    'label' => 'Syntax language',
+                                    'label' =>
+                                        'Syntax language',
+
                                     'type' => 'text',
                                     'required' => true,
-                                    'placeholder' => 'e.g. python',
+
+                                    'placeholder' =>
+                                        'e.g. python',
                                 ],
 
                                 [
@@ -151,26 +230,34 @@ class CodeExampleBlockSeeder extends Seeder
 
                                 [
                                     'name' => 'command',
-                                    'label' => 'Run command',
+                                    'label' =>
+                                        'Run command',
+
                                     'type' => 'text',
                                     'required' => false,
+
                                     'placeholder' =>
                                         'e.g. python hello.py',
                                 ],
 
                                 [
                                     'name' => 'output',
-                                    'label' => 'Simulated output',
+                                    'label' =>
+                                        'Simulated output',
+
                                     'type' => 'textarea',
                                     'rows' => 4,
                                     'required' => false,
+
                                     'placeholder' =>
                                         'e.g. Hello, World! 🎉',
                                 ],
 
                                 [
                                     'name' => 'explanation',
-                                    'label' => 'Explanation',
+                                    'label' =>
+                                        'Explanation',
+
                                     'type' => 'textarea',
                                     'rows' => 4,
                                     'required' => false,
@@ -214,7 +301,8 @@ class CodeExampleBlockSeeder extends Seeder
                     'examples' => [
 
                         [
-                            'label' => 'Python',
+                            'label' =>
+                                'Python',
 
                             'language' =>
                                 'python',
@@ -257,7 +345,8 @@ CODE,
                         ],
 
                         [
-                            'label' => 'Java',
+                            'label' =>
+                                'Java',
 
                             'language' =>
                                 'java',
@@ -282,9 +371,11 @@ CODE,
                         ],
 
                         [
-                            'label' => 'C',
+                            'label' =>
+                                'C',
 
-                            'language' => 'c',
+                            'language' =>
+                                'c',
 
                             'code' =>
                                 <<<'CODE'
@@ -308,9 +399,11 @@ CODE,
                     ],
                 ],
 
-                'status' => 'active',
+                'status' =>
+                    'active',
 
-                'position' => 20,
+                'position' =>
+                    20,
             ]
         );
     }

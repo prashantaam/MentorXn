@@ -52,7 +52,7 @@ const shuffleArray = (items) => {
   return result;
 };
 
-function QuizBlock({ block }) {
+function MCQQuizBlock({ block }) {
   const data =
     block?.data || {};
 
@@ -345,7 +345,7 @@ function QuizBlock({ block }) {
   /*
    * Default pass mark = 70%.
    *
-   * If we later add this to the Quiz
+   * If we later add this to the MCQ Quiz
    * configuration, this can simply read
    * from data.pass_percentage.
    */
@@ -639,31 +639,31 @@ function QuizBlock({ block }) {
           </div>
 
           <div className="block-button-group block-button-group--mobile-stack quiz-block-result-actions">
-                <button
-                    type="button"
-                    className="block-button block-button--pink"
-                    onClick={
-                    handlePlayAgain
-                    }
-                >
-                    🔁 Play again
-                </button>
+            <button
+              type="button"
+              className="block-button block-button--pink"
+              onClick={
+                handlePlayAgain
+              }
+            >
+              🔁 Play again
+            </button>
 
-                <button
-                    type="button"
-                    className="block-button block-button--white"
-                   onClick={() => {
-                                    handlePlayAgain();
+            <button
+              type="button"
+              className="block-button block-button--white"
+              onClick={() => {
+                handlePlayAgain();
 
-                                    window.scrollTo({
-                                        top: 0,
-                                        behavior: "smooth",
-                                    });
-                                    }}
-                >
-                    Back to lesson
-                </button>
-                </div>
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              Back to lesson
+            </button>
+          </div>
         </div>
       </LearningBlockShell>
     );
@@ -691,7 +691,7 @@ function QuizBlock({ block }) {
 
   /*
    * =========================================
-   * Quiz
+   * MCQ Quiz
    * =========================================
    */
 
@@ -710,7 +710,26 @@ function QuizBlock({ block }) {
         />
       )}
 
-      <section className="quiz-block-question">
+      {/*
+       * =====================================
+       * Current Question
+       * =====================================
+       *
+       * data-visual-index stores the ORIGINAL
+       * questions[] index.
+       *
+       * This allows the generic Visual Editor
+       * to identify the correct question even
+       * when shuffle_questions is enabled.
+       * =====================================
+       */}
+
+      <section
+        className="quiz-block-question"
+        data-visual-index={
+          currentQuestionIndex
+        }
+      >
         {showQuestionNumbers && (
           <div className="quiz-block-progress">
             Question{" "}
@@ -922,4 +941,4 @@ function QuizBlock({ block }) {
   );
 }
 
-export default QuizBlock;
+export default MCQQuizBlock;

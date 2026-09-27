@@ -15,6 +15,7 @@ class SequenceBlockSeeder extends Seeder
          *
          * This prevents duplicate templates.
          */
+
         $template = LBlockTemplate::query()
             ->where('component', 'SequenceBlock')
             ->orWhere('name', 'Sequence')
@@ -31,9 +32,7 @@ class SequenceBlockSeeder extends Seeder
          */
 
         $template->name = 'Sequence';
-
         $template->component = 'SequenceBlock';
-
         $template->icon = '🔢';
 
         $template->description =
@@ -54,17 +53,12 @@ class SequenceBlockSeeder extends Seeder
          * Teacher Configuration
          * =====================================================
          *
-         * IMPORTANT:
-         *
          * Teachers enter the items in the CORRECT order.
          *
-         * Example:
-         *
-         * 1. Get two slices of bread
-         * 2. Open the peanut butter jar
-         * 3. Spread peanut butter
-         *
-         * SequenceBlock can then shuffle them for students.
+         * SequenceBlock may shuffle the rendered order for
+         * students. Each rendered item exposes its original
+         * data index through data-visual-index so the generic
+         * visual editor can still edit the correct item.
          * =====================================================
          */
 
@@ -74,38 +68,56 @@ class SequenceBlockSeeder extends Seeder
                 /*
                  * Block Title
                  */
+
                 [
                     'name' => 'title',
                     'label' => 'Block title',
                     'type' => 'text',
                     'required' => true,
+
+                    'visual' => [
+                        'selector' => '.learning-block > h2',
+                    ],
                 ],
 
                 /*
                  * Block Icon
                  */
+
                 [
                     'name' => 'icon',
                     'label' => 'Icon',
                     'type' => 'text',
                     'required' => false,
+
+                    'visual' => [
+                        'selector' => '.learning-block > h2',
+                        'group' => 'heading',
+                    ],
                 ],
 
                 /*
                  * Instructions
                  */
+
                 [
                     'name' => 'subtitle',
                     'label' => 'Instructions',
                     'type' => 'textarea',
                     'required' => false,
+
+                    'visual' => [
+                        'selector' => '.sequence-block-instructions',
+                    ],
                 ],
 
                 /*
                  * Sequence Items
                  *
-                 * The order entered here is the correct order.
+                 * data_index_attribute tells the generic editor
+                 * that rendered order may differ from data order.
                  */
+
                 [
                     'name' => 'items',
                     'label' => 'Sequence items',
@@ -113,6 +125,12 @@ class SequenceBlockSeeder extends Seeder
                     'required' => true,
                     'item_label' => 'Step',
                     'min_items' => 2,
+
+                    'visual' => [
+                        'selector' => '.sequence-block-item',
+                        'selection_type' => 'repeater',
+                        'data_index_attribute' => 'data-visual-index',
+                    ],
 
                     'fields' => [
                         [
@@ -128,6 +146,7 @@ class SequenceBlockSeeder extends Seeder
                 /*
                  * Shuffle
                  */
+
                 [
                     'name' => 'shuffle_items',
                     'label' => 'Shuffle items',
@@ -139,6 +158,7 @@ class SequenceBlockSeeder extends Seeder
                 /*
                  * Position Numbers
                  */
+
                 [
                     'name' => 'show_numbers',
                     'label' => 'Show numbers',
@@ -150,6 +170,7 @@ class SequenceBlockSeeder extends Seeder
                 /*
                  * Correct Feedback
                  */
+
                 [
                     'name' => 'correct_message',
                     'label' => 'Correct message',
@@ -161,12 +182,8 @@ class SequenceBlockSeeder extends Seeder
 
                 /*
                  * Incorrect Feedback
-                 *
-                 * Leave blank to use SequenceBlock's automatic:
-                 *
-                 * "Getting there! 3 of 6 steps are already
-                 * in the right spot."
                  */
+
                 [
                     'name' => 'incorrect_message',
                     'label' => 'Incorrect message',
@@ -181,14 +198,10 @@ class SequenceBlockSeeder extends Seeder
          * =====================================================
          * Example Data
          * =====================================================
-         *
-         * Based on the Programming Basics sandwich activity.
-         * =====================================================
          */
 
         $template->example_data = [
             'title' => 'A recipe is an algorithm',
-
             'icon' => '🥪',
 
             'subtitle' =>
@@ -199,6 +212,7 @@ class SequenceBlockSeeder extends Seeder
             /*
              * Entered in CORRECT order.
              */
+
             'items' => [
                 [
                     'text' =>
@@ -227,7 +241,6 @@ class SequenceBlockSeeder extends Seeder
             ],
 
             'shuffle_items' => true,
-
             'show_numbers' => true,
 
             'correct_message' =>
@@ -244,7 +257,6 @@ class SequenceBlockSeeder extends Seeder
          */
 
         $template->status = 'active';
-
         $template->position = 40;
 
         $template->save();

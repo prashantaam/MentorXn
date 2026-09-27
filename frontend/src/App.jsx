@@ -6,35 +6,30 @@ import {
 import HomePage from "./pages/HomePage";
 
 /* Student */
-
 import StudentLoginPage from "./pages/student/auth/LoginPage";
 import StudentRegisterPage from "./pages/student/auth/RegisterPage";
 import StudentDashboard from "./pages/student/StudentDashboard";
 
 /* Teacher */
-
 import TeacherLoginPage from "./pages/teacher/auth/TeacherLoginPage";
 import TeacherRegisterPage from "./pages/teacher/auth/TeacherRegisterPage";
 import TeacherDashboard from "./pages/teacher/dashboard/TeacherDashboard";
-
 import CourseListPage from "./pages/teacher/courses/CourseListPage";
 import CourseCreatePage from "./pages/teacher/courses/CourseCreatePage";
 import CoursePlaygroundPage from "./pages/teacher/courses/CoursePlaygroundPage";
+import VisualBlockEditorPage from "./pages/teacher/courses/VisualBlockEditorPage";
 
 /* Layouts */
-
 import StudentLayout from "./layouts/StudentLayout";
 import TeacherLayout from "./layouts/TeacherLayout";
 
 /* Route Protection */
-
 import ProtectedRoute from "./components/common/ProtectedRoute";
 
 
 function App() {
   return (
     <Routes>
-
       {/* ========================================
           Public
       ======================================== */}
@@ -71,20 +66,16 @@ function App() {
           />
         }
       >
-
         <Route
           element={<StudentLayout />}
         >
-
           <Route
             path="/student/dashboard"
             element={
               <StudentDashboard />
             }
           />
-
         </Route>
-
       </Route>
 
 
@@ -116,18 +107,15 @@ function App() {
           />
         }
       >
-
         <Route
           element={<TeacherLayout />}
         >
-
           <Route
             path="/teacher/dashboard"
             element={
               <TeacherDashboard />
             }
           />
-
 
           <Route
             path="/teacher/courses"
@@ -136,14 +124,12 @@ function App() {
             }
           />
 
-
           <Route
             path="/teacher/courses/create"
             element={
               <CourseCreatePage />
             }
           />
-
 
           <Route
             path="/teacher/courses/:courseId/playground"
@@ -152,12 +138,14 @@ function App() {
             }
           />
 
-
-        
+          <Route
+            path="/teacher/courses/:courseId/topics/:topicId/blocks/create"
+            element={
+              <VisualBlockEditorPage />
+            }
+          />
         </Route>
-
       </Route>
-
     </Routes>
   );
 }

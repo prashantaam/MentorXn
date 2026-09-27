@@ -2,7 +2,7 @@ import BigIdeasBlock from "../block-components/BigIdeasBlock";
 import FlipCardBlock from "../block-components/FlipCardBlock";
 import CodeExampleBlock from "../block-components/CodeExampleBlock";
 import SequenceBlock from "../block-components/SequenceBlock";
-import QuizBlock from "../block-components/QuizBlock";
+import MCQQuizBlock from "../block-components/MCQQuizBlock";
 import ProcessFlowBlock from "../block-components/ProcessFlowBlock";
 import ToggleExplorerBlock from "../block-components/ToggleExplorerBlock";
 import CodeActionBlock from "../block-components/CodeActionBlock";
@@ -33,8 +33,8 @@ const blockRegistry = {
   SequenceBlock: {
     component: SequenceBlock,
   },
-  QuizBlock: {
-  component: QuizBlock,
+  MCQQuizBlock: {
+  component: MCQQuizBlock,
   },
   ProcessFlowBlock: {
   component: ProcessFlowBlock,
@@ -45,6 +45,7 @@ const blockRegistry = {
   CodeActionBlock: {
   component: CodeActionBlock,
   },
+  
 };
 
 export const getBlockComponent = (componentName) => {
