@@ -20,6 +20,13 @@ import {
 
 
 /* =========================================================
+   Constants
+   ========================================================= */
+
+const MAX_CREATED_CARDS = 6;
+
+
+/* =========================================================
    Initial Values
    ========================================================= */
 
@@ -139,6 +146,9 @@ function getActionFunction(action) {
         "equal"
       );
 
+    case "create_card":
+      return "create_card";
+
     case "string":
     default:
       return (
@@ -197,9 +207,12 @@ function CodeActionInput({
   visualIndex,
 }) {
   return (
-    <label className="code-action-field" data-visual-index={
+    <label
+      className="code-action-field"
+      data-visual-index={
         visualIndex
-      }>
+      }
+    >
       <span>
         {input?.label ||
           "Input"}
@@ -233,8 +246,8 @@ function CodeDisplay({
           /*
            * Syntax highlighting is visual only.
            *
-           * It has no relationship to the
-           * JavaScript calculation engine.
+           * The actual calculation continues
+           * to use our JavaScript helpers.
            */
           language="text"
           style={vscDarkPlus}
@@ -266,6 +279,52 @@ function CodeDisplay({
     </div>
   );
 }
+
+
+/* =========================================================
+   Created Cards
+   ========================================================= */
+
+function CreatedCards({
+  cards,
+}) {
+  if (
+    !Array.isArray(cards) ||
+    cards.length === 0
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="code-action-created-cards">
+      {cards.map(
+        (card, cardIndex) => (
+          <div
+            key={`created-card-${cardIndex}`}
+            className="code-action-created-card"
+          >
+            {card.map(
+              (
+                value,
+                valueIndex
+              ) => (
+                <div
+                  key={
+                    `created-card-${cardIndex}-value-${valueIndex}`
+                  }
+                  className="code-action-created-card-row"
+                >
+                  {value}
+                </div>
+              )
+            )}
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
 
 
 /* =========================================================
@@ -307,6 +366,7 @@ function CodeActionBlock({
     );
 
 
+
   const initialValues =
     useMemo(
       () =>
@@ -330,10 +390,10 @@ function CodeActionBlock({
 
 
   /*
-   * Select the first action by default.
+   * First action selected by default.
    *
-   * For the Code Quest example this means
-   * len() is immediately selected.
+   * For "Try it on your own text"
+   * this means len().
    */
 
   const [
@@ -346,6 +406,19 @@ function CodeActionBlock({
   );
 
 
+  /*
+   * Create Card stores every card that
+   * the learner creates.
+   *
+   * Maximum: 6.
+   */
+
+  const [
+    createdCards,
+    setCreatedCards,
+  ] = useState([]);
+
+
   /* =======================================================
      Reset When Block Changes
      ======================================================= */
@@ -355,17 +428,13 @@ function CodeActionBlock({
       initialValues
     );
 
-    /*
-     * Always select the first configured
-     * action when this block/configuration
-     * is loaded or changed.
-     */
-
     setSelectedActionIndex(
       actions.length > 0
         ? 0
         : null
     );
+
+    setCreatedCards([]);
   }, [
     block?.id,
     initialValues,
@@ -401,6 +470,11 @@ function CodeActionBlock({
     );
 
 
+  const isCreateCard =
+    functionType ===
+    "create_card";
+
+
   /* =======================================================
      Resolve Action Arguments
      ======================================================= */
@@ -421,7 +495,15 @@ function CodeActionBlock({
 
   const result =
     useMemo(() => {
-      if (!activeAction) {
+      /*
+       * Create Card does not have a
+       * conventional Result section.
+       */
+
+      if (
+        !activeAction ||
+        isCreateCard
+      ) {
         return "";
       }
 
@@ -446,6 +528,7 @@ function CodeActionBlock({
       );
     }, [
       activeAction,
+      isCreateCard,
       functionType,
       functionName,
       values,
@@ -471,6 +554,13 @@ function CodeActionBlock({
       if (!template) {
         return "";
       }
+
+      /*
+       * IMPORTANT:
+       *
+       * Create Card also uses the code display.
+       * It simply does not use the normal Result.
+       */
 
       return applyTemplate(
         template,
@@ -511,15 +601,91 @@ function CodeActionBlock({
 
 
   /* =======================================================
+     Create Card
+     ======================================================= */
+
+  const createCard = () => {
+    /*
+     * Ignore the click if six cards
+     * have already been created.
+     */
+
+    if (
+      createdCards.length >=
+      MAX_CREATED_CARDS
+    ) {
+      return;
+    }
+
+
+    /*
+     * Remove blank values from the card.
+     */
+
+    const cardValues =
+      values
+        .map(
+          (value) =>
+            String(
+              value ?? ""
+            ).trim()
+        )
+        .filter(
+          (value) =>
+            value !== ""
+        );
+
+
+    /*
+     * Do not create an empty card.
+     */
+
+    if (
+      cardValues.length === 0
+    ) {
+      return;
+    }
+
+
+    /*
+     * Store a snapshot.
+     *
+     * Future input changes will therefore
+     * not alter previously created cards.
+     */
+
+    setCreatedCards(
+      (currentCards) => [
+        ...currentCards,
+        cardValues,
+      ].slice(
+        0,
+        MAX_CREATED_CARDS
+      )
+    );
+  };
+
+
+  /* =======================================================
      Action Click
      ======================================================= */
 
   const handleActionClick = (
     index
   ) => {
+    const action =
+      actions[index];
+
     setSelectedActionIndex(
       index
     );
+
+    if (
+      action?.function_type ===
+      "create_card"
+    ) {
+      createCard();
+    }
   };
 
 
@@ -562,6 +728,9 @@ function CodeActionBlock({
                     index
                   ] ?? ""
                 }
+                visualIndex={
+                  index
+                }
                 onChange={(
                   newValue
                 ) =>
@@ -600,6 +769,16 @@ function CodeActionBlock({
                   selectedActionIndex ===
                   index;
 
+                const createCardAction =
+                  action
+                    ?.function_type ===
+                  "create_card";
+
+                const limitReached =
+                  createCardAction &&
+                  createdCards.length >=
+                    MAX_CREATED_CARDS;
+
                 return (
                   <button
                     key={`action-${index}`}
@@ -611,8 +790,14 @@ function CodeActionBlock({
                           : ""
                       }`
                     }
+                    data-visual-index={
+                      index
+                    }
                     aria-pressed={
                       active
+                    }
+                    disabled={
+                      limitReached
                     }
                     onClick={() =>
                       handleActionClick(
@@ -632,7 +817,10 @@ function CodeActionBlock({
 
 
           {/* ===========================================
-              Dynamic Code
+              Code Display
+
+              Visible for ALL action types,
+              including Create Card.
               =========================================== */}
 
           <CodeDisplay
@@ -643,31 +831,52 @@ function CodeActionBlock({
 
 
           {/* ===========================================
-              Dynamic Result
+              Normal Result
+
+              Hidden only for Create Card.
               =========================================== */}
 
-          <div
-            className="code-action-result"
-            aria-live="polite"
-          >
-            <strong>
-              Result:
-            </strong>
+          {!isCreateCard && (
+            <div
+              className="code-action-result"
+              aria-live="polite"
+            >
+              <strong>
+                Result:
+              </strong>
 
-            <span>
-              {activeAction
-                ? result === ""
-                  ? "—"
-                  : result
-                : "—"}
-            </span>
-          </div>
+              <span>
+                {activeAction
+                  ? result === ""
+                    ? "—"
+                    : result
+                  : "—"}
+              </span>
+            </div>
+          )}
+
+
+          {/* ===========================================
+              Created Cards
+
+              Only relevant to Create Card.
+              Existing cards remain visible.
+              =========================================== */}
+
+          {isCreateCard && (
+            <CreatedCards
+              cards={
+                createdCards
+              }
+            />
+          )}
         </>
       ) : (
         <div className="block-empty">
           No actions have been configured yet.
         </div>
       )}
+
     </LearningBlockShell>
   );
 }

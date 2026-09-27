@@ -961,121 +961,6 @@ class CodeActionBlockSeeder extends Seeder
                     ],
                 ],
 
-
-                /*
-                 * =====================================
-                 * STATIC MESSAGES
-                 *
-                 * These belong to the BLOCK.
-                 *
-                 * They are not results and they are
-                 * not connected to Create Card.
-                 * =====================================
-                 */
-
-                [
-                    'name' =>
-                        'messages',
-
-                    'label' =>
-                        'Messages',
-
-                    'type' =>
-                        'repeater',
-
-                    'required' =>
-                        false,
-
-                    'item_label' =>
-                        'Message',
-
-                    'visual' => [
-                        'selector' =>
-                            '.code-action-message',
-
-                        'selection_type' =>
-                            'repeater',
-
-                        'index_attribute' =>
-                            'data-visual-index',
-                    ],
-
-                    'fields' => [
-
-                        /*
-                         * Message type comes FIRST.
-                         */
-
-                        [
-                            'name' =>
-                                'type',
-
-                            'label' =>
-                                'Message type',
-
-                            'type' =>
-                                'select',
-
-                            'required' =>
-                                true,
-
-                            'default' =>
-                                'success',
-
-                            'options' => [
-
-                                [
-                                    'value' =>
-                                        'success',
-
-                                    'label' =>
-                                        'Success',
-                                ],
-
-                                [
-                                    'value' =>
-                                        'warning',
-
-                                    'label' =>
-                                        'Warning',
-                                ],
-
-                                [
-                                    'value' =>
-                                        'danger',
-
-                                    'label' =>
-                                        'Danger',
-                                ],
-                            ],
-                        ],
-
-
-                        /*
-                         * Message text comes SECOND.
-                         */
-
-                        [
-                            'name' =>
-                                'text',
-
-                            'label' =>
-                                'Message',
-
-                            'type' =>
-                                'textarea',
-
-                            'rows' =>
-                                3,
-
-                            'required' =>
-                                true,
-
-                            'placeholder' =>
-                                'e.g. Variables remember the values you give them.',
-                        ],
-                    ],
-                ],
             ],
         ];
 
@@ -1289,17 +1174,6 @@ class CodeActionBlockSeeder extends Seeder
                 ],
             ],
 
-
-            /*
-             * =========================================
-             * STATIC MESSAGES
-             *
-             * Empty by default for this example.
-             * =========================================
-             */
-
-            'messages' =>
-                [],
         ];
 
 

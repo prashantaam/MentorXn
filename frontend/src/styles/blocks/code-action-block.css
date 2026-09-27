@@ -440,3 +440,51 @@
       13px !important;
   }
 }
+
+/* =========================================================
+   Created Cards
+   ========================================================= */
+
+.code-action-created-cards {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(130px, 1fr)
+    );
+  gap: 14px;
+
+  margin-top: 20px;
+}
+
+.code-action-created-card {
+  min-height: 130px;
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+
+  border: 2px solid
+    var(--border, #d6d3cc);
+  border-radius: 14px;
+
+  background:
+    var(--surface2, #eeede7);
+}
+
+.code-action-created-card-row {
+  padding: 9px 10px;
+
+  border-radius: 8px;
+
+  background:
+    rgba(255, 255, 255, 0.72);
+
+  font-weight: 700;
+  text-align: center;
+
+  overflow-wrap: anywhere;
+}
+

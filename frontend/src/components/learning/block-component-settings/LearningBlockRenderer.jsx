@@ -1,7 +1,27 @@
 import "../../../styles/blocks/index.js";
+
 import {
   getBlockComponent,
 } from "./blockRegistry";
+
+import {
+  LearningBlockSharedProvider,
+} from "./LearningBlockShell";
+
+
+/*
+ * =========================================================
+ * MentorXn - Learning Block Renderer
+ * =========================================================
+ *
+ * Resolves the React component registered against a
+ * learning block template.
+ *
+ * It also supplies shared block-level data to
+ * LearningBlockShell.
+ *
+ * =========================================================
+ */
 
 
 function LearningBlockRenderer({
@@ -11,8 +31,18 @@ function LearningBlockRenderer({
     return null;
   }
 
+
+  /*
+   * =========================================
+   * Resolve Block Component
+   * =========================================
+   */
+
   const componentName =
-    block.lblock_template?.component;
+    block
+      ?.lblock_template
+      ?.component;
+
 
   if (!componentName) {
     return (
@@ -23,14 +53,19 @@ function LearningBlockRenderer({
     );
   }
 
+
   const BlockComponent =
-    getBlockComponent(componentName);
+    getBlockComponent(
+      componentName
+    );
+
 
   if (!BlockComponent) {
     return (
       <div className="learning-block-unsupported">
         Unsupported learning block
         component:{" "}
+
         <strong>
           {componentName}
         </strong>
@@ -38,11 +73,64 @@ function LearningBlockRenderer({
     );
   }
 
+
+  /*
+   * =========================================
+   * Shared Block Data
+   * =========================================
+   *
+   * Shared functionality belongs here rather
+   * than inside individual block components.
+   *
+   * Every learning block can therefore use:
+   *
+   * block.data.messages
+   *
+   * without MCQQuizBlock, SequenceBlock,
+   * CodeActionBlock, etc. containing
+   * message-specific code.
+   *
+   * =========================================
+   */
+
+  const messages =
+    Array.isArray(
+      block
+        ?.data
+        ?.messages
+    )
+      ? block.data.messages
+      : [];
+
+
+  /*
+   * =========================================
+   * Render
+   * =========================================
+   *
+   * LearningBlockSharedProvider passes shared
+   * information down to LearningBlockShell.
+   *
+   * The actual BlockComponent remains unaware
+   * of Messages.
+   */
+
   return (
-    <BlockComponent
-      block={block}
-    />
+    <div className="learning-block-renderer">
+      <LearningBlockSharedProvider
+        messages={
+          messages
+        }
+      >
+        <BlockComponent
+          block={
+            block
+          }
+        />
+      </LearningBlockSharedProvider>
+    </div>
   );
 }
+
 
 export default LearningBlockRenderer;
