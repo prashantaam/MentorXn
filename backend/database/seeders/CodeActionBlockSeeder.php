@@ -9,6 +9,12 @@ class CodeActionBlockSeeder extends Seeder
 {
     public function run(): void
     {
+        /*
+         * =============================================
+         * FIND OR CREATE TEMPLATE
+         * =============================================
+         */
+
         $template = LBlockTemplate::query()
             ->where(
                 'component',
@@ -25,6 +31,13 @@ class CodeActionBlockSeeder extends Seeder
                 new LBlockTemplate();
         }
 
+
+        /*
+         * =============================================
+         * TEMPLATE DETAILS
+         * =============================================
+         */
+
         $template->name =
             'Code Action';
 
@@ -35,7 +48,7 @@ class CodeActionBlockSeeder extends Seeder
             '⌨️';
 
         $template->description =
-            'Interactive coding activity where learners enter a value and explore programming operations using action buttons.';
+            'Interactive coding activity where learners enter values and explore programming concepts using configurable action buttons.';
 
         $template->tags = [
             'code',
@@ -43,6 +56,7 @@ class CodeActionBlockSeeder extends Seeder
             'practice',
             'python',
             'string',
+            'variable',
         ];
 
 
@@ -266,7 +280,7 @@ class CodeActionBlockSeeder extends Seeder
 
                         /*
                          * -----------------------------
-                         * Function Type
+                         * FUNCTION TYPE
                          * -----------------------------
                          */
 
@@ -287,6 +301,7 @@ class CodeActionBlockSeeder extends Seeder
                                 'string',
 
                             'options' => [
+
                                 [
                                     'value' =>
                                         'string',
@@ -310,13 +325,21 @@ class CodeActionBlockSeeder extends Seeder
                                     'label' =>
                                         'Comparison',
                                 ],
+
+                                [
+                                    'value' =>
+                                        'create_card',
+
+                                    'label' =>
+                                        'Create Card',
+                                ],
                             ],
                         ],
 
 
                         /*
                          * -----------------------------
-                         * String Function
+                         * STRING FUNCTION
                          * -----------------------------
                          */
 
@@ -331,7 +354,7 @@ class CodeActionBlockSeeder extends Seeder
                                 'select',
 
                             'required' =>
-                                true,
+                                false,
 
                             'default' =>
                                 'length',
@@ -400,6 +423,22 @@ class CodeActionBlockSeeder extends Seeder
 
                                     'label' =>
                                         'Trim whitespace',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'trim_start',
+
+                                    'label' =>
+                                        'Trim start',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'trim_end',
+
+                                    'label' =>
+                                        'Trim end',
                                 ],
 
                                 [
@@ -479,7 +518,7 @@ class CodeActionBlockSeeder extends Seeder
                                         'count',
 
                                     'label' =>
-                                        'Count',
+                                        'Count occurrences',
                                 ],
 
                                 [
@@ -487,7 +526,7 @@ class CodeActionBlockSeeder extends Seeder
                                         'find',
 
                                     'label' =>
-                                        'Find',
+                                        'Find position',
                                 ],
 
                                 [
@@ -519,7 +558,7 @@ class CodeActionBlockSeeder extends Seeder
                                         'is_alphanumeric',
 
                                     'label' =>
-                                        'Letters and numbers',
+                                        'Letters and numbers only',
                                 ],
 
                                 [
@@ -535,7 +574,7 @@ class CodeActionBlockSeeder extends Seeder
 
                         /*
                          * -----------------------------
-                         * Number Function
+                         * NUMBER FUNCTION
                          * -----------------------------
                          */
 
@@ -564,6 +603,7 @@ class CodeActionBlockSeeder extends Seeder
                             ],
 
                             'options' => [
+
                                 [
                                     'value' =>
                                         'number',
@@ -603,13 +643,133 @@ class CodeActionBlockSeeder extends Seeder
                                     'label' =>
                                         'Divide',
                                 ],
+
+                                [
+                                    'value' =>
+                                        'modulus',
+
+                                    'label' =>
+                                        'Remainder',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'power',
+
+                                    'label' =>
+                                        'Power',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'floor_divide',
+
+                                    'label' =>
+                                        'Floor division',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'absolute',
+
+                                    'label' =>
+                                        'Absolute value',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'round',
+
+                                    'label' =>
+                                        'Round',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'floor',
+
+                                    'label' =>
+                                        'Round down',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'ceil',
+
+                                    'label' =>
+                                        'Round up',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'minimum',
+
+                                    'label' =>
+                                        'Minimum',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'maximum',
+
+                                    'label' =>
+                                        'Maximum',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'square',
+
+                                    'label' =>
+                                        'Square',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'cube',
+
+                                    'label' =>
+                                        'Cube',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'square_root',
+
+                                    'label' =>
+                                        'Square root',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'increment',
+
+                                    'label' =>
+                                        'Increment',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'decrement',
+
+                                    'label' =>
+                                        'Decrement',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'percentage',
+
+                                    'label' =>
+                                        'Percentage',
+                                ],
                             ],
                         ],
 
 
                         /*
                          * -----------------------------
-                         * Comparison Function
+                         * COMPARISON FUNCTION
                          * -----------------------------
                          */
 
@@ -638,6 +798,7 @@ class CodeActionBlockSeeder extends Seeder
                             ],
 
                             'options' => [
+
                                 [
                                     'value' =>
                                         'equal',
@@ -664,10 +825,26 @@ class CodeActionBlockSeeder extends Seeder
 
                                 [
                                     'value' =>
+                                        'greater_or_equal',
+
+                                    'label' =>
+                                        'Greater than or equal',
+                                ],
+
+                                [
+                                    'value' =>
                                         'less_than',
 
                                     'label' =>
                                         'Less than',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'less_or_equal',
+
+                                    'label' =>
+                                        'Less than or equal',
                                 ],
                             ],
                         ],
@@ -675,7 +852,9 @@ class CodeActionBlockSeeder extends Seeder
 
                         /*
                          * -----------------------------
-                         * Button Label
+                         * BUTTON LABEL
+                         *
+                         * Always visible.
                          * -----------------------------
                          */
 
@@ -693,13 +872,16 @@ class CodeActionBlockSeeder extends Seeder
                                 true,
 
                             'placeholder' =>
-                                'e.g. slice [0:5]',
+                                'e.g. len(), Assign it, Create',
                         ],
 
 
                         /*
                          * -----------------------------
-                         * Action Arguments
+                         * ACTION ARGUMENTS
+                         *
+                         * String operations can use
+                         * these for slice, append etc.
                          * -----------------------------
                          */
 
@@ -719,6 +901,14 @@ class CodeActionBlockSeeder extends Seeder
                             'item_label' =>
                                 'Argument',
 
+                            'show_when' => [
+                                'field' =>
+                                    'function_type',
+
+                                'equals' =>
+                                    'string',
+                            ],
+
                             'fields' => [
 
                                 [
@@ -735,7 +925,7 @@ class CodeActionBlockSeeder extends Seeder
                                         false,
 
                                     'placeholder' =>
-                                        'e.g. 5 or 🎉',
+                                        'e.g. 0, 5 or 🎉',
                                 ],
                             ],
                         ],
@@ -743,7 +933,9 @@ class CodeActionBlockSeeder extends Seeder
 
                         /*
                          * -----------------------------
-                         * Code Display
+                         * CODE DISPLAY
+                         *
+                         * Also used by Create Card.
                          * -----------------------------
                          */
 
@@ -768,15 +960,132 @@ class CodeActionBlockSeeder extends Seeder
                         ],
                     ],
                 ],
+
+
+                /*
+                 * =====================================
+                 * STATIC MESSAGES
+                 *
+                 * These belong to the BLOCK.
+                 *
+                 * They are not results and they are
+                 * not connected to Create Card.
+                 * =====================================
+                 */
+
+                [
+                    'name' =>
+                        'messages',
+
+                    'label' =>
+                        'Messages',
+
+                    'type' =>
+                        'repeater',
+
+                    'required' =>
+                        false,
+
+                    'item_label' =>
+                        'Message',
+
+                    'visual' => [
+                        'selector' =>
+                            '.code-action-message',
+
+                        'selection_type' =>
+                            'repeater',
+
+                        'index_attribute' =>
+                            'data-visual-index',
+                    ],
+
+                    'fields' => [
+
+                        /*
+                         * Message type comes FIRST.
+                         */
+
+                        [
+                            'name' =>
+                                'type',
+
+                            'label' =>
+                                'Message type',
+
+                            'type' =>
+                                'select',
+
+                            'required' =>
+                                true,
+
+                            'default' =>
+                                'success',
+
+                            'options' => [
+
+                                [
+                                    'value' =>
+                                        'success',
+
+                                    'label' =>
+                                        'Success',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'warning',
+
+                                    'label' =>
+                                        'Warning',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'danger',
+
+                                    'label' =>
+                                        'Danger',
+                                ],
+                            ],
+                        ],
+
+
+                        /*
+                         * Message text comes SECOND.
+                         */
+
+                        [
+                            'name' =>
+                                'text',
+
+                            'label' =>
+                                'Message',
+
+                            'type' =>
+                                'textarea',
+
+                            'rows' =>
+                                3,
+
+                            'required' =>
+                                true,
+
+                            'placeholder' =>
+                                'e.g. Variables remember the values you give them.',
+                        ],
+                    ],
+                ],
             ],
         ];
 
 
         /*
          * =============================================
-         * EXAMPLE
+         * EXAMPLE DATA
          *
-         * Code Quest:
+         * Keep our working:
+         *
          * "Try it on your own text"
          * =============================================
          */
@@ -813,7 +1122,7 @@ class CodeActionBlockSeeder extends Seeder
 
             /*
              * =========================================
-             * ACTION BUTTONS
+             * ACTIONS
              * =========================================
              */
 
@@ -934,6 +1243,7 @@ class CodeActionBlockSeeder extends Seeder
                         'slice [0:5]',
 
                     'arguments' => [
+
                         [
                             'value' =>
                                 '0',
@@ -967,6 +1277,7 @@ class CodeActionBlockSeeder extends Seeder
                         '+ " 🎉"',
 
                     'arguments' => [
+
                         [
                             'value' =>
                                 ' 🎉',
@@ -977,8 +1288,26 @@ class CodeActionBlockSeeder extends Seeder
                         "text = \"{{input1}}\"\ntext + \"{{arg1}}\"",
                 ],
             ],
+
+
+            /*
+             * =========================================
+             * STATIC MESSAGES
+             *
+             * Empty by default for this example.
+             * =========================================
+             */
+
+            'messages' =>
+                [],
         ];
 
+
+        /*
+         * =============================================
+         * TEMPLATE STATUS
+         * =============================================
+         */
 
         $template->status =
             'active';
