@@ -22,6 +22,7 @@ function VisualBlockEditorPage() {
   const {
     courseId,
     topicId,
+    blockId,
   } = useParams();
 
   const navigate =
@@ -29,6 +30,9 @@ function VisualBlockEditorPage() {
 
   const { token } =
     useAuth();
+
+  const isEditMode =
+    Boolean(blockId);
 
   const [
     templates,
@@ -48,6 +52,11 @@ function VisualBlockEditorPage() {
   const [
     visualSelection,
     setVisualSelection,
+  ] = useState(null);
+
+  const [
+    existingBlock,
+    setExistingBlock,
   ] = useState(null);
 
   const [
@@ -87,65 +96,6 @@ function VisualBlockEditorPage() {
 
     return headers;
   };
-
-
-  /*
-   * =========================================
-   * Load Block Templates
-   * =========================================
-   */
-
-  useEffect(() => {
-    const loadTemplates =
-      async () => {
-        setIsLoading(true);
-        setError("");
-
-        try {
-          const response =
-            await fetch(
-              "/api/teacher/lblock-templates",
-              {
-                headers:
-                  getHeaders(),
-              }
-            );
-
-          const data =
-            await response.json();
-
-          if (!response.ok) {
-            throw new Error(
-              data.message ||
-                "Unable to load learning block templates."
-            );
-          }
-
-          setTemplates(
-            data.lblock_templates ||
-              []
-          );
-        } catch (
-          requestError
-        ) {
-          console.error(
-            "Load block templates error:",
-            requestError
-          );
-
-          setError(
-            requestError.message ||
-              "Unable to load learning block templates."
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-    if (token) {
-      loadTemplates();
-    }
-  }, [token]);
 
 
   /*
@@ -242,6 +192,274 @@ function VisualBlockEditorPage() {
 
   /*
    * =========================================
+   * Build Existing Block Form
+   * =========================================
+   */
+
+  const buildExistingBlockForm = (
+    template,
+    learningBlock
+  ) => {
+    const initialForm =
+      buildInitialForm(template);
+
+    const blockData =
+      learningBlock?.data &&
+      typeof learningBlock.data ===
+        "object"
+        ? learningBlock.data
+        : {};
+
+    const fields =
+      template
+        ?.configuration_schema
+        ?.fields ||
+      [];
+
+    fields.forEach(
+      (field) => {
+        const fieldName =
+          field?.name;
+
+        if (!fieldName) {
+          return;
+        }
+
+        if (
+          fieldName === "title"
+        ) {
+          initialForm.title =
+            learningBlock?.title ??
+            initialForm.title ??
+            "";
+
+          return;
+        }
+
+        if (
+          fieldName === "icon"
+        ) {
+          initialForm.icon =
+            learningBlock?.icon ??
+            initialForm.icon ??
+            "";
+
+          return;
+        }
+
+        if (
+          Object.prototype.hasOwnProperty.call(
+            blockData,
+            fieldName
+          )
+        ) {
+          initialForm[fieldName] =
+            blockData[fieldName];
+        }
+      }
+    );
+
+    return initialForm;
+  };
+
+
+  /*
+   * =========================================
+   * Load Templates + Existing Block
+   * =========================================
+   */
+
+  useEffect(() => {
+    const loadEditor =
+      async () => {
+        setIsLoading(true);
+        setError("");
+
+        try {
+          /*
+           * -----------------------------------------
+           * Load active block templates
+           * -----------------------------------------
+           */
+
+          const templatesResponse =
+            await fetch(
+              "/api/teacher/lblock-templates",
+              {
+                headers:
+                  getHeaders(),
+              }
+            );
+
+          const templatesData =
+            await templatesResponse.json();
+
+          if (
+            !templatesResponse.ok
+          ) {
+            throw new Error(
+              templatesData.message ||
+                "Unable to load learning block templates."
+            );
+          }
+
+          const loadedTemplates =
+            templatesData.lblock_templates ||
+            [];
+
+          setTemplates(
+            loadedTemplates
+          );
+
+          /*
+           * -----------------------------------------
+           * Create Mode
+           * -----------------------------------------
+           */
+
+          if (!isEditMode) {
+            setExistingBlock(null);
+            setSelectedTemplate(null);
+            setTemplateForm({});
+            setVisualSelection(null);
+
+            return;
+          }
+
+          /*
+           * -----------------------------------------
+           * Edit Mode
+           * -----------------------------------------
+           */
+
+          const blockResponse =
+            await fetch(
+              `/api/teacher/learning-blocks/${blockId}`,
+              {
+                headers:
+                  getHeaders(),
+              }
+            );
+
+          const blockData =
+            await blockResponse.json();
+
+          if (!blockResponse.ok) {
+            throw new Error(
+              blockData.message ||
+                "Unable to load learning block."
+            );
+          }
+
+          const learningBlock =
+            blockData.learning_block;
+
+          if (!learningBlock) {
+            throw new Error(
+              "Learning block not found."
+            );
+          }
+
+          /*
+           * Extra safety:
+           * make sure this block belongs
+           * to the topic in the URL.
+           */
+
+          if (
+            learningBlock.topic_id &&
+            Number(
+              learningBlock.topic_id
+            ) !==
+              Number(topicId)
+          ) {
+            throw new Error(
+              "This learning block does not belong to the selected topic."
+            );
+          }
+
+          /*
+           * Find the existing block's template.
+           *
+           * Prefer the template ID because
+           * component names can change over time.
+           */
+
+          const templateId =
+            learningBlock
+              .lblock_template_id ??
+            learningBlock
+              .lblock_template
+              ?.id;
+
+          const matchingTemplate =
+            loadedTemplates.find(
+              (template) =>
+                Number(
+                  template.id
+                ) ===
+                Number(
+                  templateId
+                )
+            );
+
+          if (!matchingTemplate) {
+            throw new Error(
+              "The learning block template is no longer available."
+            );
+          }
+
+          setExistingBlock(
+            learningBlock
+          );
+
+          setSelectedTemplate(
+            matchingTemplate
+          );
+
+          setTemplateForm(
+            buildExistingBlockForm(
+              matchingTemplate,
+              learningBlock
+            )
+          );
+
+          setVisualSelection(null);
+        } catch (
+          requestError
+        ) {
+          console.error(
+            "Load visual block editor error:",
+            requestError
+          );
+
+          setError(
+            requestError.message ||
+              "Unable to load the visual block editor."
+          );
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+    if (
+      token &&
+      courseId &&
+      topicId
+    ) {
+      loadEditor();
+    }
+  }, [
+    token,
+    courseId,
+    topicId,
+    blockId,
+    isEditMode,
+  ]);
+
+
+  /*
+   * =========================================
    * Select Template
    * =========================================
    */
@@ -249,6 +467,17 @@ function VisualBlockEditorPage() {
   const handleSelectTemplate = (
     template
   ) => {
+    /*
+     * Existing blocks keep their original
+     * template. This prevents incompatible
+     * data from being moved between block
+     * types.
+     */
+
+    if (isEditMode) {
+      return;
+    }
+
     setSelectedTemplate(
       template
     );
@@ -283,7 +512,9 @@ function VisualBlockEditorPage() {
       } = templateForm;
 
       return {
-        id: "visual-preview",
+        id:
+          existingBlock?.id ??
+          "visual-preview",
 
         title:
           typeof title ===
@@ -299,7 +530,9 @@ function VisualBlockEditorPage() {
 
         data,
 
-        status: "draft",
+        status:
+          existingBlock?.status ||
+          "draft",
 
         lblock_template:
           selectedTemplate,
@@ -307,6 +540,7 @@ function VisualBlockEditorPage() {
     }, [
       selectedTemplate,
       templateForm,
+      existingBlock,
     ]);
 
 
@@ -331,6 +565,11 @@ function VisualBlockEditorPage() {
         ?.fields ||
       [];
 
+    /*
+     * Validate required fields before
+     * sending data to Laravel.
+     */
+
     for (const field of fields) {
       if (!field.required) {
         continue;
@@ -348,6 +587,10 @@ function VisualBlockEditorPage() {
           typeof value ===
             "string" &&
           !value.trim()
+        ) ||
+        (
+          Array.isArray(value) &&
+          value.length === 0
         )
       ) {
         setError(
@@ -357,6 +600,13 @@ function VisualBlockEditorPage() {
         return;
       }
     }
+
+    /*
+     * Build the block's JSON data.
+     *
+     * title + icon remain top-level
+     * LearningBlock columns.
+     */
 
     const blockData = {};
 
@@ -390,44 +640,70 @@ function VisualBlockEditorPage() {
       }
     );
 
+    const requestBody = {
+      title:
+        typeof templateForm.title ===
+        "string"
+          ? templateForm.title.trim() ||
+            null
+          : null,
+
+      icon:
+        typeof templateForm.icon ===
+        "string"
+          ? templateForm.icon.trim() ||
+            null
+          : null,
+
+      data:
+        blockData,
+
+      status:
+        existingBlock?.status ||
+        "draft",
+    };
+
+    /*
+     * lblock_template_id is required only
+     * when creating.
+     *
+     * The backend intentionally does not
+     * allow changing template while editing.
+     */
+
+    if (!isEditMode) {
+      requestBody.lblock_template_id =
+        selectedTemplate.id;
+    }
+
     setIsSaving(true);
     setError("");
 
     try {
+      const requestUrl =
+        isEditMode
+          ? `/api/teacher/learning-blocks/${blockId}`
+          : `/api/teacher/topics/${topicId}/learning-blocks`;
+
+      const requestMethod =
+        isEditMode
+          ? "PUT"
+          : "POST";
+
       const response =
         await fetch(
-          `/api/teacher/topics/${topicId}/learning-blocks`,
+          requestUrl,
           {
-            method: "POST",
+            method:
+              requestMethod,
 
             headers:
               getHeaders(true),
 
             body:
-              JSON.stringify({
-                lblock_template_id:
-                  selectedTemplate.id,
-
-                title:
-                  typeof templateForm.title ===
-                  "string"
-                    ? templateForm.title.trim() ||
-                      null
-                    : null,
-
-                icon:
-                  typeof templateForm.icon ===
-                  "string"
-                    ? templateForm.icon.trim() ||
-                      null
-                    : null,
-
-                data:
-                  blockData,
-
-                status:
-                  "draft",
-              }),
+              JSON.stringify(
+                requestBody
+              ),
           }
         );
 
@@ -445,30 +721,40 @@ function VisualBlockEditorPage() {
         throw new Error(
           firstError ||
             data.message ||
-            "Unable to create learning block."
+            (
+              isEditMode
+                ? "Unable to update learning block."
+                : "Unable to create learning block."
+            )
         );
       }
 
       navigate(
-  `/teacher/courses/${courseId}/playground`,
-  {
-    state: {
-      selectedTopicId:
-        topicId,
-    },
-  }
-);
+        `/teacher/courses/${courseId}/playground`,
+        {
+          state: {
+            selectedTopicId:
+              topicId,
+          },
+        }
+      );
     } catch (
       requestError
     ) {
       console.error(
-        "Create learning block error:",
+        isEditMode
+          ? "Update learning block error:"
+          : "Create learning block error:",
         requestError
       );
 
       setError(
         requestError.message ||
-          "Unable to create learning block."
+          (
+            isEditMode
+              ? "Unable to update learning block."
+              : "Unable to create learning block."
+          )
       );
     } finally {
       setIsSaving(false);
@@ -487,7 +773,8 @@ function VisualBlockEditorPage() {
       `/teacher/courses/${courseId}/playground`,
       {
         state: {
-          selectedTopicId: topicId,
+          selectedTopicId:
+            topicId,
         },
       }
     );
@@ -504,7 +791,9 @@ function VisualBlockEditorPage() {
     return (
       <div className="visual-block-editor-state">
         <strong>
-          Loading Block Library...
+          {isEditMode
+            ? "Loading Learning Block..."
+            : "Loading Block Library..."}
         </strong>
 
         <span>
@@ -524,6 +813,7 @@ function VisualBlockEditorPage() {
   return (
     <div className="visual-block-editor">
       <div className="visual-block-editor-workspace">
+
         {/* =================================
             Block Library
         ================================== */}
@@ -533,7 +823,9 @@ function VisualBlockEditorPage() {
             <button
               type="button"
               className="visual-block-editor-back"
-              onClick={handleCancel}
+              onClick={
+                handleCancel
+              }
             >
               ← Back to topic
             </button>
@@ -541,21 +833,69 @@ function VisualBlockEditorPage() {
 
           <div className="visual-block-editor-panel-heading">
             <span>
-              BLOCK LIBRARY
+              {isEditMode
+                ? "BLOCK TYPE"
+                : "BLOCK LIBRARY"}
             </span>
 
             <h2>
-              Choose a template
+              {isEditMode
+                ? "Editing block"
+                : "Choose a template"}
             </h2>
 
             <p>
-              Start with one of your
-              existing learning blocks.
+              {isEditMode
+                ? "Edit the content and settings of this learning block."
+                : "Start with one of your existing learning blocks."}
             </p>
           </div>
 
           <div className="visual-block-editor-template-list">
-            {templates.length >
+            {isEditMode ? (
+              selectedTemplate ? (
+                <button
+                  type="button"
+                  className="visual-block-editor-template active"
+                  disabled
+                >
+                  <span className="visual-block-editor-template-icon">
+                    {selectedTemplate.icon ||
+                      "🧱"}
+                  </span>
+
+                  <span className="visual-block-editor-template-content">
+                    <strong>
+                      {
+                        selectedTemplate.name
+                      }
+                    </strong>
+
+                    {selectedTemplate.description && (
+                      <small>
+                        {
+                          selectedTemplate.description
+                        }
+                      </small>
+                    )}
+
+                    <small>
+                      Block type cannot be
+                      changed while editing.
+                    </small>
+                  </span>
+
+                  <span className="visual-block-editor-template-arrow">
+                    ✓
+                  </span>
+                </button>
+              ) : (
+                <div className="visual-block-editor-empty">
+                  Unable to determine
+                  the block template.
+                </div>
+              )
+            ) : templates.length >
             0 ? (
               templates.map(
                 (template) => {
@@ -683,15 +1023,15 @@ function VisualBlockEditorPage() {
                 </div>
 
                 <h3>
-                  Choose a block
-                  template
+                  {isEditMode
+                    ? "Unable to load block"
+                    : "Choose a block template"}
                 </h3>
 
                 <p>
-                  Select a template
-                  from the Block
-                  Library to start
-                  designing.
+                  {isEditMode
+                    ? "The existing learning block could not be prepared for editing."
+                    : "Select a template from the Block Library to start designing."}
                 </p>
               </div>
             )}
@@ -708,8 +1048,12 @@ function VisualBlockEditorPage() {
               <button
                 type="button"
                 className="visual-block-editor-cancel"
-                disabled={isSaving}
-                onClick={handleCancel}
+                disabled={
+                  isSaving
+                }
+                onClick={
+                  handleCancel
+                }
               >
                 Cancel
               </button>
@@ -717,10 +1061,19 @@ function VisualBlockEditorPage() {
               <button
                 type="button"
                 className="visual-block-editor-save"
-                disabled={isSaving || !selectedTemplate}
-                onClick={handleSave}
+                disabled={
+                  isSaving ||
+                  !selectedTemplate
+                }
+                onClick={
+                  handleSave
+                }
               >
-                {isSaving ? "Saving..." : "Add / Save Block"}
+                {isSaving
+                  ? "Saving..."
+                  : isEditMode
+                  ? "Save Changes"
+                  : "Add Block"}
               </button>
             </div>
           </div>
@@ -743,33 +1096,32 @@ function VisualBlockEditorPage() {
               </h2>
 
               <p>
-                Choose a block
-                template to begin.
+                {isEditMode
+                  ? "Unable to load the block configuration."
+                  : "Choose a block template to begin."}
               </p>
             </div>
           ) : (
-            <>
-              <VisualPropertiesPanel
-                schema={
-                  selectedTemplate
-                    .configuration_schema
-                }
-                form={
-                  templateForm
-                }
-                selection={
-                  visualSelection
-                }
-                onChange={
-                  setTemplateForm
-                }
-                onClearSelection={() =>
-                  setVisualSelection(
-                    null
-                  )
-                }
-              />
-            </>
+            <VisualPropertiesPanel
+              schema={
+                selectedTemplate
+                  .configuration_schema
+              }
+              form={
+                templateForm
+              }
+              selection={
+                visualSelection
+              }
+              onChange={
+                setTemplateForm
+              }
+              onClearSelection={() =>
+                setVisualSelection(
+                  null
+                )
+              }
+            />
           )}
         </aside>
       </div>

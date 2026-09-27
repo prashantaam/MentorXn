@@ -8,6 +8,16 @@ function getText(
 }
 
 
+function getArgument(
+  argumentsList,
+  index = 0
+) {
+  return String(
+    argumentsList?.[index] ?? ""
+  );
+}
+
+
 function getInteger(
   value,
   fallback
@@ -27,10 +37,27 @@ function getInteger(
 
 export function calculateStringResult(
   functionName,
-  values = []
+  values = [],
+  argumentsList = []
 ) {
+  /*
+   * =========================================
+   * Learner Input
+   * =========================================
+   */
+
   const text =
     getText(values, 0);
+
+  /*
+   * =========================================
+   * Additional Learner Inputs
+   * =========================================
+   *
+   * These remain supported so CodeActionBlock
+   * can still be used for activities where
+   * multiple learner inputs are appropriate.
+   */
 
   const second =
     getText(values, 1);
@@ -39,7 +66,47 @@ export function calculateStringResult(
     getText(values, 2);
 
 
+  /*
+   * =========================================
+   * Action Arguments
+   * =========================================
+   *
+   * These are configured by the block/action,
+   * rather than entered by the learner.
+   *
+   * Example:
+   *
+   * slice [0:5]
+   *
+   * arguments:
+   * ["0", "5"]
+   *
+   * + " 🎉"
+   *
+   * arguments:
+   * [" 🎉"]
+   */
+
+  const firstArgument =
+    getArgument(
+      argumentsList,
+      0
+    );
+
+  const secondArgument =
+    getArgument(
+      argumentsList,
+      1
+    );
+
+
   switch (functionName) {
+    /*
+     * =========================================
+     * Basic String
+     * =========================================
+     */
+
     case "input":
       return text;
 
@@ -81,6 +148,12 @@ export function calculateStringResult(
       );
 
 
+    /*
+     * =========================================
+     * Whitespace
+     * =========================================
+     */
+
     case "trim":
       return text.trim();
 
@@ -92,6 +165,12 @@ export function calculateStringResult(
     case "trim_end":
       return text.trimEnd();
 
+
+    /*
+     * =========================================
+     * Character Access
+     * =========================================
+     */
 
     case "first_character":
       return (
@@ -107,6 +186,12 @@ export function calculateStringResult(
       );
 
 
+    /*
+     * =========================================
+     * Reverse
+     * =========================================
+     */
+
     case "reverse":
       return Array.from(text)
         .reverse()
@@ -114,26 +199,44 @@ export function calculateStringResult(
 
 
     /*
-     * Input 1 = original text
-     * Input 2 = start position
-     * Input 3 = end position
+     * =========================================
+     * Slice
+     * =========================================
      *
-     * If Input 2 is empty:
-     * start = 0
+     * Preferred:
      *
-     * If Input 3 is empty:
-     * slice to the end.
+     * action arguments:
+     * ["0", "5"]
+     *
+     * Produces:
+     * text.slice(0, 5)
+     *
+     * Backwards compatibility:
+     *
+     * If action arguments are not supplied,
+     * learner input 2 and learner input 3
+     * are still supported.
      */
 
     case "slice": {
+      const startValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
+      const endValue =
+        secondArgument !== ""
+          ? secondArgument
+          : third;
+
       const start =
         getInteger(
-          second,
+          startValue,
           0
         );
 
       if (
-        third.trim() === ""
+        endValue.trim() === ""
       ) {
         return text.slice(
           start
@@ -142,7 +245,7 @@ export function calculateStringResult(
 
       const end =
         getInteger(
-          third,
+          endValue,
           text.length
         );
 
@@ -154,75 +257,178 @@ export function calculateStringResult(
 
 
     /*
-     * Input 1 = original text
-     * Input 2 = text to append
+     * =========================================
+     * Append
+     * =========================================
+     *
+     * Preferred:
+     *
+     * action arguments:
+     * [" 🎉"]
+     *
+     * Backwards compatibility:
+     *
+     * If no action argument exists,
+     * learner input 2 is used.
      */
 
-    case "append":
+    case "append": {
+      const appendValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
       return (
-        text + second
+        text +
+        appendValue
       );
-
-
-    case "contains":
-      return String(
-        text.includes(
-          second
-        )
-      );
-
-
-    case "starts_with":
-      return String(
-        text.startsWith(
-          second
-        )
-      );
-
-
-    case "ends_with":
-      return String(
-        text.endsWith(
-          second
-        )
-      );
+    }
 
 
     /*
-     * Input 1 = original text
-     * Input 2 = text to find
-     * Input 3 = replacement text
+     * =========================================
+     * Contains
+     * =========================================
      */
 
-    case "replace":
-      if (second === "") {
+    case "contains": {
+      const searchValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
+      return String(
+        text.includes(
+          searchValue
+        )
+      );
+    }
+
+
+    /*
+     * =========================================
+     * Starts With
+     * =========================================
+     */
+
+    case "starts_with": {
+      const searchValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
+      return String(
+        text.startsWith(
+          searchValue
+        )
+      );
+    }
+
+
+    /*
+     * =========================================
+     * Ends With
+     * =========================================
+     */
+
+    case "ends_with": {
+      const searchValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
+      return String(
+        text.endsWith(
+          searchValue
+        )
+      );
+    }
+
+
+    /*
+     * =========================================
+     * Replace
+     * =========================================
+     */
+
+    case "replace": {
+      const findValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
+      const replacementValue =
+        secondArgument !== ""
+          ? secondArgument
+          : third;
+
+      if (
+        findValue === ""
+      ) {
         return text;
       }
 
       return text
-        .split(second)
-        .join(third);
+        .split(findValue)
+        .join(
+          replacementValue
+        );
+    }
 
 
-    case "count":
-      if (second === "") {
+    /*
+     * =========================================
+     * Count
+     * =========================================
+     */
+
+    case "count": {
+      const searchValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
+      if (
+        searchValue === ""
+      ) {
         return "0";
       }
 
       return String(
         text
-          .split(second)
+          .split(
+            searchValue
+          )
           .length - 1
       );
+    }
 
 
-    case "find":
+    /*
+     * =========================================
+     * Find
+     * =========================================
+     */
+
+    case "find": {
+      const searchValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
       return String(
         text.indexOf(
-          second
+          searchValue
         )
       );
+    }
 
+
+    /*
+     * =========================================
+     * Checks
+     * =========================================
+     */
 
     case "is_empty":
       return String(
@@ -255,16 +461,22 @@ export function calculateStringResult(
 
 
     /*
-     * Input 1 = text
-     * Input 2 = repeat count
+     * =========================================
+     * Repeat
+     * =========================================
      */
 
     case "repeat": {
+      const repeatValue =
+        firstArgument !== ""
+          ? firstArgument
+          : second;
+
       const times =
         Math.max(
           0,
           getInteger(
-            second,
+            repeatValue,
             0
           )
         );
@@ -274,6 +486,12 @@ export function calculateStringResult(
       );
     }
 
+
+    /*
+     * =========================================
+     * Fallback
+     * =========================================
+     */
 
     default:
       return text;

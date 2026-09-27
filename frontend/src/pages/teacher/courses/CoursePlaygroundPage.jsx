@@ -1175,6 +1175,19 @@ function CoursePlaygroundPage() {
     );
   };
 
+  const handleEditLearningBlock =
+  (block) => {
+    if (
+      !selectedTopic ||
+      !block?.id
+    ) {
+      return;
+    }
+
+    navigate(
+      `/teacher/courses/${courseId}/topics/${selectedTopic.id}/blocks/${block.id}/edit`
+    );
+  };
   const handleRequestDeleteLearningBlock =
     (block) => {
       setLearningBlockPendingDelete(block);
@@ -1627,7 +1640,22 @@ function CoursePlaygroundPage() {
                           key={block.id}
                           className="course-playground-learning-block"
                         >
-                          <div className="course-playground-learning-block-actions">
+                         
+                        <div className="course-playground-learning-block-actions">
+                            <button
+                              type="button"
+                              className="course-playground-block-action-button"
+                              onClick={() =>
+                                handleEditLearningBlock(
+                                  block
+                                )
+                              }
+                              aria-label={`Edit ${block.title || "learning block"}`}
+                              title="Edit learning block"
+                            >
+                              ✏️ Edit
+                            </button>
+
                             <button
                               type="button"
                               className="course-playground-block-action-button danger"
@@ -1641,7 +1669,7 @@ function CoursePlaygroundPage() {
                             >
                               🗑️ Delete
                             </button>
-                          </div>
+                        </div>
 
                           <LearningBlockRenderer
                             block={block}

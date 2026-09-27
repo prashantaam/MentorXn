@@ -41,10 +41,19 @@ function getInitialValues(inputs) {
 function applyTemplate(
   template,
   values,
-  result = ""
+  result = "",
+  argumentsList = []
 ) {
   let output =
     String(template ?? "");
+
+  /*
+   * Learner inputs:
+   *
+   * {{input1}}
+   * {{input2}}
+   * {{input3}}
+   */
 
   values.forEach(
     (value, index) => {
@@ -59,7 +68,37 @@ function applyTemplate(
       output =
         output.replace(
           token,
-          String(value ?? "")
+          String(
+            value ?? ""
+          )
+        );
+    }
+  );
+
+  /*
+   * Action arguments:
+   *
+   * {{arg1}}
+   * {{arg2}}
+   * {{arg3}}
+   */
+
+  argumentsList.forEach(
+    (value, index) => {
+      const token =
+        new RegExp(
+          `\\{\\{\\s*arg${
+            index + 1
+          }\\s*\\}\\}`,
+          "gi"
+        );
+
+      output =
+        output.replace(
+          token,
+          String(
+            value ?? ""
+          )
         );
     }
   );
@@ -111,6 +150,43 @@ function getActionFunction(action) {
 
 
 /* =========================================================
+   Resolve Action Arguments
+   ========================================================= */
+
+function getActionArguments(action) {
+  if (!action) {
+    return [];
+  }
+
+  if (
+    Array.isArray(
+      action.arguments
+    )
+  ) {
+    return action.arguments.map(
+      (argument) => {
+        if (
+          argument &&
+          typeof argument ===
+            "object"
+        ) {
+          return String(
+            argument.value ?? ""
+          );
+        }
+
+        return String(
+          argument ?? ""
+        );
+      }
+    );
+  }
+
+  return [];
+}
+
+
+/* =========================================================
    Input
    ========================================================= */
 
@@ -118,9 +194,12 @@ function CodeActionInput({
   input,
   value,
   onChange,
+  visualIndex,
 }) {
   return (
-    <label className="code-action-field">
+    <label className="code-action-field" data-visual-index={
+        visualIndex
+      }>
       <span>
         {input?.label ||
           "Input"}
@@ -250,10 +329,21 @@ function CodeActionBlock({
   );
 
 
+  /*
+   * Select the first action by default.
+   *
+   * For the Code Quest example this means
+   * len() is immediately selected.
+   */
+
   const [
     selectedActionIndex,
     setSelectedActionIndex,
-  ] = useState(null);
+  ] = useState(
+    actions.length > 0
+      ? 0
+      : null
+  );
 
 
   /* =======================================================
@@ -265,12 +355,21 @@ function CodeActionBlock({
       initialValues
     );
 
+    /*
+     * Always select the first configured
+     * action when this block/configuration
+     * is loaded or changed.
+     */
+
     setSelectedActionIndex(
-      null
+      actions.length > 0
+        ? 0
+        : null
     );
   }, [
     block?.id,
     initialValues,
+    actions,
   ]);
 
 
@@ -303,6 +402,20 @@ function CodeActionBlock({
 
 
   /* =======================================================
+     Resolve Action Arguments
+     ======================================================= */
+
+  const actionArguments =
+    useMemo(
+      () =>
+        getActionArguments(
+          activeAction
+        ),
+      [activeAction]
+    );
+
+
+  /* =======================================================
      Dynamic Result
      ======================================================= */
 
@@ -316,7 +429,8 @@ function CodeActionBlock({
         calculateCodeResult(
           functionType,
           functionName,
-          values
+          values,
+          actionArguments
         );
 
       if (
@@ -335,6 +449,7 @@ function CodeActionBlock({
       functionType,
       functionName,
       values,
+      actionArguments,
     ]);
 
 
@@ -360,12 +475,14 @@ function CodeActionBlock({
       return applyTemplate(
         template,
         values,
-        result
+        result,
+        actionArguments
       );
     }, [
       activeAction,
       values,
       result,
+      actionArguments,
     ]);
 
 

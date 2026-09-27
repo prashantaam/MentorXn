@@ -14,13 +14,15 @@ import {
 export function calculateCodeResult(
   functionType,
   functionName,
-  values = []
+  values = [],
+  argumentsList = []
 ) {
   switch (functionType) {
     case "string":
       return calculateStringResult(
         functionName,
-        values
+        values,
+        argumentsList
       );
 
     case "number":

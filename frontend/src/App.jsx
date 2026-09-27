@@ -144,6 +144,11 @@ function App() {
               <VisualBlockEditorPage />
             }
           />
+
+          <Route
+            path="/teacher/courses/:courseId/topics/:topicId/blocks/:blockId/edit"
+            element={<VisualBlockEditorPage />}
+          />
         </Route>
       </Route>
     </Routes>

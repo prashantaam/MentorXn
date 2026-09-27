@@ -163,6 +163,10 @@ Route::middleware('auth:sanctum')->group(function () {
             [LearningBlockController::class, 'store']
         );
 
+        Route::get(
+            '/learning-blocks/{learningBlock}',
+            [LearningBlockController::class, 'show']
+        );
         Route::put(
             '/learning-blocks/{learningBlock}',
             [LearningBlockController::class, 'update']

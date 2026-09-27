@@ -49,6 +49,63 @@ class LearningBlockController extends Controller
     }
 
     /**
+     * Return one existing learning block.
+     *
+     * Used by the Visual Block Editor when
+     * a teacher edits an existing block.
+     */
+    public function show(
+        Request $request,
+        LearningBlock $learningBlock
+    ): JsonResponse {
+        $user = $request->user();
+
+        if (!$user->isTeacher()) {
+            return response()->json([
+                'message' => 'Teacher access required.',
+            ], 403);
+        }
+
+        /*
+         * Load everything required to:
+         *
+         * 1. verify ownership;
+         * 2. identify the topic/course;
+         * 3. render the block in the Visual Editor.
+         */
+        $learningBlock->loadMissing(
+            'topic.lesson.course',
+            'lblockTemplate'
+        );
+
+        /*
+         * A teacher must only be able to access
+         * learning blocks belonging to their
+         * own course.
+         */
+        if (
+            !$learningBlock->topic ||
+            !$learningBlock->topic->lesson ||
+            !$learningBlock->topic->lesson->course ||
+            $learningBlock
+                ->topic
+                ->lesson
+                ->course
+                ->teacher_id !== $user->id
+        ) {
+            return response()->json([
+                'message' =>
+                    'Learning block not found.',
+            ], 404);
+        }
+
+        return response()->json([
+            'learning_block' =>
+                $learningBlock,
+        ]);
+    }
+
+    /**
      * Create a template-driven learning block.
      */
     public function store(
