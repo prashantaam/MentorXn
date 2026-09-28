@@ -222,6 +222,48 @@ class CodeActionBlockSeeder extends Seeder
 
                         [
                             'name' =>
+                                'input_type',
+
+                            'label' =>
+                                'Input type',
+
+                            'type' =>
+                                'select',
+
+                            'required' =>
+                                true,
+
+                            'default' =>
+                                'text',
+
+                            'options' => [
+                                [
+                                    'value' =>
+                                        'text',
+
+                                    'label' =>
+                                        'Text',
+                                ],
+                                [
+                                    'value' =>
+                                        'dropdown',
+
+                                    'label' =>
+                                        'Dropdown',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'checkbox',
+
+                                    'label' =>
+                                        'Checkbox',
+                                ],
+                            ],
+                        ],
+
+                        [
+                            'name' =>
                                 'default_value',
 
                             'label' =>
@@ -235,6 +277,37 @@ class CodeActionBlockSeeder extends Seeder
 
                             'placeholder' =>
                                 'e.g. Hello, hello',
+                        ],
+
+                        [
+                            'name' =>
+                                'options',
+
+                            'label' =>
+                                'Dropdown options',
+
+                            'type' =>
+                                'textarea',
+
+                            'rows' =>
+                                4,
+
+                            'required' =>
+                                false,
+
+                            'show_when' => [
+                                'field' =>
+                                    'input_type',
+
+                                'equals' =>
+                                    'dropdown',
+                            ],
+
+                            'help' =>
+                                'Enter one option per line.',
+
+                            'placeholder' =>
+                                "True\nFalse",
                         ],
                     ],
                 ],
@@ -257,13 +330,13 @@ class CodeActionBlockSeeder extends Seeder
                         'repeater',
 
                     'required' =>
-                        true,
+                        false,
 
                     'item_label' =>
                         'Action',
 
                     'min_items' =>
-                        1,
+                        0,
 
                     'visual' => [
                         'selector' =>
@@ -324,6 +397,14 @@ class CodeActionBlockSeeder extends Seeder
 
                                     'label' =>
                                         'Comparison',
+                                ],
+
+                                [
+                                    'value' =>
+                                        'logic',
+
+                                    'label' =>
+                                        'Logic',
                                 ],
 
                                 [
@@ -851,6 +932,62 @@ class CodeActionBlockSeeder extends Seeder
 
 
                         /*
+                          * -----------------------------
+                          * LOGIC FUNCTION
+                          * -----------------------------
+                         */
+
+                        [
+                            'name' =>
+                                'logic_function',
+
+                            'label' =>
+                                'Logic function',
+
+                            'type' =>
+                                'select',
+
+                            'required' =>
+                                false,
+
+                            'default' =>
+                                'and',
+
+                            'show_when' => [
+                                'field' =>
+                                    'function_type',
+
+                                'equals' =>
+                                    'logic',
+                            ],
+
+                            'options' => [
+                                [
+                                    'value' =>
+                                        'and',
+
+                                    'label' =>
+                                        'AND',
+                                ],
+                                [
+                                    'value' =>
+                                        'or',
+
+                                    'label' =>
+                                        'OR',
+                                ],
+                                [
+                                    'value' =>
+                                        'not',
+
+                                    'label' =>
+                                        'NOT',
+                                ],
+                            ],
+                        ],
+
+
+                        /*
                          * -----------------------------
                          * BUTTON LABEL
                          *
@@ -961,6 +1098,241 @@ class CodeActionBlockSeeder extends Seeder
                     ],
                 ],
 
+
+                /*
+                 * =====================================
+                 * AUTOMATIC CALCULATION
+                 *
+                 * Used when the teacher does not add
+                 * any Action buttons.
+                 * =====================================
+                 */
+
+                [
+                    'name' =>
+                        'auto_calculate',
+
+                    'label' =>
+                        'Calculate automatically',
+
+                    'type' =>
+                        'boolean',
+
+                    'required' =>
+                        false,
+
+                    'default' =>
+                        false,
+
+                    'help' =>
+                        'When enabled, changing a text input, dropdown or checkbox recalculates the result immediately. Action buttons are not required.',
+                ],
+
+                [
+                    'name' =>
+                        'auto_function_type',
+
+                    'label' =>
+                        'Automatic function type',
+
+                    'type' =>
+                        'select',
+
+                    'required' =>
+                        false,
+
+                    'default' =>
+                        'logic',
+
+                    'show_when' => [
+                        'field' =>
+                            'auto_calculate',
+
+                        'equals' =>
+                            true,
+                    ],
+
+                    'options' => [
+                        [
+                            'value' =>
+                                'string',
+
+                            'label' =>
+                                'Text / String',
+                        ],
+                        [
+                            'value' =>
+                                'number',
+
+                            'label' =>
+                                'Number',
+                        ],
+                        [
+                            'value' =>
+                                'comparison',
+
+                            'label' =>
+                                'Comparison',
+                        ],
+                        [
+                            'value' =>
+                                'logic',
+
+                            'label' =>
+                                'Logic',
+                        ],
+                    ],
+                ],
+
+                [
+                    'name' =>
+                        'auto_function_source',
+
+                    'label' =>
+                        'Function source',
+
+                    'type' =>
+                        'select',
+
+                    'required' =>
+                        false,
+
+                    'default' =>
+                        'fixed',
+
+                    'show_when' => [
+                        'field' =>
+                            'auto_calculate',
+
+                        'equals' =>
+                            true,
+                    ],
+
+                    'options' => [
+                        [
+                            'value' =>
+                                'fixed',
+
+                            'label' =>
+                                'Fixed function',
+                        ],
+                        [
+                            'value' =>
+                                'input',
+
+                            'label' =>
+                                'Input value',
+                        ],
+                    ],
+
+                    'help' =>
+                        'Choose Fixed when this block always performs one operation. Choose Input value when an input such as a dropdown selects the operation.',
+                ],
+
+                [
+                    'name' =>
+                        'auto_function_name',
+
+                    'label' =>
+                        'Fixed function name',
+
+                    'type' =>
+                        'text',
+
+                    'required' =>
+                        false,
+
+                    'default' =>
+                        'and',
+
+                    'show_when' => [
+                        'field' =>
+                            'auto_function_source',
+
+                        'equals' =>
+                            'fixed',
+                    ],
+
+                    'help' =>
+                        'Used only when Function source is Fixed. Enter the operation this block should always perform, for example add, subtract, and, or or equal.',
+                ],
+
+                [
+                    'name' =>
+                        'auto_function_input',
+
+                    'label' =>
+                        'Function input number',
+
+                    'type' =>
+                        'text',
+
+                    'required' =>
+                        false,
+
+                    'default' =>
+                        '2',
+
+                    'show_when' => [
+                        'field' =>
+                            'auto_function_source',
+
+                        'equals' =>
+                            'input',
+                    ],
+
+                    'help' =>
+                        'Used only when Function source is Input value. Enter which learner input contains the operation: 1 = first input, 2 = second input, etc. For A [operator] B, use 2.',
+                ],
+
+                [
+                    'name' =>
+                        'auto_code_example',
+
+                    'label' =>
+                        'Automatic code display',
+
+                    'type' =>
+                        'code',
+
+                    'required' =>
+                        false,
+
+                    'show_when' => [
+                        'field' =>
+                            'auto_calculate',
+
+                        'equals' =>
+                            true,
+                    ],
+
+                    'help' =>
+                        'Optional display-only code. Use {{input1}}, {{input2}}, {{input3}} and {{result}}.',
+                ],
+
+                [
+                    'name' =>
+                        'result_view',
+
+                    'label' =>
+                        'Result view',
+
+                    'type' =>
+                        'textarea',
+
+                    'rows' =>
+                        3,
+
+                    'required' =>
+                        false,
+
+                    'help' =>
+                        'Optional custom result. Supports {{input1}}, {{input2}}, {{result}} plus **bold**, `inline code` and [[label]].',
+
+                    'placeholder' =>
+                        'A = **{{input1}}**, B = **{{input3}}** → result = [[{{result}}]]',
+                ],
+
             ],
         ];
 
@@ -998,6 +1370,9 @@ class CodeActionBlockSeeder extends Seeder
                 [
                     'label' =>
                         'Your string',
+
+                    'input_type' =>
+                        'text',
 
                     'default_value' =>
                         'Hello, hello',

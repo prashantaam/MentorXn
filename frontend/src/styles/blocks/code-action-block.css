@@ -45,18 +45,14 @@
   min-width: 0;
   min-height: 42px;
   padding: 7px 10px;
-
   background:
     var(--surface);
   color:
     var(--text);
-
   border:
     2.5px solid
     var(--ink);
-
   border-radius: 10px;
-
   font: inherit;
 }
 
@@ -66,8 +62,42 @@
   outline:
     3px solid
     var(--w);
-
   outline-offset: 2px;
+}
+
+
+/* =========================================================
+   Checkbox Inputs
+   ========================================================= */
+
+.code-action-block
+  .code-action-field--checkbox {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.code-action-block
+  .code-action-field--checkbox
+  input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  flex: 0 0 24px;
+  cursor: pointer;
+  accent-color: #2f8f57;
+}
+
+.code-action-block
+  .code-action-field--checkbox
+  > span {
+  margin: 0;
+  line-height: 1;
+  cursor: pointer;
 }
 
 
@@ -89,29 +119,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   min-height: 38px;
-
   padding: 5px 13px;
-
   background:
     var(--surface);
-
   color:
     var(--text);
-
   border:
     2.5px solid
     var(--ink);
-
   border-radius: 999px;
-
   font: inherit;
   font-size: 0.9rem;
   font-weight: 800;
-
   cursor: pointer;
-
   transition:
     background 0.15s ease,
     box-shadow 0.15s ease,
@@ -122,7 +143,6 @@
   .code-action-option:hover {
   background:
     var(--surface2);
-
   transform:
     translateY(-1px);
 }
@@ -132,7 +152,6 @@
   outline:
     3px solid
     var(--ink);
-
   outline-offset: 3px;
 }
 
@@ -140,10 +159,8 @@
   .code-action-option.on {
   background:
     var(--w);
-
   color:
     var(--on-w);
-
   box-shadow:
     3px 3px 0
     var(--shadow-c);
@@ -157,20 +174,14 @@
 .code-action-block
   .code-action-code-wrapper {
   width: 100%;
-
   margin-top: 16px;
-
   overflow: hidden;
-
   background:
     #1e1e1e;
-
   border:
     3px solid
     var(--ink);
-
   border-radius: 16px;
-
   box-shadow:
     4px 4px 0
     var(--shadow-c);
@@ -179,13 +190,10 @@
 .code-action-block
   .code-action-code-syntax {
   display: block;
-
   width: 100%;
   max-width: 100%;
-
   overflow-x: auto;
   overflow-y: hidden;
-
   background:
     #1e1e1e;
 }
@@ -199,17 +207,12 @@
   .code-action-code-syntax
   pre {
   display: block;
-
   width: 100%;
-
   margin: 0 !important;
-
   border: 0 !important;
   border-radius: 0 !important;
-
   box-shadow:
     none !important;
-
   background:
     #1e1e1e !important;
 }
@@ -218,28 +221,21 @@
   .code-action-code-syntax
   code {
   display: block;
-
   margin: 0;
-
   border: 0 !important;
   border-radius: 0 !important;
-
   box-shadow:
     none !important;
-
   background:
     transparent !important;
-
   font-family:
     Consolas,
     Monaco,
     "Courier New",
     monospace !important;
-
   font-size: 14px;
   font-weight: 400;
   line-height: 1.65;
-
   text-shadow: none;
 }
 
@@ -251,16 +247,12 @@
   code span {
   padding-top: 0;
   padding-bottom: 0;
-
   border: 0 !important;
   border-radius: 0 !important;
-
   box-shadow:
     none !important;
-
   outline:
     none !important;
-
   text-shadow:
     none !important;
 }
@@ -277,26 +269,18 @@
   .linenumber {
   display:
     inline-block !important;
-
   min-width: 2.4em;
-
   padding-right:
     14px !important;
-
   color:
     #858585 !important;
-
   background:
     transparent !important;
-
   border:
     0 !important;
-
   box-shadow:
     none !important;
-
   text-align: right;
-
   user-select: none;
 }
 
@@ -305,18 +289,13 @@
   .token {
   background:
     transparent !important;
-
   border:
     0 !important;
-
   border-radius:
     0 !important;
-
   box-shadow:
     none !important;
-
   font-family: inherit;
-
   text-shadow:
     none !important;
 }
@@ -332,23 +311,16 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: 8px;
-
   margin-top: 18px;
-
   padding: 13px 14px;
-
   background:
     var(--surface2);
-
   color:
     var(--text);
-
   border:
     2.5px dashed
     var(--ink);
-
   border-radius: 14px;
-
   line-height: 1.5;
 }
 
@@ -378,11 +350,9 @@
   .code-action-code-syntax::-webkit-scrollbar-thumb {
   background:
     #555;
-
   border:
     2px solid
     #1e1e1e;
-
   border-radius:
     999px;
 }
@@ -396,7 +366,6 @@
 .code-action-block
   .code-action-code-syntax {
   scrollbar-width: thin;
-
   scrollbar-color:
     #555 #1e1e1e;
 }
@@ -422,9 +391,14 @@
   }
 
   .code-action-block
+    .code-action-field--checkbox {
+    width: auto;
+    align-self: flex-start;
+  }
+
+  .code-action-block
     .code-action-code-wrapper {
     border-radius: 14px;
-
     box-shadow:
       3px 3px 0
       var(--shadow-c);
@@ -441,6 +415,7 @@
   }
 }
 
+
 /* =========================================================
    Created Cards
    ========================================================= */
@@ -453,38 +428,56 @@
       minmax(130px, 1fr)
     );
   gap: 14px;
-
   margin-top: 20px;
 }
 
 .code-action-created-card {
   min-height: 130px;
   padding: 16px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 8px;
-
   border: 2px solid
     var(--border, #d6d3cc);
   border-radius: 14px;
-
   background:
     var(--surface2, #eeede7);
 }
 
 .code-action-created-card-row {
   padding: 9px 10px;
-
   border-radius: 8px;
-
   background:
     rgba(255, 255, 255, 0.72);
-
   font-weight: 700;
   text-align: center;
-
   overflow-wrap: anywhere;
 }
 
+/* =========================================================
+   Compact Code Action Inputs
+   ========================================================= */
+
+/* Checkbox fields should not expand */
+.code-action-block
+  .code-action-field--checkbox {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: auto;
+}
+
+/* Dropdown fields should not expand */
+.code-action-block
+  .code-action-field:has(select) {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: auto;
+}
+
+/* Keep the controls close together */
+.code-action-block
+  .code-action-inputs {
+  justify-content: flex-start;
+  column-gap: 16px;
+}

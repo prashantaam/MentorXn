@@ -79,7 +79,17 @@
 
   vertical-align: baseline;
 }
+/* Boolean result labels */
 
+.learning-text-label--true {
+  background: #c9f4dc;
+  color: #17653a;
+}
+
+.learning-text-label--false {
+  background: #ffd8d8;
+  color: #9b2525;
+}
 /* =========================================================
    Responsive
    ========================================================= */

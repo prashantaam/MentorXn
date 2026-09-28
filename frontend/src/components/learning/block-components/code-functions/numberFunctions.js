@@ -6,39 +6,50 @@ function toNumber(value) {
     : 0;
 }
 
-
 export function calculateNumberResult(
   mode,
   values = []
 ) {
-  const first = toNumber(
-    values[0]
-  );
-
-  const second = toNumber(
-    values[1]
-  );
+  const first = toNumber(values[0]);
+  const second = toNumber(values[1]);
 
   switch (mode) {
     case "number":
       return String(first);
 
+    /*
+     * Addition
+     * Supports both internal name and symbol.
+     */
     case "add":
+    case "+":
       return String(
         first + second
       );
 
+    /*
+     * Subtraction
+     */
     case "subtract":
+    case "-":
       return String(
         first - second
       );
 
+    /*
+     * Multiplication
+     */
     case "multiply":
+    case "*":
       return String(
         first * second
       );
 
+    /*
+     * Division
+     */
     case "divide":
+    case "/":
       if (second === 0) {
         return "Cannot divide by zero";
       }
@@ -47,7 +58,11 @@ export function calculateNumberResult(
         first / second
       );
 
+    /*
+     * Modulus
+     */
     case "modulus":
+    case "%":
       if (second === 0) {
         return "Cannot divide by zero";
       }
@@ -56,12 +71,20 @@ export function calculateNumberResult(
         first % second
       );
 
+    /*
+     * Power
+     */
     case "power":
+    case "**":
       return String(
         first ** second
       );
 
+    /*
+     * Floor division
+     */
     case "floor_divide":
+    case "//":
       if (second === 0) {
         return "Cannot divide by zero";
       }

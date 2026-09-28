@@ -8,6 +8,7 @@ function BlockConfigField({
   value,
   onChange,
   showLabel = true,
+  siblingValues = {},
 }) {
   const [
     answerInput,
@@ -16,6 +17,30 @@ function BlockConfigField({
 
 
   if (!field?.name) {
+    return null;
+  }
+
+
+  /*
+   * Top-level conditional visibility.
+   *
+   * Parent editors can pass the complete configuration object
+   * as siblingValues. Repeater fields already pass their item
+   * object as sibling values.
+   */
+  const condition =
+    field?.show_when;
+
+  if (
+    condition?.field &&
+    Object.prototype.hasOwnProperty.call(
+      condition,
+      "equals"
+    ) &&
+    siblingValues?.[
+      condition.field
+    ] !== condition.equals
+  ) {
     return null;
   }
 
@@ -644,6 +669,9 @@ function BlockConfigField({
                             itemField.name,
                             newValue
                           )
+                        }
+                        siblingValues={
+                          item
                         }
                       />
                     )

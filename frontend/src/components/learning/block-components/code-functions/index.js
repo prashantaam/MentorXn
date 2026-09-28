@@ -10,6 +10,9 @@ import {
   calculateComparisonResult,
 } from "./comparisonFunctions";
 
+import {
+  calculateLogicResult,
+} from "./logicFunctions";
 
 export function calculateCodeResult(
   functionType,
@@ -36,6 +39,12 @@ export function calculateCodeResult(
         functionName,
         values
       );
+
+    case "logic":
+    return calculateLogicResult(
+        functionName,
+        values
+    );
 
     default:
       return String(
