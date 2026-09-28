@@ -339,6 +339,83 @@ class LearningBlockController extends Controller
     }
 
     /**
+ * Reorder learning blocks within a topic.
+ */
+public function reorder(
+    Request $request,
+    Topic $topic
+): JsonResponse {
+    $user = $request->user();
+
+    if (!$user->isTeacher()) {
+        return response()->json([
+            'message' => 'Teacher access required.',
+        ], 403);
+    }
+
+    if (
+        $topic->lesson->course->teacher_id
+        !== $user->id
+    ) {
+        return response()->json([
+            'message' => 'Topic not found.',
+        ], 404);
+    }
+
+    $validated = $request->validate([
+        'blocks' => [
+            'required',
+            'array',
+        ],
+        'blocks.*.id' => [
+            'required',
+            'integer',
+        ],
+        'blocks.*.position' => [
+            'required',
+            'integer',
+            'min:1',
+        ],
+    ]);
+
+    $topicBlockIds = $topic
+        ->learningBlocks()
+        ->pluck('id')
+        ->map(fn ($id) => (int) $id)
+        ->all();
+
+    foreach ($validated['blocks'] as $block) {
+        if (!in_array((int) $block['id'], $topicBlockIds, true)) {
+            return response()->json([
+                'message' =>
+                    'One or more learning blocks do not belong to this topic.',
+            ], 422);
+        }
+    }
+
+    foreach ($validated['blocks'] as $block) {
+        $topic
+            ->learningBlocks()
+            ->where('id', $block['id'])
+            ->update([
+                'position' => $block['position'],
+            ]);
+    }
+
+    $learningBlocks = $topic
+        ->learningBlocks()
+        ->with('lblockTemplate')
+        ->orderBy('position')
+        ->get();
+
+    return response()->json([
+        'message' =>
+            'Learning blocks reordered successfully.',
+        'learning_blocks' =>
+            $learningBlocks,
+    ]);
+}
+    /**
      * Delete a learning block.
      */
     public function destroy(
@@ -470,4 +547,6 @@ class LearningBlockController extends Controller
 
         return null;
     }
+
+
 }

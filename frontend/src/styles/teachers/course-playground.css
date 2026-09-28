@@ -3026,3 +3026,73 @@ textarea:focus {
     min-width: 42px;
   }
 }
+.course-playground-block-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 32px;
+  height: 32px;
+
+  padding: 0 8px;
+
+  border: 1px solid #d8dee9;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #667085;
+
+  font-size: 20px;
+  font-weight: 700;
+
+  cursor: grab;
+
+  user-select: none;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.course-playground-block-drag-handle:hover {
+  background: #f8fafc;
+  border-color: #98a2b3;
+}
+
+.course-playground-block-drag-handle:active {
+  cursor: grabbing;
+}
+
+.course-playground-block-position {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 28px;
+  height: 28px;
+
+  border-radius: 999px;
+
+  background: #f2f4f7;
+
+  color: #475467;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.course-playground-learning-block.is-dragging {
+  opacity: 0.45;
+}
+
+.course-playground-learning-block.is-drag-over {
+  outline: 2px dashed #667085;
+  outline-offset: 5px;
+}
+
+.course-playground-learning-block.is-drag-over
+  .course-playground-learning-block-actions {
+  opacity: 1;
+}

@@ -4,6 +4,32 @@ import {
 } from "react";
 
 import {
+  DndContext,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
+import {
+  CSS,
+} from "@dnd-kit/utilities";
+
+import {
+  restrictToVerticalAxis,
+  restrictToParentElement,
+} from "@dnd-kit/modifiers";
+
+import {
   useLocation,
   useNavigate,
   useParams,
@@ -52,6 +78,111 @@ const getLessonAccentColor = (lessons, selectedLesson) => {
 
 
 
+function SortableLearningBlock({
+  block,
+  index,
+  onEdit,
+  onDelete,
+  disabled,
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: String(block.id),
+    disabled,
+  });
+
+  const style = {
+    transform:
+      CSS.Transform.toString(
+        transform
+      ),
+    transition,
+    position: "relative",
+    zIndex: isDragging
+      ? 20
+      : "auto",
+    opacity: isDragging
+      ? 0.65
+      : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={[
+        "course-playground-learning-block",
+        isDragging
+          ? "is-dragging"
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div className="course-playground-learning-block-actions">
+        <span className="course-playground-block-position">
+          {index + 1}
+        </span>
+
+        <button
+          type="button"
+          className="course-playground-block-drag-handle"
+          disabled={disabled}
+          title="Drag to reorder"
+          aria-label={`Move ${
+            block.title ||
+            "learning block"
+          }`}
+          {...attributes}
+          {...listeners}
+        >
+          ⋮⋮
+        </button>
+
+        <button
+          type="button"
+          className="course-playground-block-action-button"
+          onClick={() =>
+            onEdit(block)
+          }
+          aria-label={`Edit ${
+            block.title ||
+            "learning block"
+          }`}
+          title="Edit learning block"
+        >
+          ✏️ Edit
+        </button>
+
+        <button
+          type="button"
+          className="course-playground-block-action-button danger"
+          onClick={() =>
+            onDelete(block)
+          }
+          aria-label={`Delete ${
+            block.title ||
+            "learning block"
+          }`}
+          title="Delete learning block"
+        >
+          🗑️ Delete
+        </button>
+      </div>
+
+      <LearningBlockRenderer
+        block={block}
+      />
+    </div>
+  );
+}
+
 function CoursePlaygroundPage() {
   const { courseId } =
     useParams();
@@ -89,6 +220,29 @@ function CoursePlaygroundPage() {
     learningBlocks,
     setLearningBlocks,
   ] = useState([]);
+
+  const [
+    isReorderingBlocks,
+    setIsReorderingBlocks,
+  ] = useState(false);
+
+  const blockSensors = useSensors(
+    useSensor(
+      PointerSensor,
+      {
+        activationConstraint: {
+          distance: 5,
+        },
+      }
+    ),
+    useSensor(
+      KeyboardSensor,
+      {
+        coordinateGetter:
+          sortableKeyboardCoordinates,
+      }
+    )
+  );
 
   const [
     learningBlockPendingDelete,
@@ -1188,6 +1342,139 @@ function CoursePlaygroundPage() {
       `/teacher/courses/${courseId}/topics/${selectedTopic.id}/blocks/${block.id}/edit`
     );
   };
+  /*
+   * =========================================
+   * Reorder Learning Blocks
+   * =========================================
+   */
+
+  const handleLearningBlockDragEnd =
+    async ({
+      active,
+      over,
+    }) => {
+      if (
+        !over ||
+        active.id === over.id ||
+        !selectedTopic ||
+        isReorderingBlocks
+      ) {
+        return;
+      }
+
+      const oldIndex =
+        learningBlocks.findIndex(
+          (block) =>
+            String(block.id) ===
+            String(active.id)
+        );
+
+      const newIndex =
+        learningBlocks.findIndex(
+          (block) =>
+            String(block.id) ===
+            String(over.id)
+        );
+
+      if (
+        oldIndex === -1 ||
+        newIndex === -1
+      ) {
+        return;
+      }
+
+      const previousBlocks =
+        learningBlocks.map(
+          (block) => ({
+            ...block,
+          })
+        );
+
+      const reorderedBlocks =
+        arrayMove(
+          learningBlocks,
+          oldIndex,
+          newIndex
+        ).map(
+          (block, index) => ({
+            ...block,
+            position: index + 1,
+          })
+        );
+
+      /*
+       * Optimistic update:
+       * move the block immediately.
+       */
+      setLearningBlocks(
+        reorderedBlocks
+      );
+
+      setIsReorderingBlocks(true);
+      setFormError("");
+
+      try {
+        const response =
+          await fetch(
+            `/api/teacher/topics/${selectedTopic.id}/learning-blocks/reorder`,
+            {
+              method: "PUT",
+
+              headers:
+                getHeaders(true),
+
+              body: JSON.stringify({
+                blocks:
+                  reorderedBlocks.map(
+                    (block) => ({
+                      id: block.id,
+                      position:
+                        block.position,
+                    })
+                  ),
+              }),
+            }
+          );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+              "Unable to reorder learning blocks."
+          );
+        }
+
+        setLearningBlocks(
+          data.learning_blocks ||
+            reorderedBlocks
+        );
+      } catch (requestError) {
+        console.error(
+          "Reorder learning blocks error:",
+          requestError
+        );
+
+        /*
+         * Restore the previous order
+         * when the API save fails.
+         */
+        setLearningBlocks(
+          previousBlocks
+        );
+
+        setFormError(
+          requestError.message ||
+            "Unable to reorder learning blocks."
+        );
+      } finally {
+        setIsReorderingBlocks(
+          false
+        );
+      }
+    };
+
   const handleRequestDeleteLearningBlock =
     (block) => {
       setLearningBlockPendingDelete(block);
@@ -1634,49 +1921,61 @@ function CoursePlaygroundPage() {
                 ) : learningBlocks.length >
                   0 ? (
                   <>
-                    {learningBlocks.map(
-                      (block) => (
-                        <div
-                          key={block.id}
-                          className="course-playground-learning-block"
-                        >
-                         
-                        <div className="course-playground-learning-block-actions">
-                            <button
-                              type="button"
-                              className="course-playground-block-action-button"
-                              onClick={() =>
-                                handleEditLearningBlock(
-                                  block
-                                )
+                    <DndContext
+                      sensors={
+                        blockSensors
+                      }
+                      collisionDetection={
+                        closestCenter
+                      }
+                      modifiers={[
+                        restrictToVerticalAxis,
+                        restrictToParentElement,
+                      ]}
+                      onDragEnd={
+                        handleLearningBlockDragEnd
+                      }
+                    >
+                      <SortableContext
+                        items={learningBlocks.map(
+                          (block) =>
+                            String(
+                              block.id
+                            )
+                        )}
+                        strategy={
+                          verticalListSortingStrategy
+                        }
+                      >
+                        {learningBlocks.map(
+                          (
+                            block,
+                            index
+                          ) => (
+                            <SortableLearningBlock
+                              key={
+                                block.id
                               }
-                              aria-label={`Edit ${block.title || "learning block"}`}
-                              title="Edit learning block"
-                            >
-                              ✏️ Edit
-                            </button>
-
-                            <button
-                              type="button"
-                              className="course-playground-block-action-button danger"
-                              onClick={() =>
-                                handleRequestDeleteLearningBlock(
-                                  block
-                                )
+                              block={
+                                block
                               }
-                              aria-label={`Delete ${block.title || "learning block"}`}
-                              title="Delete learning block"
-                            >
-                              🗑️ Delete
-                            </button>
-                        </div>
-
-                          <LearningBlockRenderer
-                            block={block}
-                          />
-                        </div>
-                      )
-                    )}
+                              index={
+                                index
+                              }
+                              disabled={
+                                isReorderingBlocks
+                              }
+                              onEdit={
+                                handleEditLearningBlock
+                              }
+                              onDelete={
+                                handleRequestDeleteLearningBlock
+                              }
+                            />
+                          )
+                        )}
+                      </SortableContext>
+                    </DndContext>
 
                     <button
                       type="button"
