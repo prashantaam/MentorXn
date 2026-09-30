@@ -1101,6 +1101,33 @@ class CodeActionBlockSeeder extends Seeder
 
                 /*
                  * =====================================
+                 * INITIAL CODE
+                 * =====================================
+                 */
+
+                [
+                    'name' =>
+                        'initial_code',
+
+                    'label' =>
+                        'Initial code',
+
+                    'type' =>
+                        'code',
+
+                    'required' =>
+                        false,
+
+                    'help' =>
+                        'Display-only code shown to the learner. Supports {{input1}}, {{input2}}, {{input3}} and other learner input placeholders.',
+
+                    'placeholder' =>
+                        "score = {{input1}}\n\nif score >= 90:\n    grade = \"A 🏆\"\nelif score >= 75:\n    grade = \"B 👍\"\nelif score >= 50:\n    grade = \"C 🙂\"\nelse:\n    grade = \"F ❌\"",
+                ],
+
+
+                /*
+                 * =====================================
                  * AUTOMATIC CALCULATION
                  *
                  * Used when the teacher does not add
@@ -1181,6 +1208,13 @@ class CodeActionBlockSeeder extends Seeder
                             'label' =>
                                 'Logic',
                         ],
+                        [
+                            'value' =>
+                                'conditional',
+
+                            'label' =>
+                                'Conditional / If-Else',
+                        ],
                     ],
                 ],
 
@@ -1226,7 +1260,7 @@ class CodeActionBlockSeeder extends Seeder
                     ],
 
                     'help' =>
-                        'Choose Fixed when this block always performs one operation. Choose Input value when an input such as a dropdown selects the operation.',
+                        'Choose Input value when a dropdown should select the operation, for example and/or/not.',
                 ],
 
                 [
@@ -1254,7 +1288,7 @@ class CodeActionBlockSeeder extends Seeder
                     ],
 
                     'help' =>
-                        'Used only when Function source is Fixed. Enter the operation this block should always perform, for example add, subtract, and, or or equal.',
+                        'Examples: and, or, not, add, subtract, equal.',
                 ],
 
                 [
@@ -1282,7 +1316,7 @@ class CodeActionBlockSeeder extends Seeder
                     ],
 
                     'help' =>
-                        'Used only when Function source is Input value. Enter which learner input contains the operation: 1 = first input, 2 = second input, etc. For A [operator] B, use 2.',
+                        '1 = first input, 2 = second input, etc. For A [operator] B, use 2.',
                 ],
 
                 [

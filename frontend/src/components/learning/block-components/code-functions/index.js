@@ -14,6 +14,10 @@ import {
   calculateLogicResult,
 } from "./logicFunctions";
 
+import {
+  calculateConditionalResult,
+} from "./conditionalFunctions";
+
 export function calculateCodeResult(
   functionType,
   functionName,
@@ -42,6 +46,12 @@ export function calculateCodeResult(
 
     case "logic":
     return calculateLogicResult(
+        functionName,
+        values
+    );
+
+    case "conditional":
+    return calculateConditionalResult(
         functionName,
         values
     );
