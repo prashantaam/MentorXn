@@ -1,0 +1,219 @@
+.drag-bucket-block .drag-bucket-block-instructions {
+  margin-bottom: 18px;
+}
+
+.drag-bucket-block .drag-bucket-source-section {
+  margin-bottom: 20px;
+}
+
+.drag-bucket-block .drag-bucket-section-heading {
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.drag-bucket-block .drag-bucket-available {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-height: 74px;
+  padding: 14px;
+  border: 2px dashed #cfd5df;
+  border-radius: 14px;
+  background: #fafbfc;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.drag-bucket-block .drag-bucket-available.is-over,
+.drag-bucket-block .drag-bucket.is-over {
+  border-color: #5d6ee5;
+  background: #f4f5ff;
+}
+
+.drag-bucket-block .drag-bucket-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.drag-bucket-block .drag-bucket {
+  min-height: 170px;
+  padding: 14px;
+  border: 2px dashed #cfd5df;
+  border-radius: 16px;
+  background: #fff;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.drag-bucket-block .drag-bucket-title {
+  margin-bottom: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.drag-bucket-block .drag-bucket-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 10px;
+  min-height: 95px;
+}
+
+.drag-bucket-block .drag-bucket-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: auto;
+  min-height: 42px;
+  padding: 9px 13px;
+  border: 1px solid #d7dce5;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 7%);
+  font: inherit;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.drag-bucket-block .drag-bucket-item:active {
+  cursor: grabbing;
+}
+
+.drag-bucket-block .drag-bucket-item:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.drag-bucket-block .drag-bucket-item.is-dragging {
+  opacity: 0.35;
+}
+
+.drag-bucket-block .drag-bucket-item.is-correct {
+  border-color: #70c994;
+  background: #eefaf3;
+}
+
+.drag-bucket-block .drag-bucket-item.is-incorrect {
+  border-color: #e59b9b;
+  background: #fff1f1;
+}
+
+.drag-bucket-block .drag-bucket-item--overlay {
+  opacity: 1;
+  cursor: grabbing;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
+}
+
+.drag-bucket-block .drag-bucket-item-handle {
+  font-weight: 800;
+  opacity: 0.55;
+}
+
+.drag-bucket-block .drag-bucket-placeholder {
+  width: 100%;
+  padding: 12px;
+  color: #737b87;
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.drag-bucket-block .drag-bucket-status {
+  margin-top: 12px;
+  color: #68707c;
+  font-size: 0.92rem;
+}
+
+.drag-bucket-block .drag-bucket-feedback {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+
+.drag-bucket-block .drag-bucket-feedback--correct {
+  background: #eefaf3;
+  border: 1px solid #9ddab5;
+}
+
+.drag-bucket-block .drag-bucket-feedback--incorrect {
+  background: #fff4f4;
+  border: 1px solid #efb2b2;
+}
+
+.drag-bucket-block .drag-bucket-answers {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px dashed #cfd5df;
+  border-radius: 14px;
+  background: #fafbfc;
+}
+
+.drag-bucket-block .drag-bucket-answers-title {
+  margin: 0 0 14px;
+}
+
+.drag-bucket-block .drag-bucket-answer-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.drag-bucket-block .drag-bucket-answer {
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.drag-bucket-block .drag-bucket-answer-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.drag-bucket-block .drag-bucket-answer-chip {
+  display: inline-flex;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eef1f5;
+  font-size: 0.9rem;
+}
+
+.drag-bucket-block .drag-bucket-score {
+  margin-top: 14px;
+}
+
+.drag-bucket-block .drag-bucket-complete-message {
+  margin-top: 12px;
+}
+
+.drag-bucket-block .drag-bucket-actions {
+  margin-top: 20px;
+}
+
+.drag-bucket-block .drag-bucket-empty {
+  padding: 18px;
+  border: 1px dashed #cfd5df;
+  border-radius: 12px;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .drag-bucket-block .drag-bucket-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .drag-bucket-block .drag-bucket-available {
+    align-items: stretch;
+  }
+
+  .drag-bucket-block .drag-bucket-item {
+    max-width: 100%;
+  }
+}

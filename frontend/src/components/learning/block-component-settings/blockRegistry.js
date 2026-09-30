@@ -6,6 +6,8 @@ import MCQQuizBlock from "../block-components/MCQQuizBlock";
 import ProcessFlowBlock from "../block-components/ProcessFlowBlock";
 import ToggleExplorerBlock from "../block-components/ToggleExplorerBlock";
 import CodeActionBlock from "../block-components/CodeActionBlock";
+import DragBucketBlock from "../block-components/DragBucketBlock";
+import ArrangeTextBlock from "../block-components/ArrangeTextBlock";
 
 const blockRegistry = {
   /*
@@ -35,6 +37,14 @@ const blockRegistry = {
   },
   MCQQuizBlock: {
   component: MCQQuizBlock,
+  },
+
+  DragBucketBlock: {
+    component: DragBucketBlock,
+  },
+
+  ArrangeTextBlock: {
+    component: ArrangeTextBlock,
   },
   ProcessFlowBlock: {
   component: ProcessFlowBlock,
