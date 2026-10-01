@@ -119,6 +119,8 @@ $template->configuration_schema = [
                     'fields' => [
                         'show_code_display',
                         'code_display',
+                        'show_result_box',
+                        'result_box_format',
                         'show_card',
                         'card_format',
                     ],
@@ -736,6 +738,68 @@ $template->configuration_schema = [
 
                     'fields' => [
 [
+
+                            'name' =>
+
+                                'action_trigger',
+
+
+
+                            'label' =>
+
+                                'Action type',
+
+
+
+                            'type' =>
+
+                                'select',
+
+
+
+                            'required' =>
+
+                                true,
+
+
+
+                            'default' =>
+
+                                'button',
+
+
+
+                            'options' => [
+
+                                [
+
+                                    'value' =>
+
+                                        'button',
+
+                                    'label' =>
+
+                                        'Button',
+
+                                ],
+
+                                [
+
+                                    'value' =>
+
+                                        'auto',
+
+                                    'label' =>
+
+                                        'Auto',
+
+                                ],
+
+                            ],
+
+                        ],
+
+                                                                                                [
 
                             'name' =>
 
@@ -1372,13 +1436,13 @@ $template->configuration_schema = [
 
                                 'field' =>
 
-                                    'function_type',
+                                    'action_trigger',
 
 
 
                                 'equals' =>
 
-                                    'number',
+                                    'button',
 
                             ],
 
@@ -1975,7 +2039,21 @@ $template->configuration_schema = [
 
                             'required' =>
 
-                                true,
+                                false,
+
+
+
+                            'show_when' => [
+
+                                'field' =>
+
+                                    'action_trigger',
+
+                                'equals' =>
+
+                                    'button',
+
+                            ],
 
 
 
@@ -2164,6 +2242,102 @@ $template->configuration_schema = [
 
                     'name' =>
 
+                        'show_result_box',
+
+
+
+                    'label' =>
+
+                        'Show result box',
+
+
+
+                    'type' =>
+
+                        'boolean',
+
+
+
+                    'required' =>
+
+                        false,
+
+
+
+                    'default' =>
+
+                        true,
+
+                ],
+
+                [
+
+                    'name' =>
+
+                        'result_box_format',
+
+
+
+                    'label' =>
+
+                        'Result box format',
+
+
+
+                    'type' =>
+
+                        'textarea',
+
+
+
+                    'rows' =>
+
+                        3,
+
+
+
+                    'required' =>
+
+                        false,
+
+
+
+                    'show_when' => [
+
+                        'field' =>
+
+                            'show_result_box',
+
+                        'equals' =>
+
+                            true,
+
+                    ],
+
+
+
+                    'default' =>
+
+                        '**Result:** {{result}}',
+
+
+
+                    'help' =>
+
+                        'Controls the content shown in the result box. Supports {{input1}}, {{input2}}, {{input3}}, {{arg1}}, {{arg2}} and {{result}}.',
+
+
+
+                    'placeholder' =>
+
+                        '**Result:** {{result}}',
+
+                ],
+
+                [
+
+                    'name' =>
+
                         'show_card',
 
 
@@ -2254,6 +2428,8 @@ $template->configuration_schema = [
                         "{{icon}}\n{{value}}\n{{type}} {{variable}}",
 
                 ],
+
+                
 
             ],
 

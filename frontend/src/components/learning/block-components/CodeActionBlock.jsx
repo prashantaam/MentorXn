@@ -89,133 +89,33 @@ function getInitialValues(inputs) {
      ========================================================= */
 
 function applyTemplate(
-
    template,
-
    values,
-
    result = "",
-
    argumentsList = []
-
 ) {
+   let output = String(template ?? "");
 
-   let output =
-
-      String(template ?? "");
-
-   /*
-
-     * Learner inputs:
-
-     *
-
-     * {{input1}}
-
-     * {{input2}}
-
-     * {{input3}}
-
-     */
-
-   values.forEach(
-
-      (value, index) => {
-
-         const token =
-
-            new RegExp(
-
-               `\\{\\{\*input${
-
-                  index + 1
-
-               }\*\\}\\}`,
-
-               "gi"
-
-            );
-
-         output =
-
-            output.replace(
-
-               token,
-
-               String(
-
-                  value ?? ""
-
-               )
-
-            );
-
-      }
-
-   );
-
-   /*
-
-     * Action arguments:
-
-     *
-
-     * {{arg1}}
-
-     * {{arg2}}
-
-     * {{arg3}}
-
-     */
-
-   argumentsList.forEach(
-
-      (value, index) => {
-
-         const token =
-
-            new RegExp(
-
-               `\\{\\{\*arg${
-
-                  index + 1
-
-               }\*\\}\\}`,
-
-               "gi"
-
-            );
-
-         output =
-
-            output.replace(
-
-               token,
-
-               String(
-
-                  value ?? ""
-
-               )
-
-            );
-
-      }
-
-   );
-
-   output =
-
-      output.replace(
-
-         /\{\{&#x73;*result&#x73;*\}\}/gi,
-
-         String(result ?? "")
-
+   values.forEach((value, index) => {
+      output = output.replaceAll(
+         `{{input${index + 1}}}`,
+         String(value ?? "")
       );
+   });
+
+   argumentsList.forEach((value, index) => {
+      output = output.replaceAll(
+         `{{arg${index + 1}}}`,
+         String(value ?? "")
+      );
+   });
+
+   output = output.replaceAll(
+      "{{result}}",
+      String(result ?? "")
+   );
 
    return output;
-
 }
 
 /* =========================================================
@@ -224,7 +124,7 @@ function applyTemplate(
 
      ========================================================= */
 
-function getActionFunction(action) {
+function getActionFunction(action, values = []) {
 
    if (!action) {
 
@@ -237,6 +137,7 @@ function getActionFunction(action) {
       action.function_type ||
 
       "string";
+
 
    switch (functionType) {
 
@@ -456,7 +357,7 @@ function CodeActionInput({
 
       String(input?.options ?? "")
 
-         .split(/&#x72;?/)
+         .split(/\r?\n/)
 
          .map((option) =>
 
@@ -975,6 +876,34 @@ function CodeActionBlock({
 
       actions.length > 0;
 
+   const buttonActions =
+
+      actions
+         .map((action, index) => ({
+            action,
+            index,
+         }))
+         .filter(
+            ({ action }) =>
+               action?.action_trigger !==
+               "auto"
+         );
+
+   const hasButtonActions =
+
+      buttonActions.length > 0;
+
+   const autoActionIndex =
+      actions.findIndex(
+         (action) =>
+            action?.action_trigger === "auto"
+      );
+
+   const autoAction =
+      autoActionIndex >= 0
+         ? actions[autoActionIndex]
+         : null;
+
    const automaticFunctionType =
 
       data?.auto_function_type ||
@@ -1106,16 +1035,12 @@ function CodeActionBlock({
         ======================================================= */
 
    const activeAction =
-
-      selectedActionIndex !== null
-
-         ? actions[
-
-               selectedActionIndex
-
-            ] || null
-
-         : null;
+      autoAction ||
+      (
+         selectedActionIndex !== null
+            ? actions[selectedActionIndex] || null
+            : null
+      );
 
    /* =======================================================
 
@@ -1249,6 +1174,24 @@ function CodeActionBlock({
 
             values;
 
+         let resolvedFunctionName =
+            functionName;
+
+         if (
+            activeAction?.action_trigger === "auto" &&
+            functionType === "number"
+         ) {
+            resolvedFunctionName =
+               String(values[1] ?? "")
+                  .trim()
+                  .toLowerCase();
+
+            calculationValues = [
+               values[0],
+               values[2],
+            ];
+         }
+
          if (
 
             !activeAction &&
@@ -1329,7 +1272,7 @@ function CodeActionBlock({
 
                functionType,
 
-               functionName,
+               resolvedFunctionName,
 
                calculationValues,
 
@@ -1441,15 +1384,9 @@ function CodeActionBlock({
 
          const template =
 
-            data?.result_view ||
+            data?.result_box_format ||
 
-            "";
-
-         if (!template) {
-
-            return "";
-
-         }
+            "**Result:** {{result}}";
 
          return applyTemplate(
 
@@ -1465,7 +1402,7 @@ function CodeActionBlock({
 
       }, [
 
-         data?.result_view,
+         data?.result_box_format,
 
          values,
 
@@ -1514,8 +1451,7 @@ function CodeActionBlock({
             )
 
       );
-
-   };
+};
 
    /* =======================================================
 
@@ -1688,7 +1624,7 @@ function CodeActionBlock({
 
                =============================================== */}
 
-         {hasActions && (
+         {hasButtonActions && (
 
             <div
 
@@ -1698,15 +1634,15 @@ function CodeActionBlock({
 
             >
 
-               {actions.map(
+               {buttonActions.map(
 
-                  (
+                  ({
 
                      action,
 
-                     index
+                     index,
 
-                  ) => {
+                  }) => {
 
                      const active =
 
@@ -1851,15 +1787,11 @@ function CodeActionBlock({
 
                =============================================== */}
 
-         {!isCreateCard &&
+         {data?.show_result_box !== false &&
 
-            (
+            !isCreateCard &&
 
-               activeAction ||
-
-               data?.auto_calculate
-
-            ) && (
+            (autoAction || activeAction || data?.auto_calculate) && (
 
                <div
 
