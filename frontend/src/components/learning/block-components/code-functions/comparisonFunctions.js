@@ -34,44 +34,32 @@ export function calculateComparisonResult(
     );
 
 
-  switch (functionName) {
-    case "equal":
-      return String(
-        first === second
-      );
+    switch (functionName) {
+  case "equal":
+  case "==":
+    return String(first === second);
 
+  case "not_equal":
+  case "!=":
+    return String(first !== second);
 
-    case "not_equal":
-      return String(
-        first !== second
-      );
+  case "greater_than":
+  case ">":
+    return String(first > second);
 
+  case "greater_or_equal":
+  case ">=":
+    return String(first >= second);
 
-    case "greater_than":
-      return String(
-        first > second
-      );
+  case "less_than":
+  case "<":
+    return String(first < second);
 
+  case "less_or_equal":
+  case "<=":
+    return String(first <= second);
 
-    case "greater_or_equal":
-      return String(
-        first >= second
-      );
-
-
-    case "less_than":
-      return String(
-        first < second
-      );
-
-
-    case "less_or_equal":
-      return String(
-        first <= second
-      );
-
-
-    default:
-      return "false";
-  }
+  default:
+    return "false";
+}
 }

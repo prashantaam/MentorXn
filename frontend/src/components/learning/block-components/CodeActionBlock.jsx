@@ -425,9 +425,7 @@ function CodeActionInput({
 
             <span>
 
-               {input?.label ||
-
-                  "Input"}
+               {input?.label ?? ""}
 
             </span>
 
@@ -453,9 +451,7 @@ function CodeActionInput({
 
          <span>
 
-            {input?.label ||
-
-               "Input"}
+            {input?.label ?? ""}
 
          </span>
 
@@ -1179,7 +1175,7 @@ function CodeActionBlock({
 
          if (
             activeAction?.action_trigger === "auto" &&
-            functionType === "number"
+            ["number", "comparison", "logic"].includes(functionType)
          ) {
             resolvedFunctionName =
                String(values[1] ?? "")

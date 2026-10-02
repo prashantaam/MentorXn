@@ -1958,13 +1958,13 @@ $template->configuration_schema = [
 
                                 'field' =>
 
-                                    'function_type',
+                                    'action_trigger',
 
 
 
                                 'equals' =>
 
-                                    'logic',
+                                    'button',
 
                             ],
 
