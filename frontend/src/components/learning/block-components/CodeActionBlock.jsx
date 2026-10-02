@@ -737,21 +737,145 @@ function getCreatedCardIcon(type) {
 
 }
 
-function formatCreatedCardValue(card) {
+function normaliseCardValue(value) {
 
-   const value =
+   if (Array.isArray(value)) {
 
-      String(card?.value ?? "");
+      return value;
 
-   if (card?.type === "string") {
+   }
 
-      return `"${value}"`;
+   const text = String(value ?? "").trim();
+
+   if (
+      text.startsWith("[") &&
+      text.endsWith("]")
+   ) {
+
+      try {
+
+         const parsed = JSON.parse(text);
+
+         if (Array.isArray(parsed)) {
+
+            return parsed;
+
+         }
+
+      } catch {
+
+         // Keep invalid JSON-style values as strings.
+
+      }
+
+   }
+
+   if (text.toLowerCase() === "true") {
+
+      return true;
+
+   }
+
+   if (text.toLowerCase() === "false") {
+
+      return false;
+
+   }
+
+   if (
+      text !== "" &&
+      !Number.isNaN(Number(text))
+   ) {
+
+      return Number(text);
 
    }
 
    return value;
 
 }
+
+function detectCardType(value) {
+
+   if (Array.isArray(value)) return "list";
+
+   if (typeof value === "boolean") return "boolean";
+
+   if (typeof value === "number") return "number";
+
+   return "string";
+
+}
+
+function formatCreatedCardValue(card) {
+
+   const value = normaliseCardValue(card?.value);
+
+   if (Array.isArray(value)) {
+
+      return JSON.stringify(value);
+
+   }
+
+   if (card?.type === "string") {
+
+      return `"${String(value ?? "")}"`;
+
+   }
+
+   return String(value ?? "");
+
+}
+
+function formatCardTemplateValue(value) {
+
+   if (
+      Array.isArray(value) ||
+      (
+         value &&
+         typeof value === "object"
+      )
+   ) {
+      try {
+         return JSON.stringify(value);
+      } catch {
+         return String(value ?? "");
+      }
+   }
+
+   return String(value ?? "");
+
+}
+
+
+function getCardTemplateValue(card, path) {
+
+   const parts = String(path ?? "")
+      .trim()
+      .split(".")
+      .filter(Boolean);
+
+   let current = card;
+
+   for (const part of parts) {
+
+      if (
+         current === null ||
+         current === undefined ||
+         typeof current !== "object" ||
+         !(part in current)
+      ) {
+         return "";
+      }
+
+      current = current[part];
+
+   }
+
+   return formatCardTemplateValue(current);
+
+}
+
 
 function applyCardTemplate(
 
@@ -762,45 +886,45 @@ function applyCardTemplate(
 ) {
 
    const source =
-
       String(template ?? "");
 
    if (!source.trim()) {
-
       return [];
-
    }
 
-   const replacements = {
-
-      variable: String(card?.variable ?? ""),
-
-      value: formatCreatedCardValue(card),
-
-      type: String(card?.type || "string"),
-
-      icon: getCreatedCardIcon(card?.type),
-
-   };
-
+   /*
+    * Generic JSON template resolver.
+    *
+    * Any property returned by a function is automatically
+    * available to Card Format:
+    *
+    *   {{value}}
+    *   {{type}}
+    *   {{variable}}
+    *   {{index}}
+    *   {{operation}}
+    *   {{anythingElse}}
+    *
+    * Nested values are also supported:
+    *
+    *   {{meta.label}}
+    */
    const rendered = source.replace(
 
-      /\{\{\s*(variable|value|type|icon)\s*\}\}/gi,
+      /\{\{\s*([A-Za-z0-9_.]+)\s*\}\}/g,
 
-      (_, token) =>
-
-         replacements[token.toLowerCase()] ?? ""
+      (_, path) =>
+         getCardTemplateValue(
+            card,
+            path
+         )
 
    );
-
-   /*
-    * Preserve the teacher-defined line structure.
-    * One template line becomes one rendered card row.
-    */
 
    return rendered.split(/\r?\n/);
 
 }
+
 
 function CreatedCards({
 
@@ -811,25 +935,21 @@ function CreatedCards({
 }) {
 
    if (
-
       !Array.isArray(cards) ||
-
       cards.length === 0
-
    ) {
-
       return null;
-
    }
 
    const effectiveTemplate =
-
       String(template ?? "").trim()
-
          ? String(template)
+         : "{{value}}";
 
-         : "{{icon}}\n{{value}}\n{{type}} {{variable}}";
-
+   /*
+    * CreatedCards deliberately knows nothing about function types.
+    * It renders exactly the JSON objects supplied by resultCards.
+    */
    return (
 
       <div className="code-action-created-cards">
@@ -839,23 +959,16 @@ function CreatedCards({
             (card, cardIndex) => {
 
                const lines =
-
                   applyCardTemplate(
-
                      effectiveTemplate,
-
                      card
-
                   );
 
                return (
 
                   <div
-
                      key={`created-card-${cardIndex}`}
-
                      className="code-action-created-card"
-
                   >
 
                      {lines.map(
@@ -863,15 +976,10 @@ function CreatedCards({
                         (line, lineIndex) => (
 
                            <div
-
                               key={`created-card-${cardIndex}-line-${lineIndex}`}
-
                               className="code-action-created-card-row"
-
                            >
-
                               {line || "\u00A0"}
-
                            </div>
 
                         )
@@ -891,6 +999,7 @@ function CreatedCards({
    );
 
 }
+
 
 /* =========================================================
 
@@ -1506,7 +1615,136 @@ function CodeActionBlock({
 
       ]);
 
-   /* =======================================================
+   const cardResultData =
+
+      useMemo(() => {
+
+         /*
+          * Card Display consumes one consistent JSON envelope.
+          *
+          * If a function has repeatable values, it exposes them
+          * through `items`. Card Display can then render one card
+          * per item without knowing which function produced them.
+          */
+         if (functionType === "create_variable") {
+
+            return {
+               value: createdVariables,
+               type: "variables",
+               items: createdVariables,
+            };
+
+         }
+
+         /*
+          * Array/List is stateful. The operation result and the
+          * current array are different concepts.
+          *
+          * Expose both in JSON so presentation remains a teacher
+          * decision rather than a React decision.
+          */
+         if (functionType === "array") {
+
+            return {
+               value: arrayState,
+               type: "list",
+               operation: functionName,
+               result: actionResult,
+               items: arrayState.map(
+                  (item, index) => ({
+                     value:
+                        normaliseCardValue(item),
+                     type:
+                        detectCardType(
+                           normaliseCardValue(item)
+                        ),
+                     index,
+                  })
+               ),
+            };
+
+         }
+
+         if (result === "") {
+            return null;
+         }
+
+         const value =
+            normaliseCardValue(result);
+
+         return {
+            value,
+            type: detectCardType(value),
+            result: value,
+         };
+
+      }, [
+         functionType,
+         createdVariables,
+         arrayState,
+         functionName,
+         actionResult,
+         result,
+      ]);
+
+
+   const resultCards =
+
+      useMemo(() => {
+
+         if (
+            cardResultData === null ||
+            cardResultData === undefined
+         ) {
+            return [];
+         }
+
+         /*
+          * Generic Card Display contract:
+          *
+          * 1. A direct array means each array entry is one card.
+          * 2. An object with `items` means each item is one card.
+          * 3. Any other object/value becomes one card.
+          *
+          * There is deliberately no function-type check here.
+          */
+         if (Array.isArray(cardResultData)) {
+            return cardResultData;
+         }
+
+         if (Array.isArray(cardResultData?.items)) {
+            return cardResultData.items;
+         }
+
+         return [cardResultData];
+
+      }, [cardResultData]);
+
+
+   const cardResultJson =
+
+      useMemo(() => {
+
+         try {
+
+            return JSON.stringify(
+               cardResultData,
+               null,
+               2
+            );
+
+         } catch {
+
+            return String(
+               cardResultData ?? ""
+            );
+
+         }
+
+      }, [cardResultData]);
+
+
+/* =======================================================
 
         Input Change
 
@@ -1987,7 +2225,7 @@ function CodeActionBlock({
 
             <CreatedCards
 
-               cards={createdVariables}
+               cards={resultCards}
 
                template={data?.card_format}
 

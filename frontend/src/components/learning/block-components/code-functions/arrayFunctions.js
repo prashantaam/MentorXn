@@ -1,34 +1,34 @@
 function normaliseArray(value) {
-  if (Array.isArray(value)) {
-    return [...value];
-  }
+   if (Array.isArray(value)) {
+      return [...value];
+   }
 
-  const text = String(value ?? "").trim();
+   const text = String(value ?? "").trim();
 
-  if (!text) {
-    return [];
-  }
+   if (!text) {
+      return [];
+   }
 
-  // Allow JSON-style arrays:
-  // ["Robot", "Teddy", "Kite"]
-  try {
-    const parsed = JSON.parse(text);
+   // Allow JSON-style arrays:
+   // ["Robot", "Teddy", "Kite"]
+   try {
+      const parsed = JSON.parse(text);
 
-    if (Array.isArray(parsed)) {
-      return parsed;
-    }
-  } catch {
-    // If it is not JSON, try comma-separated values.
-  }
+      if (Array.isArray(parsed)) {
+         return parsed;
+      }
+   } catch {
+      // If it is not JSON, try comma-separated values.
+   }
 
-  return text
-    .split(",")
-    .map((item) => item.trim())
-    .filter((item) => item !== "");
+   return text
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item !== "");
 }
 
 
-/*
+/**
  * Normalise teacher-configured initial array items.
  *
  * Supports:
@@ -44,39 +44,39 @@ function normaliseArray(value) {
  * ["Robot", "Teddy", "Kite"]
  */
 export function normaliseInitialArray(items = []) {
-  if (!Array.isArray(items)) {
-    return [];
-  }
+   if (!Array.isArray(items)) {
+      return [];
+   }
 
-  return items
-    .map((item) => {
-      if (
-        item &&
-        typeof item === "object" &&
-        !Array.isArray(item)
-      ) {
-        return String(item.value ?? "");
-      }
+   return items
+      .map((item) => {
+         if (
+            item &&
+            typeof item === "object" &&
+            !Array.isArray(item)
+         ) {
+            return String(item.value ?? "");
+         }
 
-      return String(item ?? "");
-    })
-    .filter((item) => item.trim() !== "");
+         return String(item ?? "");
+      })
+      .filter((item) => item.trim() !== "");
 }
 
 
-/*
+/**
  * Display an array consistently.
  */
 export function formatArray(array = []) {
-  if (!Array.isArray(array)) {
-    return "[]";
-  }
+   if (!Array.isArray(array)) {
+      return "[]";
+   }
 
-  return JSON.stringify(array);
+   return JSON.stringify(array);
 }
 
 
-/*
+/**
  * Execute an operation against the CURRENT array state.
  *
  * Mutating operations return a new array rather than changing
@@ -90,126 +90,126 @@ export function formatArray(array = []) {
  * }
  */
 export function executeArrayAction(
-  functionName,
-  currentArray = [],
-  operand = ""
+   functionName,
+   currentArray = [],
+   operand = ""
 ) {
-  const list = Array.isArray(currentArray)
-    ? [...currentArray]
-    : normaliseArray(currentArray);
+   const list = Array.isArray(currentArray)
+      ? [...currentArray]
+      : normaliseArray(currentArray);
 
-  switch (functionName) {
-    case "show":
-      return {
-        nextArray: list,
-        result: formatArray(list),
-      };
+   switch (functionName) {
+      case "show":
+         return {
+            nextArray: list,
+            result: formatArray(list),
+         };
 
-    case "append": {
-      const nextArray = [
-        ...list,
-        operand,
-      ];
+      case "append": {
+         const nextArray = [
+            ...list,
+            operand,
+         ];
 
-      return {
-        nextArray,
-        result: formatArray(nextArray),
-      };
-    }
-
-    case "pop": {
-      if (list.length === 0) {
-        return {
-          nextArray: [],
-          result: "",
-        };
+         return {
+            nextArray,
+            result: formatArray(nextArray),
+         };
       }
 
-      const nextArray = [...list];
+      case "pop": {
+         if (list.length === 0) {
+            return {
+               nextArray: [],
+               result: "",
+            };
+         }
 
-      const removedValue =
-        nextArray.pop();
+         const nextArray = [...list];
 
-      return {
-        nextArray,
-        result: String(
-          removedValue ?? ""
-        ),
-      };
-    }
+         const removedValue =
+            nextArray.pop();
 
-    case "get":
-    case "index": {
-      const index =
-        Number(operand);
-
-      if (!Number.isInteger(index)) {
-        return {
-          nextArray: list,
-          result: "Invalid index",
-        };
+         return {
+            nextArray,
+            result: String(
+               removedValue ?? ""
+            ),
+         };
       }
 
-      if (
-        index < 0 ||
-        index >= list.length
-      ) {
-        return {
-          nextArray: list,
-          result: "Index out of range",
-        };
+      case "get":
+      case "index": {
+         const index =
+            Number(operand);
+
+         if (!Number.isInteger(index)) {
+            return {
+               nextArray: list,
+               result: "Invalid index",
+            };
+         }
+
+         if (
+            index < 0 ||
+            index >= list.length
+         ) {
+            return {
+               nextArray: list,
+               result: "Index out of range",
+            };
+         }
+
+         return {
+            nextArray: list,
+            result: String(
+               list[index] ?? ""
+            ),
+         };
       }
 
-      return {
-        nextArray: list,
-        result: String(
-          list[index] ?? ""
-        ),
-      };
-    }
+      case "length":
+         return {
+            nextArray: list,
+            result: String(
+               list.length
+            ),
+         };
 
-    case "length":
-      return {
-        nextArray: list,
-        result: String(
-          list.length
-        ),
-      };
+      case "first":
+         return {
+            nextArray: list,
+            result:
+               list.length > 0
+                  ? String(
+                       list[0] ?? ""
+                    )
+                  : "",
+         };
 
-    case "first":
-      return {
-        nextArray: list,
-        result:
-          list.length > 0
-            ? String(
-                list[0] ?? ""
-              )
-            : "",
-      };
+      case "last":
+         return {
+            nextArray: list,
+            result:
+               list.length > 0
+                  ? String(
+                       list[
+                          list.length - 1
+                       ] ?? ""
+                    )
+                  : "",
+         };
 
-    case "last":
-      return {
-        nextArray: list,
-        result:
-          list.length > 0
-            ? String(
-                list[
-                  list.length - 1
-                ] ?? ""
-              )
-            : "",
-      };
-
-    default:
-      return {
-        nextArray: list,
-        result: formatArray(list),
-      };
-  }
+      default:
+         return {
+            nextArray: list,
+            result: formatArray(list),
+         };
+   }
 }
 
 
-/*
+/**
  * Stateless compatibility function.
  *
  * calculateCodeResult() can continue calling this for places
@@ -219,25 +219,25 @@ export function executeArrayAction(
  * use executeArrayAction() instead.
  */
 export function calculateArrayResult(
-  functionName,
-  values = [],
-  argumentsList = []
+   functionName,
+   values = [],
+   argumentsList = []
 ) {
-  const list =
-    normaliseArray(values[0]);
+   const list =
+      normaliseArray(values[0]);
 
-  const operand =
-    argumentsList[0] !== undefined &&
-    argumentsList[0] !== ""
-      ? argumentsList[0]
-      : values[1] ?? "";
+   const operand =
+      argumentsList[0] !== undefined &&
+      argumentsList[0] !== ""
+         ? argumentsList[0]
+         : values[1] ?? "";
 
-  const operation =
-    executeArrayAction(
-      functionName,
-      list,
-      operand
-    );
+   const operation =
+      executeArrayAction(
+         functionName,
+         list,
+         operand
+      );
 
-  return operation.result;
+   return operation.result;
 }
