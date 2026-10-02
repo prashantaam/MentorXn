@@ -308,54 +308,6 @@ $template->configuration_schema = [
 
                             'name' =>
 
-                                'array_function',
-
-                            'label' =>
-
-                                'Array function',
-
-                            'type' =>
-
-                                'select',
-
-                            'required' =>
-
-                                false,
-
-                            'default' =>
-
-                                'show',
-
-                            'show_when' => [
-
-                                'field' =>
-
-                                    'function_type',
-
-                                'equals' =>
-
-                                    'array',
-
-                            ],
-
-                            'options' => [
-
-                                ['value' => 'show', 'label' => 'Show array'],
-
-                                ['value' => 'append', 'label' => 'Append'],
-
-                                ['value' => 'pop', 'label' => 'Pop'],
-
-                                ['value' => 'get', 'label' => 'Get by index'],
-
-                            ],
-
-                        ],
-
-                        [
-
-                            'name' =>
-
                                 'label',
 
                             'label' =>
@@ -825,15 +777,10 @@ $template->configuration_schema = [
                                 ],
 
                                 [
-
                                     'value' =>
-
-                                        'create_card',
-
+                                        'create_variable',
                                     'label' =>
-
-                                        'Create Card',
-
+                                        'Create Variable',
                                 ],
 
                             ],
@@ -1206,11 +1153,11 @@ $template->configuration_schema = [
 
                                 'field' =>
 
-                                    'action_trigger',
+                                    'function_type',
 
                                 'equals' =>
 
-                                    'button',
+                                    'number',
 
                             ],
 
@@ -1598,11 +1545,11 @@ $template->configuration_schema = [
 
                                 'field' =>
 
-                                    'action_trigger',
+                                    'function_type',
 
                                 'equals' =>
 
-                                    'button',
+                                    'logic',
 
                             ],
 
@@ -1649,6 +1596,54 @@ $template->configuration_schema = [
                         ],
 
 [
+
+                            'name' =>
+
+                                'array_function',
+
+                            'label' =>
+
+                                'Array / List function',
+
+                            'type' =>
+
+                                'select',
+
+                            'required' =>
+
+                                false,
+
+                            'default' =>
+
+                                'show',
+
+                            'show_when' => [
+
+                                'field' =>
+
+                                    'function_type',
+
+                                'equals' =>
+
+                                    'array',
+
+                            ],
+
+                            'options' => [
+
+                                ['value' => 'show', 'label' => 'Show array'],
+
+                                ['value' => 'append', 'label' => 'Append'],
+
+                                ['value' => 'pop', 'label' => 'Pop'],
+
+                                ['value' => 'get', 'label' => 'Get by index'],
+
+                            ],
+
+                        ],
+
+                        [
 
                             'name' =>
 

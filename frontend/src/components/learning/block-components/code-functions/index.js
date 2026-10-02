@@ -1,64 +1,90 @@
 import {
-  calculateStringResult,
+   calculateStringResult,
 } from "./stringFunctions";
 
 import {
-  calculateNumberResult,
+   calculateNumberResult,
 } from "./numberFunctions";
 
 import {
-  calculateComparisonResult,
+   calculateComparisonResult,
 } from "./comparisonFunctions";
 
 import {
-  calculateLogicResult,
+   calculateLogicResult,
 } from "./logicFunctions";
 
 import {
-  calculateGradeResult,
+   calculateGradeResult,
 } from "./gradeCalcFunctions";
 
+import {
+   calculateArrayResult,
+} from "./arrayFunctions";
+
+import {
+   createVariable,
+} from "./createVariableFunctions";
+
+
 export function calculateCodeResult(
-  functionType,
-  functionName,
-  values = [],
-  argumentsList = []
+   functionType,
+   functionName,
+   values = [],
+   argumentsList = []
 ) {
-  switch (functionType) {
-    case "string":
-      return calculateStringResult(
-        functionName,
-        values,
-        argumentsList
-      );
+   switch (functionType) {
+      case "string":
+         return calculateStringResult(
+            functionName,
+            values,
+            argumentsList
+         );
 
-    case "number":
-      return calculateNumberResult(
-        functionName,
-        values
-      );
+      case "number":
+         return calculateNumberResult(
+            functionName,
+            values,
+            argumentsList
+         );
 
-    case "comparison":
-      return calculateComparisonResult(
-        functionName,
-        values
-      );
+      case "comparison":
+         return calculateComparisonResult(
+            functionName,
+            values,
+            argumentsList
+         );
 
-    case "logic":
-      return calculateLogicResult(
-        functionName,
-        values
-      );
+      case "logic":
+         return calculateLogicResult(
+            functionName,
+            values,
+            argumentsList
+         );
 
-    case "grade_calc":
-      return calculateGradeResult(
-        functionName,
-        values
-      );
+      case "grade_calc":
+         return calculateGradeResult(
+            functionName,
+            values,
+            argumentsList
+         );
 
-    default:
-      return String(
-        values[0] ?? ""
-      );
-  }
+      case "array":
+         return calculateArrayResult(
+            functionName,
+            values,
+            argumentsList
+         );
+
+      case "create_variable":
+         return createVariable(
+            values[0],
+            values[1]
+         );
+
+      default:
+         return String(
+            values[0] ?? ""
+         );
+   }
 }

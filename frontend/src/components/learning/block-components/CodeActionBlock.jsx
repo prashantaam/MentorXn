@@ -31,9 +31,10 @@ import {
 } from "./code-functions";
 
 import {
-  createCard,
-  MAX_CREATED_CARDS,
-} from "./code-functions/createCardFunctions";
+
+   executeArrayAction,
+
+} from "./code-functions/arrayFunctions";
 
 /* =========================================================
 
@@ -175,9 +176,19 @@ function getActionFunction(action, values = []) {
 
          );
 
-      case "create_card":
+      case "array":
 
-         return "create_card";
+         return (
+
+            action.array_function ||
+
+            "show"
+
+         );
+
+      case "create_variable":
+
+         return "create_variable";
 
       case "string":
 
@@ -1015,6 +1026,30 @@ function CodeActionBlock({
 
    );
 
+   const [
+
+      arrayState,
+
+      setArrayState,
+
+   ] = useState([]);
+
+   const [
+
+      actionResult,
+
+      setActionResult,
+
+   ] = useState("");
+
+   const [
+
+      createdVariables,
+
+      setCreatedVariables,
+
+   ] = useState([]);
+
    /*
 
      * First action selected by default.
@@ -1042,28 +1077,7 @@ function CodeActionBlock({
          : null
 
    );
-
-   /*
-
-     * Create Card stores every card that
-
-     * the learner creates.
-
-     *
-
-     * Maximum: 6.
-
-     */
-
-   const [
-
-      createdCards,
-
-      setCreatedCards,
-
-   ] = useState([]);
-
-   /* =======================================================
+/* =======================================================
 
         Reset When Block Changes
 
@@ -1077,6 +1091,12 @@ function CodeActionBlock({
 
       );
 
+      setArrayState([]);
+
+      setActionResult("");
+
+      setCreatedVariables([]);
+
       setSelectedActionIndex(
 
          actions.length > 0
@@ -1086,8 +1106,6 @@ function CodeActionBlock({
             : null
 
       );
-
-      setCreatedCards([]);
 
    }, [
 
@@ -1148,16 +1166,7 @@ function CodeActionBlock({
             )
 
          : automaticFunctionName;
-
-   const isCreateCard =
-
-      hasActions &&
-
-      functionType ===
-
-         "create_card";
-
-   /* =======================================================
+/* =======================================================
 
         Resolve Action Arguments
 
@@ -1197,12 +1206,6 @@ function CodeActionBlock({
 
            */
 
-         if (isCreateCard) {
-
-            return "";
-
-         }
-
          if (
 
             !activeAction &&
@@ -1212,6 +1215,18 @@ function CodeActionBlock({
          ) {
 
             return "";
+
+         }
+
+         if (
+
+            activeAction?.action_trigger !== "auto" &&
+
+            ["array", "create_variable"].includes(functionType)
+
+         ) {
+
+            return actionResult;
 
          }
 
@@ -1383,8 +1398,6 @@ function CodeActionBlock({
 
          activeAction,
 
-         isCreateCard,
-
          data?.auto_calculate,
 
          functionType,
@@ -1396,6 +1409,8 @@ function CodeActionBlock({
          inputs,
 
          actionArguments,
+
+         actionResult,
 
       ]);
 
@@ -1531,21 +1546,7 @@ function CodeActionBlock({
 
       );
 };
-
-   /* =======================================================
-
-        Create Card
-
-        ======================================================= */
-
-   const handleCreateCard = () => {
-    setCreatedCards((currentCards) =>
-      createCard(values, currentCards)
-    );
-  };
-
-
-  /* =======================================================
+/* =======================================================
 
         Action Click
 
@@ -1557,25 +1558,95 @@ function CodeActionBlock({
 
    ) => {
 
-      const action =
-
-         actions[index];
-
       setSelectedActionIndex(
 
          index
 
       );
 
+      const action =
+
+         actions[index];
+
       if (
 
-         action?.function_type ===
-
-         "create_card"
+         action?.function_type === "array"
 
       ) {
 
-         handleCreateCard();
+         const arrayFunction =
+
+            action?.array_function ||
+
+            "show";
+
+         const operand =
+
+            values[0] ?? "";
+
+         const operation =
+
+            executeArrayAction(
+
+               arrayFunction,
+
+               arrayState,
+
+               operand
+
+            );
+
+         setArrayState(
+
+            operation.nextArray
+
+         );
+
+         setActionResult(
+
+            String(
+
+               operation.result ?? ""
+
+            )
+
+         );
+
+         return;
+
+      }
+
+      if (action?.function_type === "create_variable") {
+
+         const createdVariable = calculateCodeResult(
+
+            "create_variable",
+
+            "create_variable",
+
+            values,
+
+            []
+
+         );
+
+         if (createdVariable && typeof createdVariable === "object") {
+
+            setCreatedVariables((currentVariables) => [
+
+               ...currentVariables,
+
+               createdVariable,
+
+            ]);
+
+            setActionResult(
+
+               String(createdVariable.value ?? "")
+
+            );
+
+         }
 
       }
 
@@ -1729,22 +1800,6 @@ function CodeActionBlock({
 
                         index;
 
-                     const createCardAction =
-
-                        action
-
-                           ?.function_type ===
-
-                        "create_card";
-
-                     const limitReached =
-
-                        createCardAction &&
-
-                        createdCards.length >=
-
-                           MAX_CREATED_CARDS;
-
                      return (
 
                         <button
@@ -1776,12 +1831,6 @@ function CodeActionBlock({
                            aria-pressed={
 
                               active
-
-                           }
-
-                           disabled={
-
-                              limitReached
 
                            }
 
@@ -1868,8 +1917,6 @@ function CodeActionBlock({
 
          {data?.show_result_box !== false &&
 
-            !isCreateCard &&
-
             (autoAction || activeAction || data?.auto_calculate) && (
 
                <div
@@ -1936,28 +1983,13 @@ function CodeActionBlock({
 
             )}
 
-         {/* ===============================================
-
-               Created Cards
-
-               =============================================== */}
-
-         {data?.show_card !== false &&
-            isCreateCard && (
+         {data?.show_card === true && (
 
             <CreatedCards
 
-               cards={
+               cards={createdVariables}
 
-                  createdCards
-
-               }
-
-               template={
-
-                  data?.card_format
-
-               }
+               template={data?.card_format}
 
             />
 

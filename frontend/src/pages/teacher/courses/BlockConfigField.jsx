@@ -1147,7 +1147,39 @@ function BlockConfigField({
 
               itemIndex
 
-            ) => (
+            ) => {
+
+              const resolvedSiblingValues =
+
+                itemFields.reduce(
+
+                  (resolved, itemField) => ({
+
+                    ...resolved,
+
+                    [itemField.name]:
+
+                      Object.prototype.hasOwnProperty.call(
+
+                        item,
+
+                        itemField.name
+
+                      )
+
+                        ? item[itemField.name]
+
+                        : getDefaultValue(itemField),
+
+                  }),
+
+                  {}
+
+                );
+
+
+
+              return (
 
               <section
 
@@ -1223,7 +1255,7 @@ function BlockConfigField({
 
                         itemField,
 
-                        item
+                        resolvedSiblingValues
 
                       )
 
@@ -1283,7 +1315,7 @@ function BlockConfigField({
 
                         siblingValues={
 
-                          item
+                          resolvedSiblingValues
 
                         }
 
@@ -1295,7 +1327,9 @@ function BlockConfigField({
 
               </section>
 
-            )
+              );
+
+            }
 
           )}
 
