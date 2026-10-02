@@ -1,16 +1,10 @@
 <?php
 
-
-
 namespace Database\Seeders;
-
-
 
 use App\Models\LBlockTemplate;
 
 use Illuminate\Database\Seeder;
-
-
 
 class CodeActionBlockSeeder extends Seeder
 
@@ -19,6 +13,7 @@ class CodeActionBlockSeeder extends Seeder
     public function run(): void
 
     {
+
 $template = LBlockTemplate::query()
 
             ->where(
@@ -39,8 +34,6 @@ $template = LBlockTemplate::query()
 
             ->first();
 
-
-
         if (!$template) {
 
             $template =
@@ -48,29 +41,22 @@ $template = LBlockTemplate::query()
                 new LBlockTemplate();
 
         }
+
 $template->name =
 
             'Code Action';
-
-
 
         $template->component =
 
             'CodeActionBlock';
 
-
-
         $template->icon =
 
             '⌨️';
 
-
-
         $template->description =
 
             'Interactive coding activity where learners enter values and explore programming concepts using configurable action buttons.';
-
-
 
         $template->tags = [
 
@@ -87,72 +73,102 @@ $template->name =
             'variable',
 
         ];
+
 $template->configuration_schema = [
 
             'sections' => [
+
                 [
+
                     'title' => 'Block Settings',
+
                     'help' => 'Configure the main block information and message.',
+
                     'fields' => [
+
                         'title',
+
                         'icon',
+
                         'subtitle',
+
                     ],
+
                 ],
+
                 [
+
                     'title' => 'Inputs',
+
                     'help' => 'Configure the learner inputs used by this activity.',
+
                     'fields' => [
+
                         'inputs',
+
                     ],
+
                 ],
+
                 [
+
                     'title' => 'Actions',
+
                     'help' => 'Configure the actions the learner can perform.',
+
                     'fields' => [
+
                         'actions',
+
                     ],
+
                 ],
+
                 [
+
                     'title' => 'Results',
+
                     'help' => 'Configure how the result is displayed.',
+
                     'fields' => [
+
                         'show_code_display',
+
                         'code_display',
+
                         'show_result_box',
+
                         'result_box_format',
+
                         'show_card',
+
                         'card_format',
+
                     ],
+
                 ],
+
             ],
 
             'fields' => [
+
 [
 
                     'name' =>
 
                         'title',
-
-
 
                     'label' =>
 
                         'Block title',
 
-
-
                     'type' =>
 
                         'text',
 
-
-
                     'required' =>
 
                         true,
-
-
 
                     'visual' => [
 
@@ -160,13 +176,9 @@ $template->configuration_schema = [
 
                             '.code-action-block > h2',
 
-
-
                         'selection_type' =>
 
                             'field',
-
-
 
                         'group' =>
 
@@ -175,31 +187,24 @@ $template->configuration_schema = [
                     ],
 
                 ],
+
 [
 
                     'name' =>
 
                         'icon',
 
-
-
                     'label' =>
 
                         'Icon',
-
-
 
                     'type' =>
 
                         'text',
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'visual' => [
 
@@ -207,13 +212,9 @@ $template->configuration_schema = [
 
                             '.code-action-block > h2',
 
-
-
                         'selection_type' =>
 
                             'field',
-
-
 
                         'group' =>
 
@@ -222,37 +223,28 @@ $template->configuration_schema = [
                     ],
 
                 ],
+
 [
 
                     'name' =>
 
                         'subtitle',
 
-
-
                     'label' =>
 
                         'Instructions',
-
-
 
                     'type' =>
 
                         'textarea',
 
-
-
                     'rows' =>
 
                         3,
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'visual' => [
 
@@ -260,8 +252,6 @@ $template->configuration_schema = [
 
                             '.code-action-block > .sub',
 
-
-
                         'selection_type' =>
 
                             'field',
@@ -269,43 +259,32 @@ $template->configuration_schema = [
                     ],
 
                 ],
+
 [
 
                     'name' =>
 
                         'inputs',
 
-
-
                     'label' =>
 
                         'Inputs',
-
-
 
                     'type' =>
 
                         'repeater',
 
-
-
                     'required' =>
 
                         true,
-
-
 
                     'item_label' =>
 
                         'Input',
 
-
-
                     'min_items' =>
 
                         1,
-
-
 
                     'visual' => [
 
@@ -313,13 +292,9 @@ $template->configuration_schema = [
 
                             '.code-action-field',
 
-
-
                         'selection_type' =>
 
                             'repeater',
-
-
 
                         'index_attribute' =>
 
@@ -327,75 +302,7 @@ $template->configuration_schema = [
 
                     ],
 
-
-
                     'fields' => [
-
-
-
-                        [
-
-                            'name' =>
-
-                                'conditional_function',
-
-
-
-                            'label' =>
-
-                                'Conditional function',
-
-
-
-                            'type' =>
-
-                                'select',
-
-
-
-                            'required' =>
-
-                                false,
-
-
-
-                            'default' =>
-
-                                'grade',
-
-
-
-                            'show_when' => [
-
-                                'field' =>
-
-                                    'function_type',
-
-
-
-                                'equals' =>
-
-                                    'conditional',
-
-                            ],
-
-
-
-                            'options' => [
-
-                                [
-
-                                    'value' => 'grade',
-
-                                    'label' => 'Grade',
-
-                                ],
-
-                            ],
-
-                        ],
-
-
 
                         [
 
@@ -403,31 +310,21 @@ $template->configuration_schema = [
 
                                 'array_function',
 
-
-
                             'label' =>
 
                                 'Array function',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 false,
 
-
-
                             'default' =>
 
                                 'show',
-
-
 
                             'show_when' => [
 
@@ -435,15 +332,11 @@ $template->configuration_schema = [
 
                                     'function_type',
 
-
-
                                 'equals' =>
 
                                     'array',
 
                             ],
-
-
 
                             'options' => [
 
@@ -459,33 +352,23 @@ $template->configuration_schema = [
 
                         ],
 
-
-
                         [
 
                             'name' =>
 
                                 'label',
 
-
-
                             'label' =>
 
                                 'Label',
-
-
 
                             'type' =>
 
                                 'text',
 
-
-
                             'required' =>
 
                                 true,
-
-
 
                             'placeholder' =>
 
@@ -493,39 +376,27 @@ $template->configuration_schema = [
 
                         ],
 
-
-
                         [
 
                             'name' =>
 
                                 'input_type',
 
-
-
                             'label' =>
 
                                 'Input type',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 true,
 
-
-
                             'default' =>
 
                                 'text',
-
-
 
                             'options' => [
 
@@ -534,8 +405,6 @@ $template->configuration_schema = [
                                     'value' =>
 
                                         'text',
-
-
 
                                     'label' =>
 
@@ -549,15 +418,11 @@ $template->configuration_schema = [
 
                                         'dropdown',
 
-
-
                                     'label' =>
 
                                         'Dropdown',
 
                                 ],
-
-
 
                                 [
 
@@ -565,11 +430,21 @@ $template->configuration_schema = [
 
                                         'checkbox',
 
-
-
                                     'label' =>
 
                                         'Checkbox',
+
+                                ],
+
+                                [
+
+                                    'value' =>
+
+                                        'range',
+
+                                    'label' =>
+
+                                        'Range slider',
 
                                 ],
 
@@ -577,33 +452,23 @@ $template->configuration_schema = [
 
                         ],
 
-
-
                         [
 
                             'name' =>
 
                                 'default_value',
 
-
-
                             'label' =>
 
                                 'Default value',
-
-
 
                             'type' =>
 
                                 'text',
 
-
-
                             'required' =>
 
                                 false,
-
-
 
                             'placeholder' =>
 
@@ -611,39 +476,27 @@ $template->configuration_schema = [
 
                         ],
 
-
-
                         [
 
                             'name' =>
 
                                 'options',
 
-
-
                             'label' =>
 
                                 'Dropdown options',
-
-
 
                             'type' =>
 
                                 'textarea',
 
-
-
                             'rows' =>
 
                                 4,
 
-
-
                             'required' =>
 
                                 false,
-
-
 
                             'show_when' => [
 
@@ -651,21 +504,15 @@ $template->configuration_schema = [
 
                                     'input_type',
 
-
-
                                 'equals' =>
 
                                     'dropdown',
 
                             ],
 
-
-
                             'help' =>
 
                                 'Enter one option per line.',
-
-
 
                             'placeholder' =>
 
@@ -673,46 +520,143 @@ $template->configuration_schema = [
 
                         ],
 
+                        [
+
+                            'name' =>
+
+                                'min',
+
+                            'label' =>
+
+                                'Minimum',
+
+                            'type' =>
+
+                                'number',
+
+                            'required' =>
+
+                                false,
+
+                            'default' =>
+
+                                0,
+
+                            'show_when' => [
+
+                                'field' =>
+
+                                    'input_type',
+
+                                'equals' =>
+
+                                    'range',
+
+                            ],
+
+                        ],
+
+                        [
+
+                            'name' =>
+
+                                'max',
+
+                            'label' =>
+
+                                'Maximum',
+
+                            'type' =>
+
+                                'number',
+
+                            'required' =>
+
+                                false,
+
+                            'default' =>
+
+                                100,
+
+                            'show_when' => [
+
+                                'field' =>
+
+                                    'input_type',
+
+                                'equals' =>
+
+                                    'range',
+
+                            ],
+
+                        ],
+
+                        [
+
+                            'name' =>
+
+                                'step',
+
+                            'label' =>
+
+                                'Step',
+
+                            'type' =>
+
+                                'number',
+
+                            'required' =>
+
+                                false,
+
+                            'default' =>
+
+                                1,
+
+                            'show_when' => [
+
+                                'field' =>
+
+                                    'input_type',
+
+                                'equals' =>
+
+                                    'range',
+
+                            ],
+
+                        ],
+
                     ],
 
                 ],
+
 [
 
                     'name' =>
 
                         'actions',
 
-
-
                     'label' =>
 
                         'Actions',
-
-
 
                     'type' =>
 
                         'repeater',
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'item_label' =>
 
                         'Action',
 
-
-
                     'min_items' =>
 
                         0,
-
-
 
                     'visual' => [
 
@@ -720,13 +664,9 @@ $template->configuration_schema = [
 
                             '.code-action-option',
 
-
-
                         'selection_type' =>
 
                             'repeater',
-
-
 
                         'index_attribute' =>
 
@@ -734,40 +674,29 @@ $template->configuration_schema = [
 
                     ],
 
-
-
                     'fields' => [
+
 [
 
                             'name' =>
 
                                 'action_trigger',
 
-
-
                             'label' =>
 
                                 'Action type',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 true,
 
-
-
                             'default' =>
 
                                 'button',
-
-
 
                             'options' => [
 
@@ -805,35 +734,23 @@ $template->configuration_schema = [
 
                                 'function_type',
 
-
-
                             'label' =>
 
                                 'Function type',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 true,
-
-
 
                             'default' =>
 
                                 'string',
 
-
-
                             'options' => [
-
-
 
                                 [
 
@@ -841,15 +758,11 @@ $template->configuration_schema = [
 
                                         'string',
 
-
-
                                     'label' =>
 
                                         'Text / String',
 
                                 ],
-
-
 
                                 [
 
@@ -857,15 +770,11 @@ $template->configuration_schema = [
 
                                         'number',
 
-
-
                                     'label' =>
 
                                         'Number',
 
                                 ],
-
-
 
                                 [
 
@@ -873,15 +782,11 @@ $template->configuration_schema = [
 
                                         'comparison',
 
-
-
                                     'label' =>
 
                                         'Comparison',
 
                                 ],
-
-
 
                                 [
 
@@ -889,31 +794,23 @@ $template->configuration_schema = [
 
                                         'logic',
 
-
-
                                     'label' =>
 
                                         'Logic',
 
                                 ],
 
-
-
                                 [
 
                                     'value' =>
 
-                                        'conditional',
-
-
+                                        'grade_calc',
 
                                     'label' =>
 
-                                        'Conditional / If-Else',
+                                        'Grade Calculator',
 
                                 ],
-
-
 
                                 [
 
@@ -921,22 +818,17 @@ $template->configuration_schema = [
 
                                         'array',
 
-
-
                                     'label' =>
 
                                         'Array / List',
 
                                 ],
 
-
                                 [
 
                                     'value' =>
 
                                         'create_card',
-
-
 
                                     'label' =>
 
@@ -947,37 +839,28 @@ $template->configuration_schema = [
                             ],
 
                         ],
+
 [
 
                             'name' =>
 
                                 'string_function',
 
-
-
                             'label' =>
 
                                 'String function',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 false,
 
-
-
                             'default' =>
 
                                 'length',
-
-
 
                             'show_when' => [
 
@@ -985,19 +868,13 @@ $template->configuration_schema = [
 
                                     'function_type',
 
-
-
                                 'equals' =>
 
                                     'string',
 
                             ],
 
-
-
                             'options' => [
-
-
 
                                 [
 
@@ -1005,15 +882,11 @@ $template->configuration_schema = [
 
                                         'input',
 
-
-
                                     'label' =>
 
                                         'Show value',
 
                                 ],
-
-
 
                                 [
 
@@ -1021,15 +894,11 @@ $template->configuration_schema = [
 
                                         'length',
 
-
-
                                     'label' =>
 
                                         'Length',
 
                                 ],
-
-
 
                                 [
 
@@ -1037,15 +906,11 @@ $template->configuration_schema = [
 
                                         'uppercase',
 
-
-
                                     'label' =>
 
                                         'Uppercase',
 
                                 ],
-
-
 
                                 [
 
@@ -1053,15 +918,11 @@ $template->configuration_schema = [
 
                                         'lowercase',
 
-
-
                                     'label' =>
 
                                         'Lowercase',
 
                                 ],
-
-
 
                                 [
 
@@ -1069,15 +930,11 @@ $template->configuration_schema = [
 
                                         'capitalize',
 
-
-
                                     'label' =>
 
                                         'Capitalise',
 
                                 ],
-
-
 
                                 [
 
@@ -1085,15 +942,11 @@ $template->configuration_schema = [
 
                                         'title_case',
 
-
-
                                     'label' =>
 
                                         'Title case',
 
                                 ],
-
-
 
                                 [
 
@@ -1101,15 +954,11 @@ $template->configuration_schema = [
 
                                         'trim',
 
-
-
                                     'label' =>
 
                                         'Trim whitespace',
 
                                 ],
-
-
 
                                 [
 
@@ -1117,15 +966,11 @@ $template->configuration_schema = [
 
                                         'trim_start',
 
-
-
                                     'label' =>
 
                                         'Trim start',
 
                                 ],
-
-
 
                                 [
 
@@ -1133,15 +978,11 @@ $template->configuration_schema = [
 
                                         'trim_end',
 
-
-
                                     'label' =>
 
                                         'Trim end',
 
                                 ],
-
-
 
                                 [
 
@@ -1149,15 +990,11 @@ $template->configuration_schema = [
 
                                         'first_character',
 
-
-
                                     'label' =>
 
                                         'First character',
 
                                 ],
-
-
 
                                 [
 
@@ -1165,15 +1002,11 @@ $template->configuration_schema = [
 
                                         'last_character',
 
-
-
                                     'label' =>
 
                                         'Last character',
 
                                 ],
-
-
 
                                 [
 
@@ -1181,15 +1014,11 @@ $template->configuration_schema = [
 
                                         'reverse',
 
-
-
                                     'label' =>
 
                                         'Reverse',
 
                                 ],
-
-
 
                                 [
 
@@ -1197,15 +1026,11 @@ $template->configuration_schema = [
 
                                         'slice',
 
-
-
                                     'label' =>
 
                                         'Slice',
 
                                 ],
-
-
 
                                 [
 
@@ -1213,15 +1038,11 @@ $template->configuration_schema = [
 
                                         'append',
 
-
-
                                     'label' =>
 
                                         'Append',
 
                                 ],
-
-
 
                                 [
 
@@ -1229,15 +1050,11 @@ $template->configuration_schema = [
 
                                         'contains',
 
-
-
                                     'label' =>
 
                                         'Contains',
 
                                 ],
-
-
 
                                 [
 
@@ -1245,15 +1062,11 @@ $template->configuration_schema = [
 
                                         'starts_with',
 
-
-
                                     'label' =>
 
                                         'Starts with',
 
                                 ],
-
-
 
                                 [
 
@@ -1261,15 +1074,11 @@ $template->configuration_schema = [
 
                                         'ends_with',
 
-
-
                                     'label' =>
 
                                         'Ends with',
 
                                 ],
-
-
 
                                 [
 
@@ -1277,15 +1086,11 @@ $template->configuration_schema = [
 
                                         'replace',
 
-
-
                                     'label' =>
 
                                         'Replace',
 
                                 ],
-
-
 
                                 [
 
@@ -1293,15 +1098,11 @@ $template->configuration_schema = [
 
                                         'count',
 
-
-
                                     'label' =>
 
                                         'Count occurrences',
 
                                 ],
-
-
 
                                 [
 
@@ -1309,15 +1110,11 @@ $template->configuration_schema = [
 
                                         'find',
 
-
-
                                     'label' =>
 
                                         'Find position',
 
                                 ],
-
-
 
                                 [
 
@@ -1325,15 +1122,11 @@ $template->configuration_schema = [
 
                                         'is_empty',
 
-
-
                                     'label' =>
 
                                         'Is empty',
 
                                 ],
-
-
 
                                 [
 
@@ -1341,15 +1134,11 @@ $template->configuration_schema = [
 
                                         'is_alpha',
 
-
-
                                     'label' =>
 
                                         'Letters only',
 
                                 ],
-
-
 
                                 [
 
@@ -1357,15 +1146,11 @@ $template->configuration_schema = [
 
                                         'is_digit',
 
-
-
                                     'label' =>
 
                                         'Digits only',
 
                                 ],
-
-
 
                                 [
 
@@ -1373,23 +1158,17 @@ $template->configuration_schema = [
 
                                         'is_alphanumeric',
 
-
-
                                     'label' =>
 
                                         'Letters and numbers only',
 
                                 ],
 
-
-
                                 [
 
                                     'value' =>
 
                                         'repeat',
-
-
 
                                     'label' =>
 
@@ -1400,37 +1179,28 @@ $template->configuration_schema = [
                             ],
 
                         ],
+
 [
 
                             'name' =>
 
                                 'number_function',
 
-
-
                             'label' =>
 
                                 'Number function',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 false,
 
-
-
                             'default' =>
 
                                 'number',
-
-
 
                             'show_when' => [
 
@@ -1438,19 +1208,13 @@ $template->configuration_schema = [
 
                                     'action_trigger',
 
-
-
                                 'equals' =>
 
                                     'button',
 
                             ],
 
-
-
                             'options' => [
-
-
 
                                 [
 
@@ -1458,15 +1222,11 @@ $template->configuration_schema = [
 
                                         'number',
 
-
-
                                     'label' =>
 
                                         'Show number',
 
                                 ],
-
-
 
                                 [
 
@@ -1474,15 +1234,11 @@ $template->configuration_schema = [
 
                                         'add',
 
-
-
                                     'label' =>
 
                                         'Add',
 
                                 ],
-
-
 
                                 [
 
@@ -1490,15 +1246,11 @@ $template->configuration_schema = [
 
                                         'subtract',
 
-
-
                                     'label' =>
 
                                         'Subtract',
 
                                 ],
-
-
 
                                 [
 
@@ -1506,15 +1258,11 @@ $template->configuration_schema = [
 
                                         'multiply',
 
-
-
                                     'label' =>
 
                                         'Multiply',
 
                                 ],
-
-
 
                                 [
 
@@ -1522,15 +1270,11 @@ $template->configuration_schema = [
 
                                         'divide',
 
-
-
                                     'label' =>
 
                                         'Divide',
 
                                 ],
-
-
 
                                 [
 
@@ -1538,15 +1282,11 @@ $template->configuration_schema = [
 
                                         'modulus',
 
-
-
                                     'label' =>
 
                                         'Remainder',
 
                                 ],
-
-
 
                                 [
 
@@ -1554,15 +1294,11 @@ $template->configuration_schema = [
 
                                         'power',
 
-
-
                                     'label' =>
 
                                         'Power',
 
                                 ],
-
-
 
                                 [
 
@@ -1570,15 +1306,11 @@ $template->configuration_schema = [
 
                                         'floor_divide',
 
-
-
                                     'label' =>
 
                                         'Floor division',
 
                                 ],
-
-
 
                                 [
 
@@ -1586,15 +1318,11 @@ $template->configuration_schema = [
 
                                         'absolute',
 
-
-
                                     'label' =>
 
                                         'Absolute value',
 
                                 ],
-
-
 
                                 [
 
@@ -1602,15 +1330,11 @@ $template->configuration_schema = [
 
                                         'round',
 
-
-
                                     'label' =>
 
                                         'Round',
 
                                 ],
-
-
 
                                 [
 
@@ -1618,15 +1342,11 @@ $template->configuration_schema = [
 
                                         'floor',
 
-
-
                                     'label' =>
 
                                         'Round down',
 
                                 ],
-
-
 
                                 [
 
@@ -1634,15 +1354,11 @@ $template->configuration_schema = [
 
                                         'ceil',
 
-
-
                                     'label' =>
 
                                         'Round up',
 
                                 ],
-
-
 
                                 [
 
@@ -1650,15 +1366,11 @@ $template->configuration_schema = [
 
                                         'minimum',
 
-
-
                                     'label' =>
 
                                         'Minimum',
 
                                 ],
-
-
 
                                 [
 
@@ -1666,15 +1378,11 @@ $template->configuration_schema = [
 
                                         'maximum',
 
-
-
                                     'label' =>
 
                                         'Maximum',
 
                                 ],
-
-
 
                                 [
 
@@ -1682,15 +1390,11 @@ $template->configuration_schema = [
 
                                         'square',
 
-
-
                                     'label' =>
 
                                         'Square',
 
                                 ],
-
-
 
                                 [
 
@@ -1698,15 +1402,11 @@ $template->configuration_schema = [
 
                                         'cube',
 
-
-
                                     'label' =>
 
                                         'Cube',
 
                                 ],
-
-
 
                                 [
 
@@ -1714,15 +1414,11 @@ $template->configuration_schema = [
 
                                         'square_root',
 
-
-
                                     'label' =>
 
                                         'Square root',
 
                                 ],
-
-
 
                                 [
 
@@ -1730,15 +1426,11 @@ $template->configuration_schema = [
 
                                         'increment',
 
-
-
                                     'label' =>
 
                                         'Increment',
 
                                 ],
-
-
 
                                 [
 
@@ -1746,23 +1438,17 @@ $template->configuration_schema = [
 
                                         'decrement',
 
-
-
                                     'label' =>
 
                                         'Decrement',
 
                                 ],
 
-
-
                                 [
 
                                     'value' =>
 
                                         'percentage',
-
-
 
                                     'label' =>
 
@@ -1773,37 +1459,28 @@ $template->configuration_schema = [
                             ],
 
                         ],
+
 [
 
                             'name' =>
 
                                 'comparison_function',
 
-
-
                             'label' =>
 
                                 'Comparison function',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 false,
 
-
-
                             'default' =>
 
                                 'equal',
-
-
 
                             'show_when' => [
 
@@ -1811,19 +1488,13 @@ $template->configuration_schema = [
 
                                     'function_type',
 
-
-
                                 'equals' =>
 
                                     'comparison',
 
                             ],
 
-
-
                             'options' => [
-
-
 
                                 [
 
@@ -1831,15 +1502,11 @@ $template->configuration_schema = [
 
                                         'equal',
 
-
-
                                     'label' =>
 
                                         'Equal',
 
                                 ],
-
-
 
                                 [
 
@@ -1847,15 +1514,11 @@ $template->configuration_schema = [
 
                                         'not_equal',
 
-
-
                                     'label' =>
 
                                         'Not equal',
 
                                 ],
-
-
 
                                 [
 
@@ -1863,15 +1526,11 @@ $template->configuration_schema = [
 
                                         'greater_than',
 
-
-
                                     'label' =>
 
                                         'Greater than',
 
                                 ],
-
-
 
                                 [
 
@@ -1879,15 +1538,11 @@ $template->configuration_schema = [
 
                                         'greater_or_equal',
 
-
-
                                     'label' =>
 
                                         'Greater than or equal',
 
                                 ],
-
-
 
                                 [
 
@@ -1895,23 +1550,17 @@ $template->configuration_schema = [
 
                                         'less_than',
 
-
-
                                     'label' =>
 
                                         'Less than',
 
                                 ],
 
-
-
                                 [
 
                                     'value' =>
 
                                         'less_or_equal',
-
-
 
                                     'label' =>
 
@@ -1922,37 +1571,28 @@ $template->configuration_schema = [
                             ],
 
                         ],
+
 [
 
                             'name' =>
 
                                 'logic_function',
 
-
-
                             'label' =>
 
                                 'Logic function',
-
-
 
                             'type' =>
 
                                 'select',
 
-
-
                             'required' =>
 
                                 false,
 
-
-
                             'default' =>
 
                                 'and',
-
-
 
                             'show_when' => [
 
@@ -1960,15 +1600,11 @@ $template->configuration_schema = [
 
                                     'action_trigger',
 
-
-
                                 'equals' =>
 
                                     'button',
 
                             ],
-
-
 
                             'options' => [
 
@@ -1977,8 +1613,6 @@ $template->configuration_schema = [
                                     'value' =>
 
                                         'and',
-
-
 
                                     'label' =>
 
@@ -1992,8 +1626,6 @@ $template->configuration_schema = [
 
                                         'or',
 
-
-
                                     'label' =>
 
                                         'OR',
@@ -2006,8 +1638,6 @@ $template->configuration_schema = [
 
                                         'not',
 
-
-
                                     'label' =>
 
                                         'NOT',
@@ -2017,31 +1647,24 @@ $template->configuration_schema = [
                             ],
 
                         ],
+
 [
 
                             'name' =>
 
                                 'label',
 
-
-
                             'label' =>
 
                                 'Button label',
-
-
 
                             'type' =>
 
                                 'text',
 
-
-
                             'required' =>
 
                                 false,
-
-
 
                             'show_when' => [
 
@@ -2055,44 +1678,33 @@ $template->configuration_schema = [
 
                             ],
 
-
-
                             'placeholder' =>
 
                                 'e.g. len(), Assign it, Create',
 
                         ],
+
 [
 
                             'name' =>
 
                                 'arguments',
 
-
-
                             'label' =>
 
                                 'Action arguments',
-
-
 
                             'type' =>
 
                                 'repeater',
 
-
-
                             'required' =>
 
                                 false,
 
-
-
                             'item_label' =>
 
                                 'Argument',
-
-
 
                             'show_when' => [
 
@@ -2100,19 +1712,13 @@ $template->configuration_schema = [
 
                                     'function_type',
 
-
-
                                 'equals' =>
 
                                     'string',
 
                             ],
 
-
-
                             'fields' => [
-
-
 
                                 [
 
@@ -2120,25 +1726,17 @@ $template->configuration_schema = [
 
                                         'value',
 
-
-
                                     'label' =>
 
                                         'Value',
-
-
 
                                     'type' =>
 
                                         'text',
 
-
-
                                     'required' =>
 
                                         false,
-
-
 
                                     'placeholder' =>
 
@@ -2150,66 +1748,51 @@ $template->configuration_schema = [
 
                         ],
 
-
                     ],
 
                 ],
+
 [
 
                     'name' =>
 
                         'show_code_display',
 
-
-
                     'label' =>
 
                         'Show code display',
-
-
 
                     'type' =>
 
                         'boolean',
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'default' =>
 
                         true,
 
                 ],
+
 [
 
                     'name' =>
 
                         'code_display',
 
-
-
                     'label' =>
 
                         'Code display',
-
-
 
                     'type' =>
 
                         'code',
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'show_when' => [
 
@@ -2223,46 +1806,33 @@ $template->configuration_schema = [
 
                     ],
 
-
-
                     'help' =>
 
                         'Display-only code shown to the learner. Supports {{input1}}, {{input2}}, {{input3}}, {{arg1}}, {{arg2}} and {{result}}.',
-
-
 
                     'placeholder' =>
 
                         "text = \"{{input1}}\"",
 
-
-
                 ],
+
 [
 
                     'name' =>
 
                         'show_result_box',
 
-
-
                     'label' =>
 
                         'Show result box',
-
-
 
                     'type' =>
 
                         'boolean',
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'default' =>
 
@@ -2276,31 +1846,21 @@ $template->configuration_schema = [
 
                         'result_box_format',
 
-
-
                     'label' =>
 
                         'Result box format',
-
-
 
                     'type' =>
 
                         'textarea',
 
-
-
                     'rows' =>
 
                         3,
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'show_when' => [
 
@@ -2314,23 +1874,17 @@ $template->configuration_schema = [
 
                     ],
 
-
-
                     'default' =>
 
-                        '**Result:** {{result}}',
-
-
+                        '\\Result:\\ {{result}}',
 
                     'help' =>
 
                         'Controls the content shown in the result box. Supports {{input1}}, {{input2}}, {{input3}}, {{arg1}}, {{arg2}} and {{result}}.',
 
-
-
                     'placeholder' =>
 
-                        '**Result:** {{result}}',
+                        '\\Result:\\ {{result}}',
 
                 ],
 
@@ -2340,62 +1894,45 @@ $template->configuration_schema = [
 
                         'show_card',
 
-
-
                     'label' =>
 
                         'Show card',
-
-
 
                     'type' =>
 
                         'boolean',
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'default' =>
 
                         true,
 
                 ],
+
 [
 
                     'name' =>
 
                         'card_format',
 
-
-
                     'label' =>
 
                         'Card format',
-
-
 
                     'type' =>
 
                         'textarea',
 
-
-
                     'rows' =>
 
                         4,
 
-
-
                     'required' =>
 
                         false,
-
-
 
                     'show_when' => [
 
@@ -2409,19 +1946,13 @@ $template->configuration_schema = [
 
                     ],
 
-
-
                     'default' =>
 
                         "{{icon}}\n{{value}}\n{{type}} {{variable}}",
 
-
-
                     'help' =>
 
                         'Controls the complete card content and line layout. Supports {{icon}}, {{variable}}, {{value}} and {{type}}.',
-
-
 
                     'placeholder' =>
 
@@ -2429,30 +1960,31 @@ $template->configuration_schema = [
 
                 ],
 
-                
-
             ],
 
         ];
+
 $template->example_data = [
+
             'title' => '',
+
             'icon' => '',
+
             'subtitle' => '',
+
             'inputs' => [],
+
             'actions' => [],
+
         ];
 
         $template->status =
 
             'active';
 
-
-
         $template->position =
 
             80;
-
-
 
         $template->save();
 

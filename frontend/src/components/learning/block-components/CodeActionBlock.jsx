@@ -161,6 +161,10 @@ function getActionFunction(action, values = []) {
 
          );
 
+      case "grade_calc":
+
+         return "grade";
+
       case "logic":
 
          return (
@@ -366,6 +370,77 @@ function CodeActionInput({
          )
 
          .filter(Boolean);
+
+   if (inputType === "range") {
+
+      const min = Number(input?.min ?? 0);
+      const max = Number(input?.max ?? 100);
+      const step = Number(input?.step ?? 1);
+      const currentValue = value === "" ? min : value;
+
+      return (
+
+         <label
+
+            className="code-action-field code-action-field--range"
+
+            data-visual-index={
+
+               visualIndex
+
+            }
+
+         >
+
+            {input?.label ? (
+
+               <span>
+
+                  {input.label}
+
+               </span>
+
+            ) : null}
+
+            <div className="code-action-range">
+
+               <input
+
+                  type="range"
+
+                  min={min}
+
+                  max={max}
+
+                  step={step}
+
+                  value={currentValue}
+
+                  onChange={(event) =>
+
+                     onChange(
+
+                        event.target.value
+
+                     )
+
+                  }
+
+               />
+
+               <strong className="code-action-range-value">
+
+                  {currentValue}
+
+               </strong>
+
+            </div>
+
+         </label>
+
+      );
+
+   }
 
    if (inputType === "checkbox") {
 
@@ -1174,18 +1249,26 @@ function CodeActionBlock({
             functionName;
 
          if (
-            activeAction?.action_trigger === "auto" &&
-            ["number", "comparison", "logic"].includes(functionType)
+            activeAction?.action_trigger === "auto"
          ) {
-            resolvedFunctionName =
-               String(values[1] ?? "")
-                  .trim()
-                  .toLowerCase();
+            if (
+               ["number", "comparison", "logic"].includes(functionType)
+            ) {
+               resolvedFunctionName =
+                  String(values[1] ?? "")
+                     .trim()
+                     .toLowerCase();
 
-            calculationValues = [
-               values[0],
-               values[2],
-            ];
+               calculationValues = [
+                  values[0],
+                  values[2],
+               ];
+            }
+
+            if (functionType === "grade_calc") {
+               resolvedFunctionName = "grade";
+               calculationValues = [values[0]];
+            }
          }
 
          if (

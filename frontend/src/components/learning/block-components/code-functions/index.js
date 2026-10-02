@@ -15,8 +15,8 @@ import {
 } from "./logicFunctions";
 
 import {
-  calculateConditionalResult,
-} from "./conditionalFunctions";
+  calculateGradeResult,
+} from "./gradeCalcFunctions";
 
 export function calculateCodeResult(
   functionType,
@@ -45,16 +45,16 @@ export function calculateCodeResult(
       );
 
     case "logic":
-    return calculateLogicResult(
+      return calculateLogicResult(
         functionName,
         values
-    );
+      );
 
-    case "conditional":
-    return calculateConditionalResult(
+    case "grade_calc":
+      return calculateGradeResult(
         functionName,
         values
-    );
+      );
 
     default:
       return String(
