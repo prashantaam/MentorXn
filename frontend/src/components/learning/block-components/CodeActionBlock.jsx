@@ -382,6 +382,57 @@ function CodeActionInput({
 
          .filter(Boolean);
 
+   if (inputType === "number") {
+
+      const min =
+         input?.min !== undefined &&
+         input?.min !== null &&
+         input?.min !== ""
+            ? Number(input.min)
+            : 0;
+
+      const step =
+         input?.step !== undefined &&
+         input?.step !== null &&
+         input?.step !== ""
+            ? Number(input.step)
+            : 1;
+
+      const max =
+         input?.max !== undefined &&
+         input?.max !== null &&
+         input?.max !== ""
+            ? Number(input.max)
+            : undefined;
+
+      return (
+
+         <label
+            className="code-action-field code-action-field--number"
+            data-visual-index={visualIndex}
+         >
+
+            {input?.label ? (
+               <span>{input.label}</span>
+            ) : null}
+
+            <input
+               type="number"
+               min={min}
+               max={max}
+               step={step}
+               value={value}
+               onChange={(event) =>
+                  onChange(event.target.value)
+               }
+            />
+
+         </label>
+
+      );
+
+   }
+
    if (inputType === "range") {
 
       const min = Number(input?.min ?? 0);

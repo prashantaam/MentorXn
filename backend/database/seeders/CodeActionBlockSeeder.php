@@ -781,6 +781,13 @@ $template->configuration_schema = [
 
 
                                 [
+                                    'value' =>
+                                        'number',
+                                    'label' =>
+                                        'Number',
+                                ],
+
+                                [
 
 
 
