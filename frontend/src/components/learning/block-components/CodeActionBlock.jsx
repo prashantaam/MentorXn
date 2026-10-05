@@ -1070,11 +1070,15 @@ function CodeActionBlock({
 
    /* =======================================================
 
-        Configuration
+        Interaction Groups
+
+        Each group owns its inputs and actions.
+
+        Results remain block-level.
 
         ======================================================= */
 
-   const inputs =
+   const interactionGroups =
 
       useMemo(
 
@@ -1082,68 +1086,117 @@ function CodeActionBlock({
 
             Array.isArray(
 
-               data.inputs
+               data.interaction_groups
 
             )
 
-               ? data.inputs
+               ? data.interaction_groups
 
                : [],
 
-         [data.inputs]
+         [data.interaction_groups]
 
       );
 
-   const actions =
+   const initialGroupValues =
 
       useMemo(
 
          () =>
 
-            Array.isArray(
+            interactionGroups.map(
 
-               data.actions
+               (group) =>
 
-            )
+                  getInitialValues(
 
-               ? data.actions
+                     Array.isArray(group?.inputs)
 
-               : [],
+                        ? group.inputs
 
-         [data.actions]
+                        : []
+
+                  )
+
+            ),
+
+         [interactionGroups]
 
       );
 
-   const hasActions =
+   /*
+    * Find the first automatic action across all groups.
+    * This preserves the existing Auto action behaviour while
+    * making its inputs come from the group that owns it.
+    */
+   const autoActionLocation =
 
-      actions.length > 0;
+      useMemo(() => {
 
-   const buttonActions =
+         for (
 
-      actions
-         .map((action, index) => ({
-            action,
-            index,
-         }))
-         .filter(
-            ({ action }) =>
-               action?.action_trigger !==
-               "auto"
-         );
+            let groupIndex = 0;
 
-   const hasButtonActions =
+            groupIndex < interactionGroups.length;
 
-      buttonActions.length > 0;
+            groupIndex += 1
 
-   const autoActionIndex =
-      actions.findIndex(
-         (action) =>
-            action?.action_trigger === "auto"
-      );
+         ) {
+
+            const groupActions =
+
+               Array.isArray(
+
+                  interactionGroups[groupIndex]?.actions
+
+               )
+
+                  ? interactionGroups[groupIndex].actions
+
+                  : [];
+
+            const actionIndex =
+
+               groupActions.findIndex(
+
+                  (action) =>
+
+                     action?.action_trigger === "auto"
+
+               );
+
+            if (actionIndex >= 0) {
+
+               return {
+
+                  groupIndex,
+
+                  actionIndex,
+
+               };
+
+            }
+
+         }
+
+         return null;
+
+      }, [interactionGroups]);
 
    const autoAction =
-      autoActionIndex >= 0
-         ? actions[autoActionIndex]
+
+      autoActionLocation
+
+         ? interactionGroups[
+
+              autoActionLocation.groupIndex
+
+           ]?.actions?.[
+
+              autoActionLocation.actionIndex
+
+           ] || null
+
          : null;
 
    const automaticFunctionType =
@@ -1151,22 +1204,6 @@ function CodeActionBlock({
       data?.auto_function_type ||
 
       "string";
-
-   const initialValues =
-
-      useMemo(
-
-         () =>
-
-            getInitialValues(
-
-               inputs
-
-            ),
-
-         [inputs]
-
-      );
 
    /* =======================================================
 
@@ -1182,7 +1219,7 @@ function CodeActionBlock({
 
    ] = useState(
 
-      initialValues
+      initialGroupValues
 
    );
 
@@ -1211,33 +1248,18 @@ function CodeActionBlock({
    ] = useState([]);
 
    /*
-
-     * First action selected by default.
-
-     *
-
-     * For "Try it on your own text"
-
-     * this means len().
-
-     */
-
+    * A selected action now needs both coordinates because
+    * action indexes restart inside every group.
+    */
    const [
 
-      selectedActionIndex,
+      selectedAction,
 
-      setSelectedActionIndex,
+      setSelectedAction,
 
-   ] = useState(
+   ] = useState(null);
 
-      actions.length > 0
-
-         ? 0
-
-         : null
-
-   );
-/* =======================================================
+   /* =======================================================
 
         Reset When Block Changes
 
@@ -1247,7 +1269,7 @@ function CodeActionBlock({
 
       setValues(
 
-         initialValues
+         initialGroupValues
 
       );
 
@@ -1257,39 +1279,85 @@ function CodeActionBlock({
 
       setCreatedVariables([]);
 
-      setSelectedActionIndex(
-
-         actions.length > 0
-
-            ? 0
-
-            : null
-
-      );
+      setSelectedAction(null);
 
    }, [
 
       block?.id,
 
-      initialValues,
-
-      actions,
+      initialGroupValues,
 
    ]);
 
    /* =======================================================
 
-        Selected Action
+        Selected Group / Action
 
         ======================================================= */
 
+   const activeLocation =
+
+      autoActionLocation ||
+
+      selectedAction;
+
+   const activeGroup =
+
+      activeLocation
+
+         ? interactionGroups[
+
+              activeLocation.groupIndex
+
+           ] || null
+
+         : null;
+
+   const activeInputs =
+
+      Array.isArray(
+
+         activeGroup?.inputs
+
+      )
+
+         ? activeGroup.inputs
+
+         : [];
+
+   const activeGroupValues =
+
+      activeLocation
+
+         ? values[
+
+              activeLocation.groupIndex
+
+           ] || []
+
+         : [];
+
+   const selectedButtonAction =
+
+      selectedAction
+
+         ? interactionGroups[
+
+              selectedAction.groupIndex
+
+           ]?.actions?.[
+
+              selectedAction.actionIndex
+
+           ] || null
+
+         : null;
+
    const activeAction =
+
       autoAction ||
-      (
-         selectedActionIndex !== null
-            ? actions[selectedActionIndex] || null
-            : null
-      );
+
+      selectedButtonAction;
 
    /* =======================================================
 
@@ -1303,7 +1371,7 @@ function CodeActionBlock({
 
          data,
 
-         values
+         activeGroupValues
 
       );
 
@@ -1321,12 +1389,15 @@ function CodeActionBlock({
 
          ? getActionFunction(
 
-               activeAction
+               activeAction,
+
+               activeGroupValues
 
             )
 
          : automaticFunctionName;
-/* =======================================================
+
+   /* =======================================================
 
         Resolve Action Arguments
 
@@ -1358,14 +1429,6 @@ function CodeActionBlock({
 
       useMemo(() => {
 
-         /*
-
-           * Create Card does not have a
-
-           * conventional Result section.
-
-           */
-
          if (
 
             !activeAction &&
@@ -1390,60 +1453,70 @@ function CodeActionBlock({
 
          }
 
-         /*
-
-           * Resolve only the values that are operands.
-
-           *
-
-           * Logic blocks can contain a dropdown between the
-
-           * Boolean inputs, for example:
-
-           *
-
-           *    A checkbox | and/or dropdown | B checkbox
-
-           *
-
-           * The dropdown selects the function; it is NOT a
-
-           * Boolean operand. Therefore logic calculations use
-
-           * only checkbox values. This remains correct even if
-
-           * the operator input is moved to another position.
-
-           */
-
          let calculationValues =
 
-            values;
+            activeGroupValues;
 
          let resolvedFunctionName =
+
             functionName;
 
+         /*
+          * Existing Auto behaviour is preserved, but the
+          * operator and operands now come from the owning group.
+          */
          if (
+
             activeAction?.action_trigger === "auto"
+
          ) {
+
             if (
+
                ["number", "comparison", "logic"].includes(functionType)
+
             ) {
+
                resolvedFunctionName =
-                  String(values[1] ?? "")
+
+                  String(
+
+                     activeGroupValues[1] ?? ""
+
+                  )
+
                      .trim()
+
                      .toLowerCase();
 
                calculationValues = [
-                  values[0],
-                  values[2],
+
+                  activeGroupValues[0],
+
+                  activeGroupValues[2],
+
                ];
+
             }
 
-            if (functionType === "grade_calc") {
-               resolvedFunctionName = "grade";
-               calculationValues = [values[0]];
+            if (
+
+               functionType === "grade_calc"
+
+            ) {
+
+               resolvedFunctionName =
+
+                  "grade";
+
+               calculationValues = [
+
+                  activeGroupValues[0],
+
+               ];
+
             }
+
          }
 
          if (
@@ -1456,11 +1529,11 @@ function CodeActionBlock({
 
             calculationValues =
 
-               values.filter(
+               activeGroupValues.filter(
 
                   (_, index) =>
 
-                     inputs[index]
+                     activeInputs[index]
 
                         ?.input_type ===
 
@@ -1472,9 +1545,7 @@ function CodeActionBlock({
 
             !activeAction &&
 
-            data?.auto_function_source ===
-
-               "input"
+            data?.auto_function_source === "input"
 
          ) {
 
@@ -1508,7 +1579,7 @@ function CodeActionBlock({
 
             calculationValues =
 
-               values.filter(
+               activeGroupValues.filter(
 
                   (_, index) =>
 
@@ -1538,9 +1609,7 @@ function CodeActionBlock({
 
             calculated === null ||
 
-            calculated ===
-
-               undefined
+            calculated === undefined
 
          ) {
 
@@ -1560,13 +1629,17 @@ function CodeActionBlock({
 
          data?.auto_calculate,
 
+         data?.auto_function_source,
+
+         data?.auto_function_input,
+
          functionType,
 
          functionName,
 
-         values,
+         activeGroupValues,
 
-         inputs,
+         activeInputs,
 
          actionArguments,
 
@@ -1577,6 +1650,9 @@ function CodeActionBlock({
    /* =======================================================
 
         Dynamic Code Display
+
+        Templates now resolve {{input1}}, {{input2}}, ...
+        against the currently active group.
 
         ======================================================= */
 
@@ -1596,23 +1672,11 @@ function CodeActionBlock({
 
          }
 
-         /*
-
-           * IMPORTANT:
-
-           *
-
-           * Create Card also uses the code display.
-
-           * It simply does not use the normal Result.
-
-           */
-
          return applyTemplate(
 
             template,
 
-            values,
+            activeGroupValues,
 
             result,
 
@@ -1624,7 +1688,7 @@ function CodeActionBlock({
 
          data?.code_display,
 
-         values,
+         activeGroupValues,
 
          result,
 
@@ -1646,7 +1710,7 @@ function CodeActionBlock({
 
             template,
 
-            values,
+            activeGroupValues,
 
             result,
 
@@ -1658,7 +1722,7 @@ function CodeActionBlock({
 
          data?.result_box_format,
 
-         values,
+         activeGroupValues,
 
          result,
 
@@ -1666,142 +1730,183 @@ function CodeActionBlock({
 
       ]);
 
+   /* =======================================================
+
+        Generic Card Display
+
+        ======================================================= */
+
    const cardResultData =
 
       useMemo(() => {
 
-         /*
-          * Card Display consumes one consistent JSON envelope.
-          *
-          * If a function has repeatable values, it exposes them
-          * through `items`. Card Display can then render one card
-          * per item without knowing which function produced them.
-          */
-         if (functionType === "create_variable") {
+         if (
+
+            functionType === "create_variable"
+
+         ) {
 
             return {
+
                value: createdVariables,
+
                type: "variables",
+
                items: createdVariables,
+
             };
 
          }
 
-         /*
-          * Array/List is stateful. The operation result and the
-          * current array are different concepts.
-          *
-          * Expose both in JSON so presentation remains a teacher
-          * decision rather than a React decision.
-          */
-         if (functionType === "array") {
+         if (
+
+            functionType === "array"
+
+         ) {
 
             return {
+
                value: arrayState,
+
                type: "list",
+
                operation: functionName,
+
                result: actionResult,
+
                items: arrayState.map(
+
                   (item, index) => ({
+
                      value:
+
                         normaliseCardValue(item),
+
                      type:
+
                         detectCardType(
+
                            normaliseCardValue(item)
+
                         ),
+
                      index,
+
                   })
+
                ),
+
             };
 
          }
 
-         if (result === "") {
+         if (
+
+            result === ""
+
+         ) {
+
             return null;
+
          }
 
          const value =
-            normaliseCardValue(result);
+
+            normaliseCardValue(
+
+               result
+
+            );
 
          return {
+
             value,
-            type: detectCardType(value),
+
+            type:
+
+               detectCardType(value),
+
             result: value,
+
          };
 
       }, [
-         functionType,
-         createdVariables,
-         arrayState,
-         functionName,
-         actionResult,
-         result,
-      ]);
 
+         functionType,
+
+         createdVariables,
+
+         arrayState,
+
+         functionName,
+
+         actionResult,
+
+         result,
+
+      ]);
 
    const resultCards =
 
       useMemo(() => {
 
          if (
+
             cardResultData === null ||
+
             cardResultData === undefined
+
          ) {
+
             return [];
+
          }
 
-         /*
-          * Generic Card Display contract:
-          *
-          * 1. A direct array means each array entry is one card.
-          * 2. An object with `items` means each item is one card.
-          * 3. Any other object/value becomes one card.
-          *
-          * There is deliberately no function-type check here.
-          */
-         if (Array.isArray(cardResultData)) {
+         if (
+
+            Array.isArray(
+
+               cardResultData
+
+            )
+
+         ) {
+
             return cardResultData;
+
          }
 
-         if (Array.isArray(cardResultData?.items)) {
+         if (
+
+            Array.isArray(
+
+               cardResultData?.items
+
+            )
+
+         ) {
+
             return cardResultData.items;
-         }
-
-         return [cardResultData];
-
-      }, [cardResultData]);
-
-
-   const cardResultJson =
-
-      useMemo(() => {
-
-         try {
-
-            return JSON.stringify(
-               cardResultData,
-               null,
-               2
-            );
-
-         } catch {
-
-            return String(
-               cardResultData ?? ""
-            );
 
          }
 
+         return [
+
+            cardResultData,
+
+         ];
+
       }, [cardResultData]);
 
-
-/* =======================================================
+   /* =======================================================
 
         Input Change
 
         ======================================================= */
 
    const handleInputChange = (
+
+      groupIndex,
 
       inputIndex,
 
@@ -1817,45 +1922,99 @@ function CodeActionBlock({
 
                (
 
-                  currentValue,
+                  groupValues,
 
-                  index
+                  currentGroupIndex
 
                ) =>
 
-                  index ===
+                  currentGroupIndex === groupIndex
 
-                  inputIndex
+                     ? groupValues.map(
 
-                     ? newValue
+                          (
 
-                     : currentValue
+                             currentValue,
+
+                             currentInputIndex
+
+                          ) =>
+
+                             currentInputIndex === inputIndex
+
+                                ? newValue
+
+                                : currentValue
+
+                       )
+
+                     : groupValues
 
             )
 
       );
-};
-/* =======================================================
+
+   };
+
+   /* =======================================================
 
         Action Click
+
+        The action receives ONLY the values from its own group.
 
         ======================================================= */
 
    const handleActionClick = (
 
-      index
+      groupIndex,
+
+      actionIndex
 
    ) => {
 
-      setSelectedActionIndex(
+      const group =
 
-         index
+         interactionGroups[
 
-      );
+            groupIndex
+
+         ];
+
+      const groupActions =
+
+         Array.isArray(
+
+            group?.actions
+
+         )
+
+            ? group.actions
+
+            : [];
 
       const action =
 
-         actions[index];
+         groupActions[
+
+            actionIndex
+
+         ];
+
+      const groupValues =
+
+         values[
+
+            groupIndex
+
+         ] || [];
+
+      setSelectedAction({
+
+         groupIndex,
+
+         actionIndex,
+
+      });
 
       if (
 
@@ -1869,9 +2028,16 @@ function CodeActionBlock({
 
             "show";
 
+         /*
+          * The first input in THIS group is the array operand.
+          *
+          * Example:
+          *   Add toy group    -> "Duck"
+          *   Access index     -> "1"
+          */
          const operand =
 
-            values[0] ?? "";
+            groupValues[0] ?? "";
 
          const operation =
 
@@ -1905,33 +2071,53 @@ function CodeActionBlock({
 
       }
 
-      if (action?.function_type === "create_variable") {
+      if (
 
-         const createdVariable = calculateCodeResult(
+         action?.function_type === "create_variable"
 
-            "create_variable",
+      ) {
 
-            "create_variable",
+         const createdVariable =
 
-            values,
+            calculateCodeResult(
 
-            []
+               "create_variable",
 
-         );
+               "create_variable",
 
-         if (createdVariable && typeof createdVariable === "object") {
+               groupValues,
 
-            setCreatedVariables((currentVariables) => [
+               []
 
-               ...currentVariables,
+            );
 
-               createdVariable,
+         if (
 
-            ]);
+            createdVariable &&
+
+            typeof createdVariable === "object"
+
+         ) {
+
+            setCreatedVariables(
+
+               (currentVariables) => [
+
+                  ...currentVariables,
+
+                  createdVariable,
+
+               ]
+
+            );
 
             setActionResult(
 
-               String(createdVariable.value ?? "")
+               String(
+
+                  createdVariable.value ?? ""
+
+               )
 
             );
 
@@ -1979,171 +2165,277 @@ function CodeActionBlock({
 
          {/* ===============================================
 
-               Inputs
+               Interaction Groups
 
                =============================================== */}
 
-         {inputs.length > 0 ? (
+         {interactionGroups.length > 0 ? (
 
-            <div className="code-action-inputs">
+            <div className="code-action-groups">
 
-               {inputs.map(
+               {interactionGroups.map(
 
                   (
 
-                     input,
+                     group,
 
-                     index
+                     groupIndex
 
-                  ) => (
+                  ) => {
 
-                     <CodeActionInput
+                     const groupInputs =
 
-                        key={`input-${index}`}
+                        Array.isArray(
 
-                        input={input}
+                           group?.inputs
 
-                        value={
+                        )
 
-                           values[
+                           ? group.inputs
 
-                              index
+                           : [];
 
-                           ] ?? ""
+                     const groupActions =
 
-                        }
+                        Array.isArray(
 
-                        visualIndex={
+                           group?.actions
 
-                           index
+                        )
 
-                        }
+                           ? group.actions
 
-                        onChange={(
+                           : [];
 
-                           newValue
+                     const groupButtonActions =
 
-                        ) =>
+                        groupActions
 
-                           handleInputChange(
+                           .map(
 
-                              index,
+                              (
 
-                              newValue
+                                 action,
+
+                                 actionIndex
+
+                              ) => ({
+
+                                 action,
+
+                                 actionIndex,
+
+                              })
 
                            )
 
-                        }
+                           .filter(
 
-                     />
+                              ({
 
-                  )
+                                 action,
 
-               )}
+                              }) =>
 
-            </div>
+                                 action?.action_trigger !== "auto"
 
-         ) : (
+                           );
 
-            <div className="block-empty">
+                     const groupValues =
 
-               No inputs have been configured yet.
+                        values[
 
-            </div>
+                           groupIndex
 
-         )}
-
-         {/* ===============================================
-
-               Actions
-
-               Optional. Existing action-based blocks continue
-
-               to work exactly as before.
-
-               =============================================== */}
-
-         {hasButtonActions && (
-
-            <div
-
-               className="code-action-options"
-
-               aria-label="Actions"
-
-            >
-
-               {buttonActions.map(
-
-                  ({
-
-                     action,
-
-                     index,
-
-                  }) => {
-
-                     const active =
-
-                        selectedActionIndex ===
-
-                        index;
+                        ] || [];
 
                      return (
 
-                        <button
+                        <div
 
-                           key={`action-${index}`}
+                           key={`interaction-group-${groupIndex}`}
 
-                           type="button"
-
-                           className={
-
-                              `code-action-option${
-
-                                 active
-
-                                    ? " on"
-
-                                    : ""
-
-                              }`
-
-                           }
-
-                           data-visual-index={
-
-                              index
-
-                           }
-
-                           aria-pressed={
-
-                              active
-
-                           }
-
-                           onClick={() =>
-
-                              handleActionClick(
-
-                                 index
-
-                              )
-
-                           }
+                           className="code-action-group"
 
                         >
 
-                           {action?.label ||
+                           {group?.group_label?.trim() ? (
 
-                              `Action ${
+                              <div className="code-action-group-label">
 
-                                 index + 1
+                                 {group.group_label}
 
-                              }`}
+                              </div>
 
-                        </button>
+                           ) : null}
+
+                           {groupInputs.length > 0 && (
+
+                              <div className="code-action-inputs">
+
+                                 {groupInputs.map(
+
+                                    (
+
+                                       input,
+
+                                       inputIndex
+
+                                    ) => (
+
+                                       <CodeActionInput
+
+                                          key={`group-${groupIndex}-input-${inputIndex}`}
+
+                                          input={input}
+
+                                          value={
+
+                                             groupValues[
+
+                                                inputIndex
+
+                                             ] ?? ""
+
+                                          }
+
+                                          visualIndex={
+
+                                             inputIndex
+
+                                          }
+
+                                          onChange={(
+
+                                             newValue
+
+                                          ) =>
+
+                                             handleInputChange(
+
+                                                groupIndex,
+
+                                                inputIndex,
+
+                                                newValue
+
+                                             )
+
+                                          }
+
+                                       />
+
+                                    )
+
+                                 )}
+
+                              </div>
+
+                           )}
+
+                           {groupButtonActions.length > 0 && (
+
+                              <div
+
+                                 className="code-action-options"
+
+                                 aria-label={
+
+                                    group?.group_label?.trim()
+
+                                       ? `${group.group_label} actions`
+
+                                       : `Group ${groupIndex + 1} actions`
+
+                                 }
+
+                              >
+
+                                 {groupButtonActions.map(
+
+                                    ({
+
+                                       action,
+
+                                       actionIndex,
+
+                                    }) => {
+
+                                       const active =
+
+                                          selectedAction?.groupIndex === groupIndex &&
+
+                                          selectedAction?.actionIndex === actionIndex;
+
+                                       return (
+
+                                          <button
+
+                                             key={`group-${groupIndex}-action-${actionIndex}`}
+
+                                             type="button"
+
+                                             className={
+
+                                                `code-action-option${
+
+                                                   active
+
+                                                      ? " on"
+
+                                                      : ""
+
+                                                }`
+
+                                             }
+
+                                             data-visual-index={
+
+                                                actionIndex
+
+                                             }
+
+                                             aria-pressed={
+
+                                                active
+
+                                             }
+
+                                             onClick={() =>
+
+                                                handleActionClick(
+
+                                                   groupIndex,
+
+                                                   actionIndex
+
+                                                )
+
+                                             }
+
+                                          >
+
+                                             {action?.label ||
+
+                                                `Action ${
+
+                                                   actionIndex + 1
+
+                                                }`}
+
+                                          </button>
+
+                                       );
+
+                                    }
+
+                                 )}
+
+                              </div>
+
+                           )}
+
+                        </div>
 
                      );
 
@@ -2153,19 +2445,19 @@ function CodeActionBlock({
 
             </div>
 
+         ) : (
+
+            <div className="block-empty">
+
+               No interaction groups have been configured yet.
+
+            </div>
+
          )}
 
          {/* ===============================================
 
-               Code Display
-
-               Action mode:
-
-               uses the selected action's code_example.
-
-               Automatic mode:
-
-               uses auto_code_example.
+               Results
 
                =============================================== */}
 
@@ -2183,26 +2475,6 @@ function CodeActionBlock({
             />
 
          )}
-
-         {/* ===============================================
-
-               Result
-
-               result_view supports the standard LearningText
-
-               formatting:
-
-               **bold**
-
-               `inline code`
-
-               [[label]]
-
-               It also supports:
-
-               {{input1}}, {{input2}}, ... and {{result}}
-
-               =============================================== */}
 
          {data?.show_result_box !== false &&
 

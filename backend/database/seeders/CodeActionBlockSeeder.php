@@ -195,59 +195,12 @@ $template->configuration_schema = [
 
 
                 [
-
-
-
-                    'title' => 'Inputs',
-
-
-
-                    'help' => 'Configure the learner inputs used by this activity.',
-
-
-
+                    'title' => 'Interaction Groups',
+                    'help' => 'Create groups containing multiple learner inputs and multiple actions.',
                     'fields' => [
-
-
-
-                        'inputs',
-
-
-
+                        'interaction_groups',
                     ],
-
-
-
                 ],
-
-
-
-                [
-
-
-
-                    'title' => 'Actions',
-
-
-
-                    'help' => 'Configure the actions the learner can perform.',
-
-
-
-                    'fields' => [
-
-
-
-                        'actions',
-
-
-
-                    ],
-
-
-
-                ],
-
 
 
                 [
@@ -525,6 +478,23 @@ $template->configuration_schema = [
 
 
 [
+                    'name' => 'interaction_groups',
+                    'label' => 'Interaction Groups',
+                    'type' => 'repeater',
+                    'required' => true,
+                    'item_label' => 'Group',
+                    'min_items' => 1,
+                    'help' => 'Each group can contain multiple learner inputs and multiple actions.',
+                    'fields' => [
+                        [
+                            'name' => 'label',
+                            'label' => 'Group label',
+                            'type' => 'text',
+                            'required' => false,
+                            'placeholder' => 'e.g. Add a toy',
+                            'help' => 'Optional. Leave blank to render the group without a heading.',
+                        ],
+                        [
 
 
 
@@ -1176,10 +1146,7 @@ $template->configuration_schema = [
 
 
                 ],
-
-
-
-[
+                        [
 
 
 
@@ -1211,7 +1178,7 @@ $template->configuration_schema = [
 
 
 
-                        false,
+                        true,
 
 
 
@@ -1227,7 +1194,7 @@ $template->configuration_schema = [
 
 
 
-                        0,
+                        1,
 
 
 
@@ -3502,6 +3469,8 @@ $template->configuration_schema = [
 
 
                 ],
+                    ],
+                ],
 
 
 
@@ -4082,11 +4051,7 @@ $template->example_data = [
 
 
 
-            'inputs' => [],
-
-
-
-            'actions' => [],
+            'interaction_groups' => [],
 
             'card_source' => 'result',
 
