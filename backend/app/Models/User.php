@@ -49,4 +49,10 @@ class User extends Authenticatable
     {
         return $this->role === 'teacher';
     }
+
+    /** Developers manage the platform's block templates. */
+    public function isDeveloper(): bool
+    {
+        return $this->role === 'developer';
+    }
 }

@@ -61,9 +61,11 @@ function AuthCard({
 
         {children}
 
-        <p className="mx-auth-card__switch">
-          {switchText} <Link to={switchTo}>{switchLabel}</Link>
-        </p>
+        {switchTo && (
+          <p className="mx-auth-card__switch">
+            {switchText} <Link to={switchTo}>{switchLabel}</Link>
+          </p>
+        )}
 
         {otherPortal && (
           <div className="mx-auth-card__note">

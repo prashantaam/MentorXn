@@ -1,0 +1,119 @@
+/* =========================================================
+   MentorXn - Rich Text Block (student view)
+   Also used for any .rich-text content rendered by RichTextContent.
+   Picked up automatically by styles/blocks/index.js.
+   ========================================================= */
+
+.rich-text {
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.rich-text > :first-child {
+  margin-top: 0;
+}
+
+.rich-text > :last-child {
+  margin-bottom: 0;
+}
+
+.rich-text p {
+  margin: 0 0 0.8em;
+}
+
+.rich-text h2,
+.rich-text h3 {
+  margin: 1.2em 0 0.45em;
+  font-family: Fredoka, "Trebuchet MS", system-ui, sans-serif;
+  line-height: 1.2;
+}
+
+.rich-text h2 {
+  font-size: 1.35rem;
+}
+
+.rich-text h3 {
+  font-size: 1.12rem;
+}
+
+.rich-text ul,
+.rich-text ol {
+  margin: 0 0 0.9em;
+  padding-left: 1.4em;
+}
+
+.rich-text li {
+  margin: 0.2em 0;
+}
+
+.rich-text li > p {
+  margin: 0;
+}
+
+.rich-text blockquote {
+  margin: 0 0 0.9em;
+  padding: 8px 14px;
+
+  background: var(--surface2);
+  border-left: 5px solid var(--w, #8fd9a8);
+  border-radius: 0 10px 10px 0;
+}
+
+.rich-text blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.rich-text code {
+  padding: 0 5px;
+
+  background: var(--surface2);
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+
+.rich-text pre {
+  margin: 0 0 0.9em;
+  padding: 12px 14px;
+  overflow-x: auto;
+
+  background: #141414;
+  color: #eef0ea;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+
+  font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.rich-text pre code {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.rich-text a {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-color: var(--w, #8fd9a8);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+
+.rich-text hr {
+  margin: 1.2em 0;
+  border: 0;
+  border-top: 2.5px dashed var(--ink);
+}
+
+.rich-text--empty {
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+}

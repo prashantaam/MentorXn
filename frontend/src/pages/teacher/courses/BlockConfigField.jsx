@@ -4,6 +4,8 @@ import {
 
 } from "react";
 
+import RichTextEditor from "../../../components/forms/RichTextEditor";
+
 import "../../../styles/teachers/block-config-fields.css";
 
 
@@ -1433,6 +1435,18 @@ function BlockConfigField({
 
 
       {field.type ===
+
+      "richtext" ? (
+
+        <RichTextEditor
+          id={fieldId}
+          value={value}
+          placeholder={field.placeholder || "Start writing…"}
+          ariaLabel={fieldLabel}
+          onChange={onChange}
+        />
+
+      ) : field.type ===
 
       "textarea" ? (
 

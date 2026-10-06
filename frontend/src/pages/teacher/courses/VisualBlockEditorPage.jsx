@@ -15,6 +15,12 @@ import VisualBlockCanvas from "../../../components/learning/visual-editor/Visual
 
 import VisualPropertiesPanel from "../../../components/learning/visual-editor/VisualPropertiesPanel";
 
+import {
+  UNCATEGORISED,
+  categoryLabel,
+  groupTemplatesByCategory,
+} from "../../../lib/blockCategories";
+
 import "../../../styles/adventure-land.css";
 import "../../../styles/pages/block-editor.css";
 
@@ -91,44 +97,20 @@ function VisualBlockEditorPage() {
   ] = useState(false);
 
 
-  const BLOCK_CATEGORIES = [
-    { id: "content", label: "📝 Content blocks", color: "var(--mx-c-net)" },
-    { id: "assessment", label: "❓ Assessment blocks", color: "var(--mx-c-blocks)" },
-    { id: "manipulation", label: "🧩 Manipulation blocks", color: "var(--mx-c-web)" },
-    { id: "process", label: "🔄 Process & structure blocks", color: "var(--mx-c-back)" },
-    { id: "code", label: "💻 Code blocks", color: "var(--mx-c-pro)" },
-  ];
-
-  const getTemplateCategory = (template) => {
-    const explicit = String(
-      template?.category ||
-      template?.group ||
-      template?.configuration_schema?.category ||
-      ""
-    ).toLowerCase();
-
-    if (explicit.includes("assessment") || explicit.includes("quiz")) return "assessment";
-    if (explicit.includes("manipulation") || explicit.includes("interactive")) return "manipulation";
-    if (explicit.includes("process") || explicit.includes("structure")) return "process";
-    if (explicit.includes("code") || explicit.includes("programming")) return "code";
-    if (explicit.includes("content")) return "content";
-
-    const haystack = [template?.name, template?.slug, template?.key, template?.description]
-      .filter(Boolean).join(" ").toLowerCase();
-
-    if (/quiz|question|multiple choice|true.false|fill.blank|reflection|assessment/.test(haystack)) return "assessment";
-    if (/flip|match|drag|drop|sort|reorder|bucket|manipulat|pattern tester/.test(haystack)) return "manipulation";
-    if (/pipeline|stepper|timeline|flow|process|worked example|structure/.test(haystack)) return "process";
-    if (/code|terminal|program|debug|error|variable|array|function|syntax/.test(haystack)) return "code";
-    return "content";
-  };
+  // Library groups come from the API (developers manage categories).
+  const [
+    categories,
+    setCategories,
+  ] = useState([]);
 
   const groupedTemplates = useMemo(() =>
-    BLOCK_CATEGORIES.map((category) => ({
-      ...category,
-      templates: templates.filter((template) => getTemplateCategory(template) === category.id),
-    })).filter((category) => category.templates.length > 0),
-    [templates]
+    groupTemplatesByCategory(templates, categories).map(({ category, templates: inGroup }) => ({
+      id: category.id ?? "uncategorised",
+      label: categoryLabel(category),
+      color: category.color,
+      templates: inGroup,
+    })),
+    [templates, categories]
   );
 
   /*
@@ -365,6 +347,11 @@ function VisualBlockEditorPage() {
 
           setTemplates(
             loadedTemplates
+          );
+
+          setCategories(
+            templatesData.block_categories ||
+            []
           );
 
           /*
@@ -862,8 +849,12 @@ function VisualBlockEditorPage() {
    */
 
   const pageTitle = isEditMode ? "Edit learning block" : "Add a learning block";
+  // Straight from the template, so it also works for an inactive category.
   const selectedCategory = selectedTemplate
-    ? BLOCK_CATEGORIES.find((category) => category.id === getTemplateCategory(selectedTemplate))
+    ? {
+        label: categoryLabel(selectedTemplate.block_category),
+        color: (selectedTemplate.block_category || UNCATEGORISED).color,
+      }
     : null;
 
   // Library search: name or description.

@@ -2,6 +2,7 @@ import BuilderModal from "./BuilderModal";
 
 /* "Are you sure?" dialog for destructive actions in the course builder. */
 function ConfirmDialog({
+  kicker = "Course structure",
   title,
   subject,
   warning,
@@ -12,7 +13,7 @@ function ConfirmDialog({
   onCancel,
 }) {
   return (
-    <BuilderModal kicker="Course structure" title={title} onClose={onCancel} busy={busy} role="alertdialog">
+    <BuilderModal kicker={kicker} title={title} onClose={onCancel} busy={busy} role="alertdialog">
       <p>
         Are you sure you want to delete <b>{subject}</b>?
       </p>

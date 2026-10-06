@@ -1,0 +1,101 @@
+/* =========================================================
+   Rich text editor (components/forms/RichTextEditor.jsx)
+   Uses the --mx-* tokens so it follows light/dark mode.
+   The text inside reuses the student .rich-text styles.
+   ========================================================= */
+
+.mx-rte {
+  overflow: hidden;
+
+  background: var(--mx-surface);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 12px;
+}
+
+.mx-rte:focus-within {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.mx-rte__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px;
+
+  background: var(--mx-surface2);
+  border-bottom: 2.5px solid var(--mx-ink);
+}
+
+.mx-rte__group {
+  display: flex;
+  gap: 2px;
+}
+
+.mx-rte__group + .mx-rte__group {
+  padding-left: 6px;
+  border-left: 2px dashed color-mix(in srgb, var(--mx-ink) 35%, transparent);
+}
+
+.mx-rte__tool {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 6px;
+
+  background: transparent;
+  color: var(--mx-text);
+  border: 2px solid transparent;
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mx-rte__tool:hover:not(:disabled) {
+  background: var(--mx-surface);
+  border-color: var(--mx-ink);
+}
+
+.mx-rte__tool.is-on {
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  border-color: var(--mx-ink);
+}
+
+.mx-rte__tool:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mx-rte__tool.is-bold { font-weight: 900; }
+.mx-rte__tool.is-italic { font-style: italic; }
+.mx-rte__tool.is-underline { text-decoration: underline; }
+.mx-rte__tool.is-strike { text-decoration: line-through; }
+.mx-rte__tool.is-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* The editable area. */
+.mx-rte__content {
+  min-height: 180px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding: 12px 14px;
+
+  /* .rich-text uses the student block tokens; map them to the theme here */
+  --text: var(--mx-text);
+  --surface2: var(--mx-surface2);
+  --ink: var(--mx-ink);
+
+  color: var(--mx-text);
+  outline: none;
+}
+
+.mx-rte__content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--mx-muted);
+  pointer-events: none;
+}

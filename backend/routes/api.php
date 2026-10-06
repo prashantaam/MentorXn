@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\Teacher\LessonController;
 use App\Http\Controllers\Api\Teacher\TopicController;
 use App\Http\Controllers\Api\Teacher\LearningBlockController;
 use App\Http\Controllers\Api\Teacher\BlockTemplateController;
+use App\Http\Controllers\Api\Dev\BlockTemplateController as DevBlockTemplateController;
+use App\Http\Controllers\Api\Dev\BlockCategoryController as DevBlockCategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,6 +45,17 @@ Route::prefix('teacher')->group(function () {
         [AuthController::class, 'loginTeacher']
     );
 });
+
+/*
+|--------------------------------------------------------------------------
+| Developer Authentication (no public sign-up)
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    '/dev/login',
+    [AuthController::class, 'loginDeveloper']
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -189,33 +202,75 @@ Route::middleware('auth:sanctum')->group(function () {
 
         /*
         |--------------------------------------------------------------------------
-        | Learning Block Templates
+        | Block Templates (read-only; managed by developers below)
         |--------------------------------------------------------------------------
         */
 
-        Route::get(
-            '/block-templates',
-            [BlockTemplateController::class, 'index']
-        );
+        Route::middleware('role:teacher,developer')->group(function () {
+            Route::get(
+                '/block-templates',
+                [BlockTemplateController::class, 'index']
+            );
 
-        Route::post(
-            '/block-templates',
-            [BlockTemplateController::class, 'store']
-        );
-
-        Route::get(
-            '/block-templates/{blockTemplate}',
-            [BlockTemplateController::class, 'show']
-        );
-
-        Route::put(
-            '/block-templates/{blockTemplate}',
-            [BlockTemplateController::class, 'update']
-        );
-
-        Route::delete(
-            '/block-templates/{blockTemplate}',
-            [BlockTemplateController::class, 'destroy']
-        );
+            Route::get(
+                '/block-templates/{blockTemplate}',
+                [BlockTemplateController::class, 'show']
+            );
+        });
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Developer: manage block templates
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('dev')
+        ->middleware('role:developer')
+        ->group(function () {
+            Route::get(
+                '/block-templates',
+                [DevBlockTemplateController::class, 'index']
+            );
+
+            Route::post(
+                '/block-templates',
+                [DevBlockTemplateController::class, 'store']
+            );
+
+            Route::get(
+                '/block-templates/{blockTemplate}',
+                [DevBlockTemplateController::class, 'show']
+            );
+
+            Route::put(
+                '/block-templates/{blockTemplate}',
+                [DevBlockTemplateController::class, 'update']
+            );
+
+            Route::delete(
+                '/block-templates/{blockTemplate}',
+                [DevBlockTemplateController::class, 'destroy']
+            );
+
+            Route::get(
+                '/block-categories',
+                [DevBlockCategoryController::class, 'index']
+            );
+
+            Route::post(
+                '/block-categories',
+                [DevBlockCategoryController::class, 'store']
+            );
+
+            Route::put(
+                '/block-categories/{blockCategory}',
+                [DevBlockCategoryController::class, 'update']
+            );
+
+            Route::delete(
+                '/block-categories/{blockCategory}',
+                [DevBlockCategoryController::class, 'destroy']
+            );
+        });
 });

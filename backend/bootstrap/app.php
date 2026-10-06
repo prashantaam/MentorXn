@@ -12,7 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureRole::class,
+        ]);
+
+        // Keeps the spaces inside rich text documents.
+        $middleware->replace(
+            \Illuminate\Foundation\Http\Middleware\TrimStrings::class,
+            \App\Http\Middleware\TrimStrings::class,
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

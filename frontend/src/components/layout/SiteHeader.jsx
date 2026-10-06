@@ -14,8 +14,10 @@ function SiteHeader() {
   const { user, isAuthenticated } = useAuth();
   const { toggleTheme } = useTheme();
 
-  // Signed-out visitors on teacher pages get the teacher log-in / sign-up.
-  const guestAuthBase = pathname.startsWith("/teacher") ? "/teacher" : "";
+  // Signed-out visitors on teacher pages get the teacher log-in / sign-up;
+  // on developer pages, the developer log-in (developers have no sign-up).
+  const isDevArea = pathname.startsWith("/dev");
+  const guestAuthBase = pathname.startsWith("/teacher") ? "/teacher" : isDevArea ? "/dev" : "";
 
   const role = isAuthenticated ? user?.role : null;
   const links = NAV_LINKS[role] || NAV_LINKS.guest;
@@ -72,9 +74,11 @@ function SiteHeader() {
             >
               Log in
             </Link>
-            <Link className="mx-btn mx-btn--sm" to={`${guestAuthBase}/register`}>
-              Sign up
-            </Link>
+            {!isDevArea && (
+              <Link className="mx-btn mx-btn--sm" to={`${guestAuthBase}/register`}>
+                Sign up
+              </Link>
+            )}
             {themeButton}
           </>
         )}

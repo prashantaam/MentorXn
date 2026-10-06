@@ -10,6 +10,12 @@ import LandingPage from "./pages/public/LandingPage";
 /* Account (students and teachers) */
 import AccountSettingsPage from "./pages/account/AccountSettingsPage";
 
+/* Developer */
+import DevLoginPage from "./pages/dev/DevLoginPage";
+import BlockTemplateListPage from "./pages/dev/BlockTemplateListPage";
+import BlockTemplateFormPage from "./pages/dev/BlockTemplateFormPage";
+import BlockCategoryListPage from "./pages/dev/BlockCategoryListPage";
+
 /* Student */
 import StudentLoginPage from "./pages/student/auth/LoginPage";
 import StudentRegisterPage from "./pages/student/auth/RegisterPage";
@@ -38,6 +44,7 @@ function App() {
         <Route path="/register" element={<StudentRegisterPage />} />
         <Route path="/teacher/login" element={<TeacherLoginPage />} />
         <Route path="/teacher/register" element={<TeacherRegisterPage />} />
+        <Route path="/dev/login" element={<DevLoginPage />} />
       </Route>
 
       {/* ========================================
@@ -55,6 +62,18 @@ function App() {
       <Route element={<ProtectedRoute requiredRole="student" />}>
         <Route element={<AppLayout area="student" />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
+        </Route>
+      </Route>
+
+      {/* ========================================
+          Developer: block templates
+      ======================================== */}
+      <Route element={<ProtectedRoute requiredRole="developer" />}>
+        <Route element={<AppLayout area="dev" />}>
+          <Route path="/dev/block-templates" element={<BlockTemplateListPage />} />
+          <Route path="/dev/block-templates/new" element={<BlockTemplateFormPage />} />
+          <Route path="/dev/block-templates/:templateId/edit" element={<BlockTemplateFormPage />} />
+          <Route path="/dev/block-categories" element={<BlockCategoryListPage />} />
         </Route>
       </Route>
 

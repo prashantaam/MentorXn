@@ -1,0 +1,308 @@
+/* ============================================================
+   Developer: block templates
+   (pages/dev/BlockTemplateListPage.jsx, BlockTemplateFormPage.jsx)
+   The form reuses the create-course layout (create-course.css).
+   ============================================================ */
+
+/* ---------- list page ---------- */
+.mx-templates {
+  max-width: var(--mx-max-width);
+  margin: 0 auto;
+  padding: 0 var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-templates__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 40px 0 14px;
+}
+
+.mx-templates__head h1 {
+  font-size: clamp(1.9rem, 4.6vw, 2.6rem);
+}
+
+.mx-templates__head p {
+  max-width: 60ch;
+  margin: 0.4em 0 0;
+}
+
+.mx-templates__flash {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mx-templates__flash-close {
+  flex: none;
+  background: none;
+  color: inherit;
+  border: 0;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mx-templates__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 10px;
+}
+
+.mx-templates__search {
+  flex: 1;
+  min-width: 220px;
+  padding: 9px 14px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 12px;
+
+  font: inherit;
+}
+
+.mx-templates__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mx-templates__categories {
+  margin-bottom: 8px;
+}
+
+.mx-templates__count {
+  display: inline-block;
+  min-width: 1.6em;
+  margin-left: 4px;
+  padding: 0 6px;
+
+  background: var(--mx-surface2);
+  color: var(--mx-text);
+  border-radius: 99px;
+
+  font-size: 0.85em;
+  text-align: center;
+}
+
+.mx-templates__group {
+  margin-top: 26px;
+}
+
+.mx-templates__group > h2.mx-world__label {
+  font-size: 1rem;
+}
+
+.mx-templates__list {
+  display: grid;
+  gap: 10px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mx-template-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.mx-template-row:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--mx-shadow-c);
+}
+
+.mx-template-row__icon {
+  flex: none;
+  width: 2rem;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.mx-template-row b {
+  display: block;
+}
+
+.mx-template-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 2px;
+  color: var(--mx-muted);
+  font-size: 0.85rem;
+}
+
+.mx-template-row__meta code {
+  padding: 0 6px;
+  background: var(--mx-surface2);
+  border: 1.5px solid var(--mx-ink);
+  border-radius: 6px;
+  font-size: 0.82rem;
+}
+
+.mx-template-row__warn {
+  background: var(--mx-warn-bg);
+  color: var(--mx-warn);
+  font-size: 0.75rem;
+}
+
+.mx-template-row__tag {
+  font-weight: 700;
+}
+
+.mx-template-row__usage {
+  flex: none;
+  min-width: 70px;
+  font-family: var(--mx-font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.mx-template-row__usage small {
+  color: var(--mx-muted);
+  font-family: var(--mx-font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.mx-template-row .mx-tag {
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .mx-template-row {
+    flex-wrap: wrap;
+  }
+
+  .mx-template-row__usage {
+    min-width: 0;
+    text-align: left;
+  }
+}
+
+/* ---------- form page ---------- */
+/* Two classes so this beats the generic .mx-field textarea style. */
+.mx-json-box .mx-json-box__input {
+  width: 100%;
+  min-height: 220px;
+  padding: 12px 14px;
+
+  background: #141414;
+  color: #eef0ea;
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 12px;
+
+  font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  resize: vertical;
+  tab-size: 2;
+}
+
+.mx-json-box.has-error .mx-json-box__input,
+.mx-field.mx-json-box.has-error textarea {
+  border-color: var(--mx-bad);
+}
+
+.mx-json-box__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.mx-json-box__status > span {
+  margin-top: 0;
+}
+
+.mx-create .mx-create__section-hint code {
+  padding: 0 4px;
+  background: var(--mx-surface2);
+  border: 1.5px solid var(--mx-ink);
+  border-radius: 5px;
+  font-size: 0.85em;
+}
+
+.mx-templates__delete {
+  margin-left: auto;
+}
+
+.mx-template-preview {
+  padding: 14px;
+
+  background: var(--mx-surface2);
+  border: 2.5px dashed var(--mx-ink);
+  border-radius: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-template-row {
+    transition: none;
+  }
+}
+
+.mx-create .mx-field__hint a {
+  color: var(--mx-text);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- categories page ---------- */
+.mx-categories {
+  margin-top: 18px;
+}
+
+/* Rows aren't links here (they have their own buttons), so no lift. */
+.mx-category-row:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.mx-category-row__chip {
+  flex: none;
+  margin: 0;
+}
+
+.mx-category-row__actions {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+
+.mx-category-preview {
+  margin-bottom: 16px;
+  padding: 14px;
+
+  background: var(--mx-surface2);
+  border: 2px dashed var(--mx-ink);
+  border-radius: 12px;
+}
+
+.mx-category-preview .mx-world__label {
+  margin: 0;
+}
+
+.mx-templates > .mx-back-link {
+  display: inline-block;
+  margin-top: 26px;
+}

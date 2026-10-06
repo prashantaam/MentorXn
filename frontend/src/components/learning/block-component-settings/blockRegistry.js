@@ -8,6 +8,7 @@ import ToggleExplorerBlock from "../block-components/ToggleExplorerBlock";
 import CodeActionBlock from "../block-components/CodeActionBlock";
 import DragBucketBlock from "../block-components/DragBucketBlock";
 import ArrangeTextBlock from "../block-components/ArrangeTextBlock";
+import RichTextBlock from "../block-components/RichTextBlock";
 
 const blockRegistry = {
   /*
@@ -27,6 +28,10 @@ const blockRegistry = {
 
   FlipCardBlock: {
     component: FlipCardBlock,
+  },
+
+  RichTextBlock: {
+    component: RichTextBlock,
   },
 
   CodeExampleBlock: {

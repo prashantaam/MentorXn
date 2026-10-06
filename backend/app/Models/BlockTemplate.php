@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BlockTemplate extends Model
@@ -14,6 +15,7 @@ class BlockTemplate extends Model
         'icon',
         'description',
         'component',
+        'block_category_id',
         'tags',
         'configuration_schema',
         'example_data',
@@ -33,6 +35,12 @@ class BlockTemplate extends Model
         'position' =>
             'integer',
     ];
+
+    /** The block-library group this template belongs to. */
+    public function blockCategory(): BelongsTo
+    {
+        return $this->belongsTo(BlockCategory::class);
+    }
 
     public function learningBlocks(): HasMany
     {

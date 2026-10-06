@@ -136,6 +136,42 @@ class AuthController extends Controller
     }
 
     /**
+     * Developer login. There is no developer sign-up: accounts are
+     * created with `php artisan app:make-developer`.
+     */
+    public function loginDeveloper(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = User::where('email', strtolower($validated['email']))->first();
+
+        if (!$user || !Hash::check($validated['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        if (!$user->isDeveloper()) {
+            throw ValidationException::withMessages([
+                'email' => ['This account is not a developer account.'],
+            ]);
+        }
+
+        $user->tokens()->delete();
+
+        $token = $user->createToken('developer-auth-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Developer signed in successfully.',
+            'user' => $user,
+            'token' => $token,
+        ]);
+    }
+
+    /**
      * Return the currently authenticated user.
      */
     public function user(Request $request): JsonResponse
