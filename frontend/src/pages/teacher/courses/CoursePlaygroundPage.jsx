@@ -16,13 +16,8 @@ import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
-  useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-
-import {
-  CSS,
-} from "@dnd-kit/utilities";
 
 import {
   restrictToVerticalAxis,
@@ -35,15 +30,20 @@ import {
   useParams,
 } from "react-router-dom";
 
+import BuilderModal from "../../../components/course-builder/BuilderModal";
+import ConfirmDialog from "../../../components/course-builder/ConfirmDialog";
+import CourseOutline from "../../../components/course-builder/CourseOutline";
+import SortableBlock from "../../../components/course-builder/SortableBlock";
+import FormField from "../../../components/forms/FormField";
+import LearningText from "../../../components/learning/shared/LearningText";
 import { useAuth } from "../../../context/AuthContext";
 
-import LearningBlockRenderer from "../../../components/learning/block-component-settings/LearningBlockRenderer";
-
-import LearningText from "../../../components/learning/shared/LearningText";
-
-import "../../../styles/teachers/course-playground.css";
+// The student-facing lesson look (crumb, highlighted title, block styles)
+// comes from the course player's stylesheet, so the preview is exact.
 import "../../../styles/adventure-land.css";
+import "../../../styles/pages/course-builder.css";
 
+// One colour per lesson, in order — the same palette the course player uses.
 const LESSON_ACCENT_COLORS = [
   "#8fd9a8", // Mint Green
   "#ffd84d", // Sunny Yellow
@@ -59,129 +59,17 @@ const LESSON_ACCENT_COLORS = [
   "#bef264", // Light Lime
 ];
 
-const getLessonAccentColor = (lessons, selectedLesson) => {
-  if (!selectedLesson) {
-    return LESSON_ACCENT_COLORS[0];
-  }
+const lessonColor = (index) =>
+  LESSON_ACCENT_COLORS[Math.max(index, 0) % LESSON_ACCENT_COLORS.length];
 
-  const lessonIndex = lessons.findIndex(
-    (lesson) => lesson.id === selectedLesson.id
-  );
+const STRUCTURE_MODES = ["add-lesson", "edit-lesson", "add-topic", "edit-topic"];
 
-  const safeIndex = lessonIndex >= 0 ? lessonIndex : 0;
-
-  return LESSON_ACCENT_COLORS[
-    safeIndex % LESSON_ACCENT_COLORS.length
-  ];
+const STRUCTURE_TITLES = {
+  "add-lesson": "📖 Add a lesson",
+  "edit-lesson": "✏️ Edit lesson",
+  "add-topic": "📑 Add a topic",
+  "edit-topic": "✏️ Edit topic",
 };
-
-
-
-
-function SortableLearningBlock({
-  block,
-  index,
-  onEdit,
-  onDelete,
-  disabled,
-}) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: String(block.id),
-    disabled,
-  });
-
-  const style = {
-    transform:
-      CSS.Transform.toString(
-        transform
-      ),
-    transition,
-    position: "relative",
-    zIndex: isDragging
-      ? 20
-      : "auto",
-    opacity: isDragging
-      ? 0.65
-      : 1,
-  };
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={[
-        "course-playground-learning-block",
-        isDragging
-          ? "is-dragging"
-          : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      <div className="course-playground-learning-block-actions">
-        <span className="course-playground-block-position">
-          {index + 1}
-        </span>
-
-        <button
-          type="button"
-          className="course-playground-block-drag-handle"
-          disabled={disabled}
-          title="Drag to reorder"
-          aria-label={`Move ${
-            block.title ||
-            "learning block"
-          }`}
-          {...attributes}
-          {...listeners}
-        >
-          ⋮⋮
-        </button>
-
-        <button
-          type="button"
-          className="course-playground-block-action-button"
-          onClick={() =>
-            onEdit(block)
-          }
-          aria-label={`Edit ${
-            block.title ||
-            "learning block"
-          }`}
-          title="Edit learning block"
-        >
-          ✏️ Edit
-        </button>
-
-        <button
-          type="button"
-          className="course-playground-block-action-button danger"
-          onClick={() =>
-            onDelete(block)
-          }
-          aria-label={`Delete ${
-            block.title ||
-            "learning block"
-          }`}
-          title="Delete learning block"
-        >
-          🗑️ Delete
-        </button>
-      </div>
-
-      <LearningBlockRenderer
-        block={block}
-      />
-    </div>
-  );
-}
 
 function CoursePlaygroundPage() {
   const { courseId } =
@@ -224,6 +112,12 @@ function CoursePlaygroundPage() {
   const [
     isReorderingBlocks,
     setIsReorderingBlocks,
+  ] = useState(false);
+
+  // Mobile: the course outline slides in as a drawer.
+  const [
+    isOutlineOpen,
+    setIsOutlineOpen,
   ] = useState(false);
 
   const blockSensors = useSensors(
@@ -949,15 +843,25 @@ function CoursePlaygroundPage() {
    */
 
   const handleOpenAddTopic =
-    () => {
+    (lesson = selectedLesson) => {
       if (
-        !selectedLesson
+        !lesson
       ) {
         setFormError(
           "Select a lesson before adding a topic."
         );
 
         return;
+      }
+
+      /*
+       * Adding to a different lesson than the one
+       * on screen: switch to that lesson first.
+       */
+      if (lesson.id !== selectedLesson?.id) {
+        setSelectedLesson(lesson);
+        setSelectedTopic(null);
+        setLearningBlocks([]);
       }
 
       setTopicForm({
@@ -1544,6 +1448,7 @@ function CoursePlaygroundPage() {
       }
     };
 
+
   /*
    * =========================================
    * Loading / Error
@@ -1552,42 +1457,25 @@ function CoursePlaygroundPage() {
 
   if (isLoading) {
     return (
-      <div className="course-playground-state">
-        <strong>
-          Loading Course
-          Playground...
-        </strong>
-
-        <span>
-          Preparing your course.
-        </span>
+      <div className="mx-page mx-builder-state">
+        <p className="mx-hint">Loading the course builder…</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="course-playground-state">
-        <strong>
-          Unable to open Course
-          Playground
-        </strong>
-
-        <span>
-          {error}
-        </span>
-
-        <button
-          type="button"
-          className="teacher-primary-button"
-          onClick={() =>
-            navigate(
-              "/teacher/courses"
-            )
-          }
-        >
-          Back to Courses
-        </button>
+      <div className="mx-page mx-builder-state">
+        <div className="mx-empty">
+          <span className="mx-empty__emoji" aria-hidden="true">
+            🧭
+          </span>
+          <h2>Couldn't open this course</h2>
+          <p>{error}</p>
+          <button type="button" className="mx-btn" onClick={() => navigate("/teacher/courses")}>
+            ← Back to my courses
+          </button>
+        </div>
       </div>
     );
   }
@@ -1602,912 +1490,487 @@ function CoursePlaygroundPage() {
    * =========================================
    */
 
+  // `selectedLesson` can be a stale copy; read topics from the live list.
+  const currentLesson =
+    lessons.find((lesson) => lesson.id === selectedLesson?.id) || selectedLesson;
+  const currentLessonIndex = lessons.findIndex((lesson) => lesson.id === currentLesson?.id);
+  const accent = lessonColor(currentLessonIndex);
+
+  // Every topic in course order, for "topic N of M" and previous/next.
+  const allTopics = lessons.flatMap((lesson) =>
+    (lesson.topics || []).map((topic) => ({ lesson, topic }))
+  );
+  const topicPosition = selectedTopic
+    ? allTopics.findIndex((entry) => entry.topic.id === selectedTopic.id)
+    : -1;
+  const previousTopic = topicPosition > 0 ? allTopics[topicPosition - 1] : null;
+  const nextTopic =
+    topicPosition >= 0 && topicPosition < allTopics.length - 1 ? allTopics[topicPosition + 1] : null;
+
+  const isStructureModalOpen = STRUCTURE_MODES.includes(editorMode);
+  const isLessonForm = editorMode === "add-lesson" || editorMode === "edit-lesson";
+  const isDialogOpen =
+    isStructureModalOpen || deletingLesson || deletingTopic || learningBlockPendingDelete;
+
+  // Outline actions close the mobile drawer before doing their thing.
+  const closeOutline = () => setIsOutlineOpen(false);
+  const goToLesson = (lesson) => {
+    closeOutline();
+    handleSelectLesson(lesson);
+  };
+  const goToTopic = (lesson, topic) => {
+    closeOutline();
+    handleSelectTopic(lesson, topic);
+  };
+  const editTopic = (lesson, topic) => {
+    closeOutline();
+    // Load the topic first, so its own blocks show once the dialog closes.
+    if (selectedTopic?.id !== topic.id) handleSelectTopic(lesson, topic);
+    handleOpenEditTopic(lesson, topic);
+  };
+
+  const updateLessonForm = (field) => (event) =>
+    setLessonForm((current) => ({ ...current, [field]: event.target.value }));
+  const updateTopicForm = (field) => (event) =>
+    setTopicForm((current) => ({ ...current, [field]: event.target.value }));
+
   return (
-    <div className="course-playground">
-      <div className="course-playground-grid">
-        {/* ===========================
-            LEFT - Course Index
-        ============================ */}
+    <div className="mx-page mx-builder">
+      <div
+        className={`mx-builder__scrim${isOutlineOpen ? " is-open" : ""}`}
+        onClick={closeOutline}
+        aria-hidden="true"
+      />
 
-        <aside className="course-playground-index">
-          <div className="course-playground-panel-heading">
-            <button
-              type="button"
-              className="course-playground-back"
-              onClick={() => navigate("/teacher/courses")}
-            >
-              ← Back
-            </button>
-           <div className="course-playground-course-heading">
-  <h1>{course?.title || "Course"}</h1>
+      <aside
+        id="course-outline"
+        className={`mx-builder__nav${isOutlineOpen ? " is-open" : ""}`}
+        aria-label="Course outline"
+      >
+        <CourseOutline
+          course={course}
+          lessons={lessons}
+          lessonColor={lessonColor}
+          selectedLesson={currentLesson}
+          selectedTopic={selectedTopic}
+          onSelectLesson={goToLesson}
+          onSelectTopic={goToTopic}
+          onAddLesson={() => {
+            closeOutline();
+            handleOpenAddLesson();
+          }}
+          onEditLesson={(lesson) => {
+            closeOutline();
+            handleOpenEditLesson(lesson);
+          }}
+          onDeleteLesson={(lesson) => {
+            closeOutline();
+            handleOpenDeleteLesson(lesson);
+          }}
+          onAddTopic={(lesson) => {
+            closeOutline();
+            handleOpenAddTopic(lesson);
+          }}
+          onEditTopic={editTopic}
+          onDeleteTopic={(lesson, topic) => {
+            closeOutline();
+            handleOpenDeleteTopic(lesson, topic);
+          }}
+        />
+      </aside>
 
-  <span
-    className={`course-playground-course-status ${
-      course?.status === "published"
-        ? "published"
-        : "draft"
-    }`}
-  >
-    {course?.status === "published"
-      ? "Published"
-      : "Draft"}
-  </span>
-</div>
-           
+      <div className="mx-builder__main">
+        <button
+          type="button"
+          className="mx-btn mx-btn--ghost mx-btn--sm mx-builder__menu"
+          aria-controls="course-outline"
+          aria-expanded={isOutlineOpen}
+          onClick={() => setIsOutlineOpen(true)}
+        >
+          ☰ Course outline
+        </button>
+
+        {formError && !isDialogOpen && (
+          <div className="mx-feedback mx-feedback--bad" role="alert">
+            {formError}
           </div>
+        )}
 
-          {lessons.length ===
-          0 ? (
-            <div className="course-playground-empty">
-              <div>
-                🗺️
+        <article className="lesson mx-builder__lesson" style={{ "--w": accent, "--lesson-accent": accent }}>
+          {selectedTopic ? (
+            /* ---------- topic: what students see, plus teacher controls ---------- */
+            <>
+              <div className="crumb">
+                {course.title}
+                {currentLesson && ` · ${currentLesson.title}`}
+                {topicPosition >= 0 && ` · topic ${topicPosition + 1} of ${allTopics.length}`}
               </div>
 
-              <strong>
-                No lessons yet
-              </strong>
+              <h1>
+                <span className="t">
+                  {selectedTopic.icon || "📑"} {selectedTopic.title}
+                </span>
+              </h1>
 
-              <p>
-                Add your first
-                lesson to start
-                building this
-                course.
-              </p>
-            </div>
-          ) : (
-            <div className="course-playground-lessons">
-              {lessons.map(
-                (lesson, lessonIndex) => (
-                  <section
-                    key={
-                      lesson.id
-                    }
-                    className="course-playground-lesson"
-                    style={{
-                      "--lesson-color":
-                        LESSON_ACCENT_COLORS[
-                          lessonIndex %
-                            LESSON_ACCENT_COLORS.length
-                        ],
-                      "--lesson-accent":
-                        LESSON_ACCENT_COLORS[
-                          lessonIndex %
-                            LESSON_ACCENT_COLORS.length
-                        ],
-                      "--w":
-                        LESSON_ACCENT_COLORS[
-                          lessonIndex %
-                            LESSON_ACCENT_COLORS.length
-                        ],
-                    }}
+              <div className="mx-blurb">
+                <div className="mx-blurb__head">
+                  <b>Introduction</b>
+                  <button
+                    type="button"
+                    className="mx-mini-btn"
+                    onClick={() => editTopic(currentLesson, selectedTopic)}
+                    aria-label="Edit topic"
+                    title="Edit topic"
                   >
-                    <div className="course-playground-lesson-heading-row">
-                      <button
-                        type="button"
-                        className={
-                          selectedLesson
-                            ?.id ===
-                            lesson.id &&
-                          !selectedTopic
-                            ? "course-playground-lesson-title active"
-                            : "course-playground-lesson-title"
-                        }
-                        onClick={() =>
-                          handleSelectLesson(
-                            lesson
-                          )
-                        }
-                      >
-                        <span>
-                          {lesson.icon ||
-                            "📖"}
-                        </span>
-
-                        <strong>
-                          {lesson.title}
-                        </strong>
-                      </button>
-
-                      <div className="course-playground-lesson-actions">
-                        <button
-                          type="button"
-                          className="course-playground-lesson-action edit"
-                          aria-label={`Edit ${lesson.title}`}
-                          title="Edit lesson"
-                          onClick={() =>
-                            handleOpenEditLesson(lesson)
-                          }
-                        >
-                          ✏️
-                        </button>
-
-                        <button
-                          type="button"
-                          className="course-playground-lesson-action delete"
-                          aria-label={`Delete ${lesson.title}`}
-                          title="Delete lesson"
-                          onClick={() =>
-                            handleOpenDeleteLesson(lesson)
-                          }
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="course-playground-topics">
-                      {(
-                        lesson.topics ||
-                        []
-                      ).map(
-                        (topic) => (
-                          <div
-                            key={topic.id}
-                            className="course-playground-topic-row"
-                          >
-                            <button
-                              type="button"
-                              className={
-                                selectedTopic?.id === topic.id
-                                  ? "course-playground-topic active"
-                                  : "course-playground-topic"
-                              }
-                              onClick={() =>
-                                handleSelectTopic(lesson, topic)
-                              }
-                            >
-                              <span>
-                                {topic.icon || "📑"}
-                              </span>
-
-                              <span>
-                                {topic.title}
-                              </span>
-                            </button>
-
-                            <div className="course-playground-topic-actions">
-                              <button
-                                type="button"
-                                className="course-playground-topic-action edit"
-                                aria-label={`Edit ${topic.title}`}
-                                title="Edit topic"
-                                onClick={() =>
-                                  handleOpenEditTopic(lesson, topic)
-                                }
-                              >
-                                ✏️
-                              </button>
-
-                              <button
-                                type="button"
-                                className="course-playground-topic-action delete"
-                                aria-label={`Delete ${topic.title}`}
-                                title="Delete topic"
-                                onClick={() =>
-                                  handleOpenDeleteTopic(lesson, topic)
-                                }
-                              >
-                                🗑️
-                              </button>
-                            </div>
-                          </div>
-                        )
-                      )}
-                    </div>
-                  </section>
-                )
-              )}
-            </div>
-          )}
-
-          <div className="course-playground-index-actions">
-            <button
-              type="button"
-              className="course-playground-add-button"
-              onClick={
-                handleOpenAddLesson
-              }
-            >
-              + Add Lesson
-            </button>
-
-            <button
-              type="button"
-              className="course-playground-add-button secondary"
-              onClick={
-                handleOpenAddTopic
-              }
-              disabled={
-                !selectedLesson
-              }
-            >
-              + Add Topic
-            </button>
-          </div>
-        </aside>
-
-        {/* ===========================
-            CENTRE - Student Preview
-        ============================ */}
-
-        <main className="course-playground-preview">
-          
-
-          <div className="course-playground-student-canvas">
-            {!selectedTopic ? (
-              <div className="course-playground-preview-empty">
-                <div>
-                  {course.icon ||
-                    "🚀"}
+                    ✏️
+                  </button>
                 </div>
-
-                <h2>
-                  {selectedLesson
-                    ? selectedLesson.title
-                    : course.title}
-                </h2>
-
-                <p>
-                  {selectedLesson
-                    ? "Add or select a topic to start building the student experience."
-                    : "Add your first lesson to start building this course."}
-                </p>
+                <LearningText text={selectedTopic.introduction} as="p" />
               </div>
-            ) : (
-              <article
-                className="lesson"
-                style={{
-                  "--lesson-accent":
-                    getLessonAccentColor(
-                      lessons,
-                      selectedLesson
-                    ),
-                  "--w":
-                    getLessonAccentColor(
-                      lessons,
-                      selectedLesson
-                    ),
-                }}
-              >
-                <div className="crumb">
-                  {course.title}
 
-                  {selectedLesson && (
-                    <>
-                      {" · "}
-
-                      {
-                        selectedLesson.title
-                      }
-                    </>
-                  )}
-                </div>
-
-                <h1>
-                  <span className="t">
-                    {selectedTopic.icon ||
-                      "📑"}{" "}
-
-                    {
-                      selectedTopic.title
-                    }
+              {isLoadingBlocks ? (
+                <p className="mx-hint mx-builder__loading">Loading learning blocks…</p>
+              ) : learningBlocks.length > 0 ? (
+                <DndContext
+                  sensors={blockSensors}
+                  collisionDetection={closestCenter}
+                  modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+                  onDragEnd={handleLearningBlockDragEnd}
+                >
+                  <SortableContext
+                    items={learningBlocks.map((block) => String(block.id))}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="mx-block-list">
+                      {learningBlocks.map((block, index) => (
+                        <SortableBlock
+                          key={block.id}
+                          block={block}
+                          index={index}
+                          disabled={isReorderingBlocks}
+                          onEdit={handleEditLearningBlock}
+                          onDelete={handleRequestDeleteLearningBlock}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              ) : (
+                <div className="mx-empty">
+                  <span className="mx-empty__emoji" aria-hidden="true">
+                    🧱
                   </span>
-                </h1>
-
-                <div className="course-playground-topic-intro">
-                  <div
-                    className="course-playground-topic-intro-character"
-                    aria-hidden="true"
-                  >
-                    {course.icon || "🚀"}
-                  </div>
-
-                  <div className="course-playground-topic-intro-content">
-                    <LearningText
-                      text={selectedTopic.introduction}
-                      as="p"
-                    />
-                  </div>
+                  <h2>No learning blocks yet</h2>
+                  <p>
+                    Add explanations, quizzes, code labs and more. Students work
+                    through them in this order.
+                  </p>
                 </div>
+              )}
 
-                {isLoadingBlocks ? (
-                  <div className="course-playground-preview-placeholder">
-                    <p>
-                      Loading
-                      learning
-                      blocks...
-                    </p>
-                  </div>
-                ) : learningBlocks.length >
-                  0 ? (
-                  <>
-                    <DndContext
-                      sensors={
-                        blockSensors
-                      }
-                      collisionDetection={
-                        closestCenter
-                      }
-                      modifiers={[
-                        restrictToVerticalAxis,
-                        restrictToParentElement,
-                      ]}
-                      onDragEnd={
-                        handleLearningBlockDragEnd
-                      }
-                    >
-                      <SortableContext
-                        items={learningBlocks.map(
-                          (block) =>
-                            String(
-                              block.id
-                            )
-                        )}
-                        strategy={
-                          verticalListSortingStrategy
-                        }
-                      >
-                        {learningBlocks.map(
-                          (
-                            block,
-                            index
-                          ) => (
-                            <SortableLearningBlock
-                              key={
-                                block.id
-                              }
-                              block={
-                                block
-                              }
-                              index={
-                                index
-                              }
-                              disabled={
-                                isReorderingBlocks
-                              }
-                              onEdit={
-                                handleEditLearningBlock
-                              }
-                              onDelete={
-                                handleRequestDeleteLearningBlock
-                              }
-                            />
-                          )
-                        )}
-                      </SortableContext>
-                    </DndContext>
+              <button type="button" className="mx-add-tile" onClick={handleOpenBlockLibrary}>
+                ＋ Add a learning block
+              </button>
 
-                    <button
-                      type="button"
-                      className="course-playground-inline-add-block"
-                      onClick={
-                        handleOpenBlockLibrary
-                      }
-                    >
-                      + Add Learning
-                      Block
-                    </button>
-                  </>
-                ) : (
-                  <div className="course-playground-preview-placeholder">
-                    <div className="course-playground-placeholder-icon">
-                      🧱
-                    </div>
-
-                    <h3>
-                      No learning
-                      blocks yet
-                    </h3>
-
-                    <p>
-                      Add your first
-                      reusable
-                      learning
-                      component to
-                      this topic.
-                    </p>
-
-                    <button
-                      type="button"
-                      className="btn"
-                      onClick={
-                        handleOpenBlockLibrary
-                      }
-                    >
-                      + Add First
-                      Block
-                    </button>
-                  </div>
-                )}
-              </article>
-            )}
-          </div>
-        </main>
-
-        {/* ===========================
-            MODAL - Add Lesson / Topic
-        ============================ */}
-
-        {(editorMode === "add-lesson" ||
-          editorMode === "edit-lesson" ||
-          editorMode === "add-topic" ||
-          editorMode === "edit-topic") && (
-          <div
-            className="course-playground-modal-backdrop"
-            role="presentation"
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget && !isSaving) {
-                handleCloseStructureDrawer();
-              }
-            }}
-          >
-            <section
-              className="course-playground-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="course-structure-modal-title"
-            >
-              <div className="course-playground-modal-header">
-                <div>
-                  <span>COURSE STRUCTURE</span>
-                  <h2 id="course-structure-modal-title">
-                    {editorMode === "add-lesson"
-                      ? "📖 Add Lesson"
-                      : editorMode === "edit-lesson"
-                      ? "✏️ Edit Lesson"
-                      : editorMode === "edit-topic"
-                      ? "✏️ Edit Topic"
-                      : "📑 Add Topic"}
-                  </h2>
-                </div>
-
+              <nav className="mx-builder__pager" aria-label="Topics">
                 <button
                   type="button"
-                  className="course-playground-modal-close"
-                  aria-label={
-                    editorMode === "add-lesson"
-                      ? "Close add lesson"
-                      : editorMode === "edit-lesson"
-                      ? "Close edit lesson"
-                      : editorMode === "edit-topic"
-                      ? "Close edit topic"
-                      : "Close add topic"
-                  }
+                  className="mx-btn mx-btn--ghost"
+                  disabled={!previousTopic}
+                  onClick={() => goToTopic(previousTopic.lesson, previousTopic.topic)}
+                  title={previousTopic?.topic.title}
+                >
+                  ← Previous topic
+                </button>
+                {nextTopic ? (
+                  <button
+                    type="button"
+                    className="mx-btn"
+                    onClick={() => goToTopic(nextTopic.lesson, nextTopic.topic)}
+                    title={nextTopic.topic.title}
+                  >
+                    Next topic →
+                  </button>
+                ) : (
+                  <span />
+                )}
+              </nav>
+            </>
+          ) : currentLesson ? (
+            /* ---------- lesson overview ---------- */
+            <>
+              <div className="crumb">
+                {course.title} · lesson {currentLessonIndex + 1} of {lessons.length}
+              </div>
+
+              <h1>
+                <span className="t">
+                  {currentLesson.icon || "📖"} {currentLesson.title}
+                </span>
+              </h1>
+
+              <div className="mx-blurb">
+                <div className="mx-blurb__head">
+                  <b>About this lesson</b>
+                  <button
+                    type="button"
+                    className="mx-mini-btn"
+                    onClick={() => handleOpenEditLesson(currentLesson)}
+                    aria-label="Edit lesson"
+                    title="Edit lesson"
+                  >
+                    ✏️
+                  </button>
+                </div>
+                <p>{currentLesson.description || "No description yet."}</p>
+              </div>
+
+              <h2 className="mx-builder__section-title">Topics</h2>
+              {(currentLesson.topics || []).length > 0 ? (
+                <ol className="mx-topic-list">
+                  {currentLesson.topics.map((topic) => (
+                    <li key={topic.id}>
+                      <button
+                        type="button"
+                        className="mx-topic-card"
+                        onClick={() => goToTopic(currentLesson, topic)}
+                      >
+                        <span className="mx-topic-card__icon" aria-hidden="true">
+                          {topic.icon || "📑"}
+                        </span>
+                        <b>{topic.title}</b>
+                        <span className="mx-hint">Open →</span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p className="mx-hint">
+                  No topics yet. Topics hold the learning blocks students work through.
+                </p>
+              )}
+
+              <button
+                type="button"
+                className="mx-add-tile"
+                onClick={() => handleOpenAddTopic(currentLesson)}
+              >
+                ＋ Add a topic to this lesson
+              </button>
+            </>
+          ) : (
+            /* ---------- empty course ---------- */
+            <>
+              <div className="crumb">{course.title}</div>
+
+              <h1>
+                <span className="t">
+                  {course.icon || "📘"} {course.title}
+                </span>
+              </h1>
+
+              {course.description && (
+                <div className="mx-blurb">
+                  <b>About this course</b>
+                  <p>{course.description}</p>
+                </div>
+              )}
+
+              <div className="mx-empty">
+                <span className="mx-empty__emoji" aria-hidden="true">
+                  🗺️
+                </span>
+                <h2>No lessons yet</h2>
+                <p>
+                  A course is made of lessons, each lesson has topics, and each
+                  topic holds the learning blocks students work through.
+                </p>
+                <button type="button" className="mx-btn" onClick={handleOpenAddLesson}>
+                  ➕ Add your first lesson
+                </button>
+              </div>
+            </>
+          )}
+        </article>
+      </div>
+
+      {/* ---------- add / edit lesson or topic ---------- */}
+      {isStructureModalOpen && (
+        <BuilderModal
+          kicker="Course structure"
+          title={STRUCTURE_TITLES[editorMode]}
+          onClose={handleCloseStructureDrawer}
+          busy={isSaving}
+        >
+          {isLessonForm ? (
+            <form
+              onSubmit={editorMode === "edit-lesson" ? handleUpdateLesson : handleCreateLesson}
+              noValidate
+            >
+              {formError && (
+                <div className="mx-feedback mx-feedback--bad" role="alert">
+                  {formError}
+                </div>
+              )}
+
+              <FormField id="lesson-title" label="Lesson title">
+                <input
+                  type="text"
+                  value={lessonForm.title}
+                  onChange={updateLessonForm("title")}
+                  placeholder="e.g. Introduction to Kubernetes"
+                  autoFocus
+                />
+              </FormField>
+
+              <FormField id="lesson-icon" label="Icon" hint="Any emoji.">
+                <input
+                  type="text"
+                  className="mx-icon-input"
+                  maxLength={8}
+                  value={lessonForm.icon}
+                  onChange={updateLessonForm("icon")}
+                />
+              </FormField>
+
+              <FormField id="lesson-description" label="Description" hint="Optional — what students will learn.">
+                <textarea
+                  rows={4}
+                  value={lessonForm.description}
+                  onChange={updateLessonForm("description")}
+                  placeholder="Describe what students will learn in this lesson."
+                />
+              </FormField>
+
+              <div className="mx-modal__actions">
+                <button
+                  type="button"
+                  className="mx-btn mx-btn--ghost"
                   disabled={isSaving}
                   onClick={handleCloseStructureDrawer}
                 >
-                  ×
+                  Cancel
+                </button>
+                <button type="submit" className="mx-btn" disabled={isSaving}>
+                  {isSaving ? "Saving…" : editorMode === "edit-lesson" ? "Save changes" : "Add lesson"}
                 </button>
               </div>
-
-              {editorMode === "add-lesson" || editorMode === "edit-lesson" ? (
-                <form
-                  className="course-playground-form course-playground-modal-form"
-                  onSubmit={
-                    editorMode === "edit-lesson"
-                      ? handleUpdateLesson
-                      : handleCreateLesson
-                  }
-                >
-                  {formError && (
-                    <div className="course-playground-form-error course-playground-modal-error">
-                      {formError}
-                    </div>
-                  )}
-
-                  <label htmlFor="lesson-title">Lesson title *</label>
-                  <input
-                    id="lesson-title"
-                    type="text"
-                    value={lessonForm.title}
-                    onChange={(event) =>
-                      setLessonForm((current) => ({
-                        ...current,
-                        title: event.target.value,
-                      }))
-                    }
-                    placeholder="e.g. Introduction to Kubernetes"
-                    autoFocus
-                  />
-
-                  <label htmlFor="lesson-icon">Icon</label>
-                  <input
-                    id="lesson-icon"
-                    type="text"
-                    value={lessonForm.icon}
-                    onChange={(event) =>
-                      setLessonForm((current) => ({
-                        ...current,
-                        icon: event.target.value,
-                      }))
-                    }
-                    placeholder="📖"
-                  />
-
-                  <label htmlFor="lesson-description">Description</label>
-                  <textarea
-                    id="lesson-description"
-                    rows="5"
-                    value={lessonForm.description}
-                    onChange={(event) =>
-                      setLessonForm((current) => ({
-                        ...current,
-                        description: event.target.value,
-                      }))
-                    }
-                    placeholder="Describe what students will learn in this lesson."
-                  />
-
-                  <div className="course-playground-form-actions course-playground-modal-actions">
-                    <button
-                      type="button"
-                      className="course-playground-cancel-button"
-                      disabled={isSaving}
-                      onClick={handleCloseStructureDrawer}
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      type="submit"
-                      className="course-playground-save-button"
-                      disabled={isSaving}
-                    >
-                      {isSaving
-                        ? "Saving..."
-                        : editorMode === "edit-lesson"
-                        ? "Save Changes"
-                        : "Add Lesson"}
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <form
-                  className="course-playground-form course-playground-modal-form"
-                  onSubmit={
-                    editorMode === "edit-topic"
-                      ? handleUpdateTopic
-                      : handleCreateTopic
-                  }
-                >
-                  <div className="course-playground-parent-info">
-                    <span>
-                      {editorMode === "edit-topic"
-                        ? "Editing topic in"
-                        : "Adding topic to"}
-                    </span>
-                    <strong>
-                      {selectedLesson?.icon || "📖"}{" "}
-                      {selectedLesson?.title || "Selected lesson"}
-                    </strong>
-                  </div>
-
-                  {formError && (
-                    <div className="course-playground-form-error course-playground-modal-error">
-                      {formError}
-                    </div>
-                  )}
-
-                  <label htmlFor="topic-title">Topic title *</label>
-                  <input
-                    id="topic-title"
-                    type="text"
-                    value={topicForm.title}
-                    onChange={(event) =>
-                      setTopicForm((current) => ({
-                        ...current,
-                        title: event.target.value,
-                      }))
-                    }
-                    placeholder="e.g. Pods and Containers"
-                    autoFocus
-                  />
-
-                  <label htmlFor="topic-icon">Icon</label>
-                  <input
-                    id="topic-icon"
-                    type="text"
-                    value={topicForm.icon}
-                    onChange={(event) =>
-                      setTopicForm((current) => ({
-                        ...current,
-                        icon: event.target.value,
-                      }))
-                    }
-                    placeholder="📑"
-                  />
-
-                  <label htmlFor="topic-introduction">
-                    Introduction *
-                  </label>
-                  <p className="course-playground-field-help">
-                    This appears at the top of the topic before the learning blocks.
-                  </p>
-
-                  <div className="course-playground-formatting-help">
-                    <span>Formatting:</span>
-                    <code>**bold**</code>
-                    <code>`code`</code>
-                    <code>[[label]]</code>
-                  </div>
-                  <textarea
-                    id="topic-introduction"
-                    rows="6"
-                    value={topicForm.introduction}
-                    onChange={(event) =>
-                      setTopicForm((current) => ({
-                        ...current,
-                        introduction: event.target.value,
-                      }))
-                    }
-                    placeholder="Introduce this topic to the student..."
-                    required
-                  />
-
-                  <div className="course-playground-form-actions course-playground-modal-actions">
-                    <button
-                      type="button"
-                      className="course-playground-cancel-button"
-                      disabled={isSaving}
-                      onClick={handleCloseStructureDrawer}
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      type="submit"
-                      className="course-playground-save-button"
-                      disabled={isSaving}
-                    >
-                      {isSaving
-                        ? "Saving..."
-                        : editorMode === "edit-topic"
-                        ? "Save Changes"
-                        : "Add Topic"}
-                    </button>
-                  </div>
-                </form>
-              )}
-            </section>
-          </div>
-        )}
-
-        {deletingTopic && (
-          <div
-            className="course-playground-modal-backdrop"
-            role="presentation"
-            onMouseDown={(event) => {
-              if (
-                event.target === event.currentTarget &&
-                !isSaving
-              ) {
-                handleCloseDeleteTopic();
-              }
-            }}
-          >
-            <section
-              className="course-playground-modal course-playground-delete-modal"
-              role="alertdialog"
-              aria-modal="true"
-              aria-labelledby="delete-topic-modal-title"
-              aria-describedby="delete-topic-modal-description"
+            </form>
+          ) : (
+            <form
+              onSubmit={editorMode === "edit-topic" ? handleUpdateTopic : handleCreateTopic}
+              noValidate
             >
-              <div className="course-playground-modal-header course-playground-delete-modal-header">
-                <div>
-                  <span>COURSE STRUCTURE</span>
-                  <h2 id="delete-topic-modal-title">
-                    🗑️ Delete Topic
-                  </h2>
-                </div>
-
-                <button
-                  type="button"
-                  className="course-playground-modal-close"
-                  aria-label="Close delete topic confirmation"
-                  disabled={isSaving}
-                  onClick={handleCloseDeleteTopic}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="course-playground-delete-modal-body">
-                <p id="delete-topic-modal-description">
-                  Are you sure you want to delete{" "}
-                  <strong>
-                    {deletingTopic.icon || "📑"}{" "}
-                    {deletingTopic.title}
-                  </strong>
-                  ?
-                </p>
-
-                <p className="course-playground-delete-warning">
-                  This will also remove the topic's learning blocks and content. This action cannot be undone.
-                </p>
-
-                {formError && (
-                  <div className="course-playground-form-error course-playground-modal-error">
-                    {formError}
-                  </div>
-                )}
-
-                <div className="course-playground-form-actions course-playground-modal-actions">
-                  <button
-                    type="button"
-                    className="course-playground-cancel-button"
-                    disabled={isSaving}
-                    onClick={handleCloseDeleteTopic}
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="button"
-                    className="course-playground-delete-button"
-                    disabled={isSaving}
-                    onClick={handleDeleteTopic}
-                  >
-                    {isSaving
-                      ? "Deleting..."
-                      : "Delete Topic"}
-                  </button>
-                </div>
-              </div>
-            </section>
-          </div>
-        )}
-
-        {deletingLesson && (
-          <div
-            className="course-playground-modal-backdrop"
-            role="presentation"
-            onMouseDown={(event) => {
-              if (
-                event.target === event.currentTarget &&
-                !isSaving
-              ) {
-                handleCloseDeleteLesson();
-              }
-            }}
-          >
-            <section
-              className="course-playground-modal course-playground-delete-modal"
-              role="alertdialog"
-              aria-modal="true"
-              aria-labelledby="delete-lesson-modal-title"
-              aria-describedby="delete-lesson-modal-description"
-            >
-              <div className="course-playground-modal-header course-playground-delete-modal-header">
-                <div>
-                  <span>COURSE STRUCTURE</span>
-                  <h2 id="delete-lesson-modal-title">
-                    🗑️ Delete Lesson
-                  </h2>
-                </div>
-
-                <button
-                  type="button"
-                  className="course-playground-modal-close"
-                  aria-label="Close delete lesson confirmation"
-                  disabled={isSaving}
-                  onClick={handleCloseDeleteLesson}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="course-playground-delete-modal-body">
-                <p id="delete-lesson-modal-description">
-                  Are you sure you want to delete
-                  {" "}
-                  <strong>
-                    {deletingLesson.icon || "📖"}{" "}
-                    {deletingLesson.title}
-                  </strong>
-                  ?
-                </p>
-
-                <p className="course-playground-delete-warning">
-                  This will also remove the lesson's topics and their learning content. This action cannot be undone.
-                </p>
-
-                {formError && (
-                  <div className="course-playground-form-error course-playground-modal-error">
-                    {formError}
-                  </div>
-                )}
-
-                <div className="course-playground-form-actions course-playground-modal-actions">
-                  <button
-                    type="button"
-                    className="course-playground-cancel-button"
-                    disabled={isSaving}
-                    onClick={handleCloseDeleteLesson}
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="button"
-                    className="course-playground-delete-confirm-button"
-                    disabled={isSaving}
-                    onClick={handleDeleteLesson}
-                  >
-                    {isSaving ? "Deleting..." : "Delete Lesson"}
-                  </button>
-                </div>
-              </div>
-            </section>
-          </div>
-        )}
-
-        {learningBlockPendingDelete && (
-          <div
-            className="course-playground-confirm-overlay"
-            role="presentation"
-            onMouseDown={(event) => {
-              if (
-                event.target ===
-                event.currentTarget
-              ) {
-                handleCancelDeleteLearningBlock();
-              }
-            }}
-          >
-            <div
-              className="course-playground-confirm-dialog"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="delete-learning-block-title"
-            >
-              <div className="course-playground-confirm-icon">
-                🗑️
-              </div>
-
-              <h2 id="delete-learning-block-title">
-                Delete Learning Block
-              </h2>
-
-              <p>
-                Are you sure you want to delete{" "}
-                <strong>
-                  {learningBlockPendingDelete.icon ||
-                    "🧩"}{" "}
-                  {learningBlockPendingDelete.title ||
-                    "this learning block"}
-                </strong>
-                ? This action cannot be undone.
+              <p className="mx-hint">
+                {editorMode === "edit-topic" ? "In " : "Adding to "}
+                <b>
+                  {currentLesson?.icon || "📖"} {currentLesson?.title || "the selected lesson"}
+                </b>
               </p>
 
-              <div className="course-playground-confirm-actions">
+              {formError && (
+                <div className="mx-feedback mx-feedback--bad" role="alert">
+                  {formError}
+                </div>
+              )}
+
+              <FormField id="topic-title" label="Topic title">
+                <input
+                  type="text"
+                  value={topicForm.title}
+                  onChange={updateTopicForm("title")}
+                  placeholder="e.g. Pods and Containers"
+                  autoFocus
+                />
+              </FormField>
+
+              <FormField id="topic-icon" label="Icon" hint="Any emoji.">
+                <input
+                  type="text"
+                  className="mx-icon-input"
+                  maxLength={8}
+                  value={topicForm.icon}
+                  onChange={updateTopicForm("icon")}
+                />
+              </FormField>
+
+              <FormField
+                id="topic-introduction"
+                label="Introduction"
+                hint={
+                  <>
+                    Shown at the top of the topic, before its blocks. Formatting:{" "}
+                    <code>**bold**</code> <code>`code`</code> <code>[[label]]</code>
+                  </>
+                }
+              >
+                <textarea
+                  rows={6}
+                  value={topicForm.introduction}
+                  onChange={updateTopicForm("introduction")}
+                  placeholder="Introduce this topic to the student…"
+                />
+              </FormField>
+
+              <div className="mx-modal__actions">
                 <button
                   type="button"
-                  className="course-playground-cancel-button"
+                  className="mx-btn mx-btn--ghost"
                   disabled={isSaving}
-                  onClick={
-                    handleCancelDeleteLearningBlock
-                  }
+                  onClick={handleCloseStructureDrawer}
                 >
                   Cancel
                 </button>
-
-                <button
-                  type="button"
-                  className="course-playground-delete-confirm-button"
-                  disabled={isSaving}
-                  onClick={
-                    handleDeleteLearningBlock
-                  }
-                >
-                  {isSaving
-                    ? "Deleting..."
-                    : "Delete Block"}
+                <button type="submit" className="mx-btn" disabled={isSaving}>
+                  {isSaving ? "Saving…" : editorMode === "edit-topic" ? "Save changes" : "Add topic"}
                 </button>
               </div>
-            </div>
-          </div>
-        )}
-      </div>
+            </form>
+          )}
+        </BuilderModal>
+      )}
+
+      {/* ---------- delete confirmations ---------- */}
+      {deletingLesson && (
+        <ConfirmDialog
+          title="🗑️ Delete lesson"
+          subject={`${deletingLesson.icon || "📖"} ${deletingLesson.title}`}
+          warning="This also removes the lesson's topics and their learning blocks. It can't be undone."
+          error={formError}
+          confirmLabel="Delete lesson"
+          busy={isSaving}
+          onConfirm={handleDeleteLesson}
+          onCancel={handleCloseDeleteLesson}
+        />
+      )}
+
+      {deletingTopic && (
+        <ConfirmDialog
+          title="🗑️ Delete topic"
+          subject={`${deletingTopic.icon || "📑"} ${deletingTopic.title}`}
+          warning="This also removes the topic's learning blocks. It can't be undone."
+          error={formError}
+          confirmLabel="Delete topic"
+          busy={isSaving}
+          onConfirm={handleDeleteTopic}
+          onCancel={handleCloseDeleteTopic}
+        />
+      )}
+
+      {learningBlockPendingDelete && (
+        <ConfirmDialog
+          title="🗑️ Delete learning block"
+          subject={`${learningBlockPendingDelete.icon || "🧩"} ${
+            learningBlockPendingDelete.title || "this learning block"
+          }`}
+          warning="It can't be undone."
+          error={formError}
+          confirmLabel="Delete block"
+          busy={isSaving}
+          onConfirm={handleDeleteLearningBlock}
+          onCancel={handleCancelDeleteLearningBlock}
+        />
+      )}
     </div>
   );
 }

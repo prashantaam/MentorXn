@@ -62,7 +62,7 @@ button{font:inherit;color:inherit}
 
 /* ---------- layout ---------- */
 .shell{display:grid;grid-template-columns:290px minmax(0,1fr);max-width:1240px;margin:0 auto;align-items:start}
-nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 68px);max-height:calc(100vh - 80px);overflow:auto;padding:18px 12px 24px 16px}
+.shell > nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 68px);max-height:calc(100vh - 80px);overflow:auto;padding:18px 12px 24px 16px}
 .world{margin-bottom:16px}
 .world h4{display:inline-block;font-size:.98rem;padding:3px 10px;border:2.5px solid var(--ink);border-radius:10px;background:var(--wc);color:var(--on-w);
   box-shadow:3px 3px 0 var(--shadow-c);margin-bottom:8px}
@@ -72,7 +72,7 @@ nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 68px);max-height:cal
 .navi .ni{font-size:1.15rem;width:1.5rem;text-align:center}
 .navi .nt{flex:1;line-height:1.25}
 .scrim{display:none}
-main{padding:22px 20px 60px;min-width:0}
+.shell > main{padding:22px 20px 60px;min-width:0}
 .lesson{max-width:880px}
 .crumb{color:var(--muted);font-weight:800;font-size:.92rem;margin-bottom:10px}
 .lesson h1{margin:0 0 16px;font-size:clamp(1.8rem,4.6vw,2.7rem)}
@@ -209,13 +209,13 @@ td.win{background:var(--good-bg);color:var(--good);font-weight:800}
 @media (max-width:860px){
   .shell{grid-template-columns:1fr}
   #menuBtn{display:block}
-  nav{position:fixed;z-index:40;top:0;left:0;bottom:0;width:min(320px,86vw);max-height:none;background:var(--paper);border-right:3px solid var(--ink);
+  .shell > nav{position:fixed;z-index:40;top:0;left:0;bottom:0;width:min(320px,86vw);max-height:none;background:var(--paper);border-right:3px solid var(--ink);
     padding-top:calc(env(safe-area-inset-top,0px) + 16px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-105%);transition:transform .25s}
-  nav.open{transform:none}
+  .shell > nav.open{transform:none}
   .scrim.open{display:block;position:fixed;inset:0;z-index:35;background:rgba(10,5,30,.55)}
   .split{grid-template-columns:1fr}
   .brand span.bt{display:none}
-  main{padding:16px 14px 60px}
+  .shell > main{padding:16px 14px 60px}
   .card{padding:14px 14px 16px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

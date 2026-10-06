@@ -32,4 +32,11 @@
   /* Error */
   --bad: #a3141b;
   --bad-bg: #ffd9d6;
+
+  /*
+   * Blocks always use the light palette above, so they must also set
+   * their own text colour. Otherwise text inherits the page's colour,
+   * which is near-white in dark mode — unreadable on a white block.
+   */
+  color: var(--text);
 }

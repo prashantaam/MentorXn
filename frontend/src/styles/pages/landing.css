@@ -1,0 +1,127 @@
+/* ============================================================
+   Landing page (pages/public/LandingPage.jsx)
+   ============================================================ */
+
+.mx-landing {
+  max-width: var(--mx-max-width);
+  margin: 0 auto;
+  padding: 0 var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-landing p {
+  margin: 0.4em 0 0.6em;
+}
+
+/* ---------- hero ---------- */
+.mx-hero {
+  max-width: 720px;
+  padding: 64px 0 40px;
+}
+
+.mx-hero h1 {
+  margin-bottom: 18px;
+  font-size: clamp(2.2rem, 5.4vw, 3.4rem);
+}
+
+.mx-highlight {
+  display: inline-block;
+  padding: 2px 16px 6px;
+
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  border: 3px solid var(--mx-ink);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--mx-shadow-c);
+
+  transform: rotate(-1.4deg);
+}
+
+.mx-hero p {
+  max-width: 56ch;
+  color: var(--mx-muted);
+  font-size: 1.15rem;
+}
+
+.mx-hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.mx-landing .mx-hero__stat {
+  margin-top: 28px;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+/* ---------- teacher banner ---------- */
+.mx-teacher-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 36px 0;
+  padding: 16px 18px;
+
+  background: var(--mx-surface2);
+  border: 2.5px dashed var(--mx-ink);
+  border-radius: 16px;
+}
+
+.mx-teacher-banner__emoji {
+  font-size: 1.8rem;
+}
+
+.mx-teacher-banner__text {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* ---------- courses ---------- */
+.mx-courses {
+  scroll-margin-top: calc(var(--mx-header-h) + 14px);
+}
+
+.mx-courses__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 52px 0 6px;
+}
+
+.mx-courses__head h2 {
+  font-size: 1.8rem;
+}
+
+/* ---------- why ---------- */
+.mx-why {
+  margin: 56px 0;
+}
+
+.mx-mini {
+  padding: 14px 16px;
+
+  background: var(--mx-surface2);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+}
+
+.mx-mini b {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--mx-font-display);
+  font-size: 1.05rem;
+}
+
+@media (max-width: 640px) {
+  .mx-hero {
+    padding: 40px 0 28px;
+  }
+}

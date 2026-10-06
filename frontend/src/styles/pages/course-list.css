@@ -1,0 +1,121 @@
+/* ============================================================
+   Teacher course list (pages/teacher/courses/CourseListPage.jsx)
+   ============================================================ */
+
+.mx-course-list {
+  max-width: var(--mx-max-width);
+  margin: 0 auto;
+  padding: 0 var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-course-list p {
+  margin: 0.4em 0 0.6em;
+}
+
+.mx-course-list__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 40px 0 14px;
+}
+
+.mx-course-list__head h1 {
+  font-size: clamp(1.9rem, 4.6vw, 2.6rem);
+}
+
+.mx-course-list__head p {
+  max-width: 60ch;
+}
+
+/* ---------- flash message ---------- */
+.mx-flash {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mx-flash__close {
+  flex: none;
+  padding: 0 4px;
+
+  background: none;
+  color: inherit;
+  border: 0;
+
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ---------- search + filters ---------- */
+.mx-course-list__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 6px;
+}
+
+.mx-search {
+  flex: 1;
+  min-width: 220px;
+  padding: 9px 14px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 12px;
+
+  font: inherit;
+}
+
+.mx-course-list__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mx-chip__count {
+  display: inline-block;
+  min-width: 1.6em;
+  margin-left: 4px;
+  padding: 0 6px;
+
+  background: var(--mx-surface2);
+  color: var(--mx-text);
+  border-radius: 99px;
+
+  font-size: 0.85em;
+  text-align: center;
+}
+
+.mx-course-list__count {
+  margin: 10px 0 0;
+  color: var(--mx-muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+/* ---------- course tile: card (opens the builder) + "Edit details" ---------- */
+.mx-course-tile {
+  position: relative;
+  display: flex;
+}
+
+.mx-course-tile > .mx-course-card {
+  flex: 1;
+  /* room for the Edit details button in the bottom-right corner */
+  padding-bottom: 20px;
+}
+
+.mx-course-tile__edit {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+}

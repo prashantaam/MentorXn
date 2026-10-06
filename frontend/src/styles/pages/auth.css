@@ -1,0 +1,106 @@
+/* ============================================================
+   Log-in / sign-up pages, student and teacher
+   (components/auth/AuthCard.jsx)
+   ============================================================ */
+
+.mx-auth {
+  display: flex;
+  justify-content: center;
+  padding: 56px var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px 30px 26px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 22px;
+  box-shadow: 7px 7px 0 var(--mx-shadow-c);
+}
+
+.mx-auth-card__badge {
+  margin-bottom: 12px;
+  background: var(--mx-surface2);
+}
+
+.mx-auth-card h1 {
+  margin-bottom: 6px;
+  font-size: 1.9rem;
+}
+
+.mx-auth-card__sub {
+  margin: 0 0 18px;
+  color: var(--mx-muted);
+}
+
+.mx-auth-card a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mx-auth-card .mx-btn {
+  text-decoration: none;
+}
+
+.mx-auth-card__submit {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.mx-auth-card__switch {
+  margin: 18px 0 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mx-auth-card__note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+
+  border-top: 2px dashed var(--mx-surface2);
+  color: var(--mx-muted);
+  font-size: 0.95rem;
+}
+
+.mx-auth-card__note a {
+  color: var(--mx-text);
+  font-weight: 800;
+}
+
+/* ---------- already signed in ---------- */
+.mx-auth-card--already {
+  text-align: center;
+}
+
+.mx-auth-card__big-emoji {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 2.4rem;
+}
+
+.mx-auth-card__actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .mx-auth {
+    padding-top: 32px;
+  }
+
+  .mx-auth-card {
+    padding: 24px 20px 22px;
+  }
+}

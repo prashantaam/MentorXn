@@ -95,6 +95,11 @@ Route::middleware('auth:sanctum')->group(function () {
             [CourseController::class, 'show']
         );
 
+        Route::put(
+            '/courses/{course}',
+            [CourseController::class, 'update']
+        );
+
         /*
         |--------------------------------------------------------------------------
         | Lessons

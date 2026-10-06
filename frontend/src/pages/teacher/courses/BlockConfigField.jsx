@@ -4,6 +4,8 @@ import {
 
 } from "react";
 
+import "../../../styles/teachers/block-config-fields.css";
+
 
 
 

@@ -1,120 +1,112 @@
-import AuthLayout from "../../../components/AuthLayout";
-import "../../../auth.css";
+import AuthCard from "../../../components/auth/AuthCard";
+import AuthField from "../../../components/auth/AuthField";
+import { useAuthForm, validateSignup } from "../../../hooks/useAuthForm";
+
+import "../../../styles/pages/auth.css";
 
 function TeacherRegisterPage() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    console.log("Teacher registration submitted");
-  };
+  const { values, errors, generalError, isSubmitting, handleChange, handleSubmit } =
+    useAuthForm({
+      endpoint: "/api/teacher/register",
+      initialValues: {
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+        terms: false,
+      },
+      validate: validateSignup,
+      redirectTo: "/teacher/dashboard",
+    });
 
   return (
-    <AuthLayout
-      teacher
-      title="Create Teacher Account"
-      subtitle="Create your account and start building learning adventures."
-      footerText="Already have a teacher account?"
-      footerLinkText="Sign in"
-      footerLink="/teacher/login"
+    <AuthCard
+      badge="🧑‍🏫 Teacher portal"
+      title="Create a teacher account"
+      subtitle="Turn what you know into interactive, hands-on courses."
+      switchText="Already have a teacher account?"
+      switchLabel="Log in"
+      switchTo="/teacher/login"
+      otherPortal={{
+        emoji: "🎓",
+        text: "Here to learn?",
+        label: "Create a learner account →",
+        to: "/register",
+      }}
     >
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="teacher-name">Your name</label>
-
-          <div className="input-wrapper">
-            <span className="input-icon">🧑‍🏫</span>
-
-            <input
-              id="teacher-name"
-              name="name"
-              type="text"
-              placeholder="Your name"
-              autoComplete="name"
-              required
-            />
+      <form onSubmit={handleSubmit} noValidate>
+        {generalError && (
+          <div className="mx-feedback mx-feedback--bad" role="alert">
+            {generalError}
           </div>
-        </div>
+        )}
 
-        <div className="form-group">
-          <label htmlFor="teacher-register-email">
-            Email address
-          </label>
+        <AuthField
+          id="teacher-name"
+          name="name"
+          label="Your name"
+          placeholder="e.g. Alex Chen"
+          autoComplete="name"
+          value={values.name}
+          onChange={handleChange}
+          error={errors.name}
+        />
 
-          <div className="input-wrapper">
-            <span className="input-icon">✉️</span>
+        <AuthField
+          id="teacher-email"
+          name="email"
+          type="email"
+          label="Email"
+          placeholder="teacher@example.com"
+          autoComplete="email"
+          value={values.email}
+          onChange={handleChange}
+          error={errors.email}
+        />
 
-            <input
-              id="teacher-register-email"
-              name="email"
-              type="email"
-              placeholder="teacher@example.com"
-              autoComplete="email"
-              required
-            />
-          </div>
-        </div>
+        <AuthField
+          id="teacher-password"
+          name="password"
+          type="password"
+          label="Password"
+          autoComplete="new-password"
+          value={values.password}
+          onChange={handleChange}
+          error={errors.password}
+          hint="Use at least 8 characters."
+        />
 
-        <div className="form-group">
-          <label htmlFor="teacher-register-password">
-            Password
-          </label>
+        <AuthField
+          id="teacher-password-confirmation"
+          name="password_confirmation"
+          type="password"
+          label="Confirm password"
+          autoComplete="new-password"
+          value={values.password_confirmation}
+          onChange={handleChange}
+          error={errors.password_confirmation}
+        />
 
-          <div className="input-wrapper">
-            <span className="input-icon">🔐</span>
-
-            <input
-              id="teacher-register-password"
-              name="password"
-              type="password"
-              placeholder="Create a password"
-              autoComplete="new-password"
-              minLength="8"
-              required
-            />
-          </div>
-
-          <small className="field-hint">
-            Use at least 8 characters.
-          </small>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="teacher-password-confirmation">
-            Confirm password
-          </label>
-
-          <div className="input-wrapper">
-            <span className="input-icon">🔐</span>
-
-            <input
-              id="teacher-password-confirmation"
-              name="password_confirmation"
-              type="password"
-              placeholder="Enter your password again"
-              autoComplete="new-password"
-              minLength="8"
-              required
-            />
-          </div>
-        </div>
-
-        <label className="terms-row">
-          <input type="checkbox" required />
-
-          <span>
-            I agree to the Terms of Use and Privacy Policy.
-          </span>
+        <label className="mx-check">
+          <input
+            type="checkbox"
+            name="terms"
+            checked={values.terms}
+            onChange={handleChange}
+          />
+          <span>I agree to the Terms of Use and Privacy Policy.</span>
         </label>
+        {errors.terms && <div className="mx-field__error">{errors.terms}</div>}
 
         <button
-          className="auth-submit teacher-submit"
+          className="mx-btn mx-auth-card__submit"
           type="submit"
+          disabled={isSubmitting}
         >
-          Create Teacher Account
-          <span>✨</span>
+          {isSubmitting ? "Creating your account…" : "Create teacher account"}
         </button>
       </form>
-    </AuthLayout>
+    </AuthCard>
   );
 }
 

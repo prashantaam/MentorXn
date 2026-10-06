@@ -1,327 +1,150 @@
 import { Link } from "react-router-dom";
 
+import StatRow from "../../components/dashboard/StatRow";
 import { useAuth } from "../../context/AuthContext";
+import { COURSES } from "../../data/courseCatalog";
+import { useStudentProgress } from "../../hooks/useStudentProgress";
+import { hueStyle } from "../../lib/hue";
 
-import "../../styles/dashboard.css";
+import "../../styles/pages/dashboard.css";
 
+function plural(count, word) {
+  return `${count} ${word}${count === 1 ? "" : "s"}`;
+}
 
-function StudentDashboard() {
-  
-   const { user } = useAuth();
+function percentComplete(entry) {
+  const total = entry.course.lessons || 0;
+  return total ? Math.min(100, Math.round((entry.completedLessons / total) * 100)) : 0;
+}
 
-  const firstName =
-    user?.name?.split(" ")[0] || "Learner";
+function ProgressCard({ entry }) {
+  const { course } = entry;
+  const pct = percentComplete(entry);
+  const Tag = entry.to ? Link : "div";
 
   return (
-    <div className="student-dashboard-page">
-      <section className="dashboard-welcome">
-        <div>
-          <div className="dashboard-eyebrow">
-            🌟 YOUR LEARNING SPACE
-          </div>
+    <Tag className="mx-progress-card" style={hueStyle(course.hue)} to={entry.to}>
+      <span className="mx-card-emoji" aria-hidden="true">
+        {course.emoji}
+      </span>
 
-          <h1>
-            Welcome back,{" "}
-            <span>{firstName}!</span> 👋
-          </h1>
-
-          <p>
-            Ready for your next learning adventure?
-            Pick up where you left off and keep building
-            your skills.
-          </p>
-        </div>
-
-        <div className="dashboard-streak">
-          <div className="dashboard-streak-icon">
-            🔥
-          </div>
-
-          <div>
-            <strong>3 day streak</strong>
-            <span>Keep it going!</span>
-          </div>
-        </div>
-      </section>
-
-      <section className="continue-learning-card">
-        <div className="continue-learning-content">
-          <div className="dashboard-section-label">
-            🚀 CONTINUE LEARNING
-          </div>
-
-          <div className="continue-course-heading">
-            <div className="dotnet-logo">
-              .NET
-            </div>
-
-            <div>
-              <h2>.NET Adventure Land</h2>
-
-              <p>
-                Learn .NET Core by exploring,
-                experimenting and solving challenges.
-              </p>
-            </div>
-          </div>
-
-          <div className="current-learning-step">
-            <span>World 1</span>
-            What is .NET?
-          </div>
-
-          <div className="dashboard-progress">
-            <div className="dashboard-progress-heading">
-              <span>Your progress</span>
-              <strong>20%</strong>
-            </div>
-
-            <div className="dashboard-progress-track">
-              <div
-                className="dashboard-progress-fill"
-                style={{ width: "20%" }}
-              />
-            </div>
-          </div>
-
-          <Link
-            to="/student/learn/dotnet"
-            className="dashboard-primary-button"
-          >
-            Continue Adventure
-            <span>→</span>
-          </Link>
-        </div>
-
-        <div className="dashboard-mascot">
-          <div className="dashboard-mascot-message">
-            Let&apos;s keep learning!
-          </div>
-
-          <div className="dashboard-mascot-character">
-            🤖
-          </div>
-        </div>
-      </section>
-
-      <section className="dashboard-content-section">
-        <div className="dashboard-section-heading">
-          <div>
-            <span>YOUR JOURNEY</span>
-            <h2>Your Progress</h2>
-          </div>
-
-          <span className="dashboard-heading-icon">
-            ✨
-          </span>
-        </div>
-
-        <div className="dashboard-stats-grid">
-          <article className="dashboard-stat-card">
-            <div className="dashboard-stat-icon stars">
-              ⭐
-            </div>
-
-            <div>
-              <strong>120</strong>
-              <span>Stars earned</span>
-            </div>
-          </article>
-
-          <article className="dashboard-stat-card">
-            <div className="dashboard-stat-icon lessons">
-              🏆
-            </div>
-
-            <div>
-              <strong>3</strong>
-              <span>Lessons completed</span>
-            </div>
-          </article>
-
-          <article className="dashboard-stat-card">
-            <div className="dashboard-stat-icon streak">
-              🔥
-            </div>
-
-            <div>
-              <strong>3</strong>
-              <span>Day streak</span>
-            </div>
-          </article>
-
-          <article className="dashboard-stat-card">
-            <div className="dashboard-stat-icon time">
-              ⏱️
-            </div>
-
-            <div>
-              <strong>45m</strong>
-              <span>Learning time</span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section
-        className="dashboard-content-section"
-        id="my-courses"
-      >
-        <div className="dashboard-section-heading">
-          <div>
-            <span>KEEP EXPLORING</span>
-            <h2>My Learning Adventures</h2>
-          </div>
-
-          <Link
-            to="/student/courses"
-            className="dashboard-browse-link"
-          >
-            Browse courses →
-          </Link>
-        </div>
-
-        <div className="dashboard-courses-grid">
-          <article className="dashboard-course-card">
-            <div className="course-card-banner dotnet-banner">
-              <div className="course-card-logo dotnet">
-                .NET
-              </div>
-
-              <span className="course-progress-status">
-                In Progress
-              </span>
-            </div>
-
-            <div className="course-card-body">
-              <span className="course-card-category">
-                DEVELOPMENT
-              </span>
-
-              <h3>.NET Adventure Land</h3>
-
-              <p>
-                Explore the .NET ecosystem through visual
-                lessons, simulations and challenges.
-              </p>
-
-              <div className="course-mini-progress">
-                <div>
-                  <span>Progress</span>
-                  <strong>20%</strong>
-                </div>
-
-                <div className="course-mini-track">
-                  <div
-                    className="course-mini-fill"
-                    style={{ width: "20%" }}
-                  />
-                </div>
-              </div>
-
-              <Link
-                to="/student/learn/dotnet"
-                className="course-continue-button"
-              >
-                Continue learning
-                <span>→</span>
-              </Link>
-            </div>
-          </article>
-
-          <article className="dashboard-course-card">
-            <div className="course-card-banner">
-              <div className="course-card-logo">
-                🐍
-              </div>
-
-              <span className="course-coming-status">
-                Coming Soon
-              </span>
-            </div>
-
-            <div className="course-card-body">
-              <span className="course-card-category">
-                DEVELOPMENT
-              </span>
-
-              <h3>Python Adventure</h3>
-
-              <p>
-                Learn Python fundamentals through
-                practical examples and interactive
-                challenges.
-              </p>
-
-              <button
-                type="button"
-                className="course-coming-button"
-                disabled
-              >
-                Coming soon
-              </button>
-            </div>
-          </article>
-
-          <article className="dashboard-course-card">
-            <div className="course-card-banner">
-              <div className="course-card-logo">
-                ⚛️
-              </div>
-
-              <span className="course-coming-status">
-                Coming Soon
-              </span>
-            </div>
-
-            <div className="course-card-body">
-              <span className="course-card-category">
-                FRONTEND
-              </span>
-
-              <h3>React Explorer</h3>
-
-              <p>
-                Build modern interfaces while learning
-                React step by step.
-              </p>
-
-              <button
-                type="button"
-                className="course-coming-button"
-                disabled
-              >
-                Coming soon
-              </button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section className="dashboard-daily-challenge">
-        <div className="daily-challenge-icon">
-          🎯
-        </div>
-
-        <div className="daily-challenge-content">
-          <span>DAILY CHALLENGE</span>
-
-          <h2>Ready for a quick challenge?</h2>
-
-          <p>
-            Complete a short activity and earn{" "}
-            <strong>10 bonus stars.</strong>
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="daily-challenge-button"
+      <div className="mx-grow">
+        <h3>{course.title}</h3>
+        <div
+          className="mx-track"
+          role="progressbar"
+          aria-valuenow={pct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`${course.title} progress`}
         >
-          Start Challenge
-          <span>⭐</span>
-        </button>
+          <div className="mx-track__fill" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="mx-hint">
+          {entry.completedLessons} / {course.lessons} lessons · {pct}% complete
+        </span>
+      </div>
+
+      {entry.to && <span className="mx-tag">Resume →</span>}
+    </Tag>
+  );
+}
+
+function StudentDashboard() {
+  const { user } = useAuth();
+  const { progress } = useStudentProgress();
+
+  const firstName = user?.name?.split(" ")[0] || "there";
+
+  const inProgress = progress.filter(
+    (entry) => !entry.certified && percentComplete(entry) < 100
+  );
+  const certificates = progress.filter((entry) => entry.certified);
+  const startedSlugs = new Set(progress.map((entry) => entry.course.slug));
+  const notStarted = COURSES.filter((course) => !startedSlugs.has(course.slug));
+
+  const lessonsDone = progress.reduce((sum, entry) => sum + entry.completedLessons, 0);
+
+  const stats = [
+    { label: progress.length === 1 ? "Course started" : "Courses started", value: progress.length },
+    { label: lessonsDone === 1 ? "Lesson completed" : "Lessons completed", value: lessonsDone },
+    { label: certificates.length === 1 ? "Certificate earned" : "Certificates earned", value: `🏅 ${certificates.length}` },
+  ];
+
+  return (
+    <div className="mx-page mx-dashboard">
+      <section className="mx-dash-hero">
+        <h1>
+          Welcome back, {firstName}
+          <span className="mx-dash-hero__wave"> 👋</span>
+        </h1>
+        <p className="mx-hint">
+          {progress.length
+            ? "Here's where you left off."
+            : "Pick a course below to start your first lesson."}
+        </p>
       </section>
+
+      <StatRow stats={stats} />
+
+      {inProgress.length > 0 && (
+        <section className="mx-dash-section">
+          <h2>▶️ Continue learning</h2>
+          <div className="mx-progress-grid">
+            {inProgress.map((entry) => (
+              <ProgressCard key={entry.course.slug} entry={entry} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {certificates.length > 0 && (
+        <section className="mx-dash-section">
+          <h2>🏅 Your certificates</h2>
+          <div className="mx-cert-grid">
+            {certificates.map((entry) => (
+              <div key={entry.course.slug} className="mx-cert-card">
+                <span className="mx-card-emoji" aria-hidden="true">
+                  🏅
+                </span>
+                <div>
+                  <b>{entry.course.title}</b>
+                  <span className="mx-hint">Completed — congrats, {firstName}!</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {progress.length === 0 && (
+        <div className="mx-empty">
+          <span className="mx-empty__emoji" aria-hidden="true">
+            🚀
+          </span>
+          <h2>You haven't started a course yet</h2>
+          <p>Pick anything below — your progress will show up here as you go.</p>
+        </div>
+      )}
+
+      {notStarted.length > 0 && (
+        <section className="mx-dash-section">
+          <h2>🧭 {progress.length ? "Explore more" : "Explore courses"}</h2>
+          <div className="mx-explore-grid">
+            {notStarted.map((course) => (
+              <div key={course.slug} className="mx-explore-card" style={hueStyle(course.hue)}>
+                <span className="mx-card-emoji" aria-hidden="true">
+                  {course.emoji}
+                </span>
+                <div>
+                  <b>{course.title}</b>
+                  <span className="mx-hint">{plural(course.lessons, "lesson")}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

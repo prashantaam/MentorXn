@@ -1,0 +1,372 @@
+/* ============================================================
+   Course builder (pages/teacher/courses/CoursePlaygroundPage.jsx)
+   Layout follows the Block Library design: a sticky outline on the
+   left (lessons = coloured sections, topics = items) and the topic
+   on the right, shown exactly as students see it.
+
+   The topic itself (.lesson, .crumb, h1 .t and every learning block)
+   is styled by adventure-land.css — the course player's stylesheet.
+   ============================================================ */
+
+.mx-builder {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  align-items: start;
+  max-width: 1240px;
+  margin: 0 auto;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-builder-state {
+  padding: 60px var(--mx-gutter);
+  text-align: center;
+}
+
+/* ---------- outline (left) ---------- */
+.mx-builder__nav {
+  position: sticky;
+  top: var(--mx-header-h); /* below the shared site header */
+  max-height: calc(100vh - var(--mx-header-h));
+  overflow: auto;
+  padding: 18px 12px 24px 16px;
+}
+
+.mx-outline .mx-back-link {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 0.92rem;
+}
+
+.mx-outline__course {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--mx-shadow-c);
+}
+
+.mx-outline__course-icon {
+  flex: none;
+  font-size: 1.7rem;
+  line-height: 1.2;
+}
+
+.mx-outline__course-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.mx-outline__course h2 {
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+.mx-outline__course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 4px;
+}
+
+.mx-outline__course-meta .mx-hint {
+  font-size: 0.82rem;
+}
+
+.mx-outline__empty {
+  margin: 0 4px 14px;
+}
+
+/* Lesson sections, topic items and mini buttons: shared side-nav styles
+   in styles/theme/components.css. */
+
+.mx-outline__add-topic {
+  margin: 4px 0 0 8px;
+  padding: 3px 10px;
+
+  background: transparent;
+  color: var(--mx-muted);
+  border: 2px dashed var(--mx-ink);
+  border-radius: 10px;
+
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mx-outline__add-topic:hover {
+  background: var(--mx-surface);
+  color: var(--mx-text);
+}
+
+.mx-outline__add-lesson {
+  margin-top: 4px;
+}
+
+/* ---------- topic (right) ---------- */
+.mx-builder__main {
+  min-width: 0;
+  padding: 22px 20px 60px;
+}
+
+.mx-builder__menu {
+  display: none;
+  margin-bottom: 14px;
+}
+
+.mx-builder__lesson {
+  max-width: 900px;
+}
+
+/* "Use it for:" box from the design — here the topic/lesson intro. */
+.mx-blurb {
+  margin: 14px 0 6px;
+  padding: 10px 16px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--mx-shadow-c);
+}
+
+.mx-blurb b {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--mx-font-display);
+}
+
+.mx-blurb__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mx-blurb p {
+  margin: 0.2em 0 0.4em;
+}
+
+.mx-builder__loading {
+  margin: 26px 0;
+}
+
+.mx-builder__section-title {
+  margin: 26px 0 10px;
+  font-size: 1.3rem;
+}
+
+/* ---------- learning blocks ---------- */
+.mx-block-list {
+  margin-top: 26px;
+}
+
+.mx-block {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.mx-block.is-dragging {
+  z-index: 20;
+  opacity: 0.65;
+}
+
+/* Teacher-only bar above each block — dashed, so it never reads as
+   part of what students see. */
+.mx-block__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 5px 8px;
+
+  background: var(--mx-surface2);
+  border: 2.5px dashed var(--mx-ink);
+  border-radius: 14px;
+}
+
+.mx-block__num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+
+  background: var(--mx-surface);
+  border: 2px solid var(--mx-ink);
+  border-radius: 8px;
+
+  font-family: var(--mx-font-display);
+  font-weight: 700;
+}
+
+.mx-block__handle {
+  flex: none;
+  padding: 0 6px;
+
+  background: transparent;
+  color: var(--mx-text);
+  border: 0;
+
+  font-weight: 800;
+  letter-spacing: -2px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.mx-block__handle:active {
+  cursor: grabbing;
+}
+
+.mx-block__handle:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.mx-block__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+
+  color: var(--mx-muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Big dashed "add" tile under the blocks / topics. */
+.mx-add-tile {
+  display: block;
+  width: 100%;
+  margin: 12px 0 0;
+  padding: 16px;
+
+  background: transparent;
+  color: var(--mx-muted);
+  border: 3px dashed var(--mx-ink);
+  border-radius: 18px;
+
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mx-add-tile:hover {
+  background: var(--mx-surface);
+  color: var(--mx-text);
+}
+
+/* ---------- lesson overview: topic list ---------- */
+.mx-topic-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mx-topic-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mx-topic-card:hover {
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+  transform: translate(-1px, -1px);
+}
+
+.mx-topic-card__icon {
+  flex: none;
+  font-size: 1.3rem;
+}
+
+.mx-topic-card b {
+  flex: 1;
+}
+
+/* ---------- pager ---------- */
+.mx-builder__pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+/* ---------- mobile: outline becomes a drawer ---------- */
+.mx-builder__scrim {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .mx-builder {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mx-builder__menu {
+    display: inline-flex;
+  }
+
+  .mx-builder__nav {
+    position: fixed;
+    z-index: 1500;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(320px, 86vw);
+    max-height: none;
+    padding-top: 20px;
+
+    background: var(--mx-paper);
+    border-right: 3px solid var(--mx-ink);
+
+    transform: translateX(-105%);
+    transition: transform 0.25s;
+  }
+
+  .mx-builder__nav.is-open {
+    transform: none;
+  }
+
+  .mx-builder__scrim.is-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1400;
+    background: rgba(10, 12, 8, 0.55);
+  }
+
+  .mx-builder__main {
+    padding: 16px 14px 60px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-builder__nav,
+  .mx-navi .mx-navi__actions,
+  .mx-world__head .mx-world__actions {
+    transition: none;
+  }
+}

@@ -1,0 +1,298 @@
+/* =========================================================
+   Block settings fields (pages/teacher/courses/BlockConfigField.jsx)
+
+   Answer lists, question editors and template fields used in the
+   visual block editor's properties panel. Moved out of the old
+   course-playground.css, which this component used to rely on
+   without importing. Class names kept as-is so nothing else changes.
+   Colours use the --mx-* tokens so the fields follow light/dark mode.
+   ========================================================= */
+
+.course-playground-content-editor {
+  min-height: 260px;
+
+  line-height: 1.6;
+}
+
+.course-playground-checkbox {
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 10px 12px;
+
+  background: var(--mx-surface2);
+
+  border: 2px solid var(--mx-ink);
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.course-playground-checkbox input {
+  width: 18px;
+  height: 18px;
+
+  margin: 0;
+}
+
+.course-playground-checkbox span {
+  font-weight: 800;
+}
+
+.course-playground-question-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-top: 12px;
+  padding: 14px;
+
+  background: var(--mx-surface);
+
+  border: 2px solid var(--mx-ink);
+  border-radius: 14px;
+
+  box-shadow:
+    3px 3px 0 var(--mx-ink);
+}
+
+.course-playground-question-header {
+  display: flex;
+  align-items: center;
+  justify-content:
+    space-between;
+  gap: 10px;
+
+  margin-bottom: 4px;
+}
+
+.course-playground-question-header strong {
+  font-size: 15px;
+}
+
+.course-playground-question-remove {
+  padding: 5px 8px;
+
+  background: var(--mx-bad-bg);
+  color: var(--mx-bad);
+
+  border:
+    1px solid var(--mx-bad);
+  border-radius: 7px;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.course-playground-small-add-button {
+  align-self: flex-start;
+
+  /* Buttons don't inherit text colour; without this it's black in dark mode. */
+  color: var(--mx-text);
+
+  padding: 7px 10px;
+
+  background: var(--mx-surface2);
+
+  border:
+    2px solid var(--mx-ink);
+  border-radius: 8px;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.course-playground-small-add-button:hover {
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+}
+
+.course-playground-question-editor select {
+  width: 100%;
+
+  padding: 10px 12px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+
+  border:
+    2px solid var(--mx-ink);
+  border-radius: 9px;
+
+  font: inherit;
+}
+
+.course-playground-question-editor select:focus {
+  outline:
+    3px solid
+    rgba(
+      255,
+      154,
+      139,
+      0.25
+    );
+
+  border-color:
+    var(--mx-ink);
+}
+
+.course-playground-template-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.course-playground-field-help {
+  margin: -4px 0 2px;
+  color: var(--mx-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.course-playground-answer-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.course-playground-answer-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.course-playground-answer-add-row input {
+  min-width: 0;
+}
+
+.course-playground-answer-add-button {
+  width: 46px;
+  min-width: 46px;
+  padding: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.course-playground-answer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.course-playground-answer-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 8px 10px;
+
+  background: var(--mx-surface2);
+  border: 2px solid var(--mx-ink);
+  border-radius: 10px;
+}
+
+.course-playground-answer-item.is-correct {
+  background: var(--mx-good-bg);
+  border-color: var(--mx-good);
+}
+
+.course-playground-answer-choice {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 0;
+
+  cursor: pointer;
+}
+
+.course-playground-answer-choice input[type="radio"] {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+
+  cursor: pointer;
+}
+
+.course-playground-answer-text {
+  flex: 1;
+  min-width: 0;
+
+  color: var(--mx-text);
+  font-weight: 800;
+  line-height: 1.4;
+
+  overflow-wrap: anywhere;
+}
+
+.course-playground-answer-remove {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  background: var(--mx-surface);
+  border: 2px solid var(--mx-ink);
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.course-playground-answer-remove:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.course-playground-answer-remove:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.course-playground-answer-empty {
+  padding: 10px 12px;
+
+  background: var(--mx-surface2);
+  border: 2px dashed var(--mx-ink);
+  border-radius: 10px;
+
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.course-playground-answer-hint {
+  margin: 0;
+
+  color: var(--mx-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .course-playground-answer-add-row {
+    grid-template-columns:
+      minmax(0, 1fr)
+      42px;
+  }
+
+  .course-playground-answer-add-button {
+    width: 42px;
+    min-width: 42px;
+  }
+}

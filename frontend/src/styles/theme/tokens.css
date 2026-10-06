@@ -1,0 +1,84 @@
+/* ============================================================
+   MentorXn design system — tokens
+   Beige paper, black ink, green accent, thick borders,
+   hard offset shadows, Fredoka + Nunito.
+
+   Everything is prefixed `--mx-` so it can't collide with the
+   older stylesheets (adventure-land.css uses the same un-prefixed
+   names like --paper / --ink for the course player).
+   ============================================================ */
+
+:root {
+  --mx-paper: #e5e4df;
+  --mx-surface: #ffffff;
+  --mx-surface2: #eeede6;
+  --mx-text: #141414;
+  --mx-muted: #54554e;
+  --mx-ink: #141414;
+  --mx-shadow-c: #141414;
+  --mx-on-accent: #141414;
+  --mx-accent: #8fd9a8;
+  --mx-logo: #2f8f5b;
+
+  --mx-good: #0b7a55;
+  --mx-good-bg: #cdf5e4;
+  --mx-warn: #7a5200;
+  --mx-warn-bg: #ffefb8;
+  --mx-bad: #a3141b;
+  --mx-bad-bg: #ffd9d6;
+
+  /* Course hues */
+  --mx-c-net: #8fd9a8;
+  --mx-c-blocks: #ffd84d;
+  --mx-c-web: #7cd4ff;
+  --mx-c-back: #ff9a8b;
+  --mx-c-pro: #6ee7b7;
+  --mx-c-final: #ffb3e1;
+  --mx-c-extra: #ffb870;
+
+  --mx-font-body: Nunito, "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mx-font-display: Fredoka, "Trebuchet MS", system-ui, sans-serif;
+  --mx-max-width: 1160px;
+  --mx-header-h: 64px; /* sticky site header; pages offset sticky panels by this */
+  --mx-gutter: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --mx-paper: #12140f;
+    --mx-surface: #1c1f18;
+    --mx-surface2: #242821;
+    --mx-text: #eef0ea;
+    --mx-muted: #a7ab9f;
+    --mx-ink: #8fd9a8;
+    --mx-shadow-c: #000000;
+    --mx-good: #7ef0bd;
+    --mx-good-bg: #12382b;
+    --mx-warn: #ffd873;
+    --mx-warn-bg: #3d2f0c;
+    --mx-bad: #ff9b9f;
+    --mx-bad-bg: #45181b;
+  }
+}
+
+:root[data-theme="dark"] {
+  --mx-paper: #12140f;
+  --mx-surface: #1c1f18;
+  --mx-surface2: #242821;
+  --mx-text: #eef0ea;
+  --mx-muted: #a7ab9f;
+  --mx-ink: #8fd9a8;
+  --mx-shadow-c: #000000;
+  --mx-good: #7ef0bd;
+  --mx-good-bg: #12382b;
+  --mx-warn: #ffd873;
+  --mx-warn-bg: #3d2f0c;
+  --mx-bad: #ff9b9f;
+  --mx-bad-bg: #45181b;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --mx-gutter: 16px;
+  }
+}

@@ -1,567 +1,197 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import {
-  Link,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import CourseCard from "../../../components/courses/CourseCard";
+import StatusTag from "../../../components/courses/StatusTag";
+import { useTeacherCourses } from "../../../hooks/useTeacherCourses";
 
-import { useAuth } from "../../../context/AuthContext";
+import "../../../styles/pages/course-list.css";
 
-import "../../../styles/teachers/teacher-courses.css";
+const STATUS_FILTERS = [
+  { value: "all", label: "All" },
+  { value: "draft", label: "Drafts" },
+  { value: "published", label: "Published" },
+];
+
+function matchesSearch(course, query) {
+  if (!query) return true;
+
+  return [course.title, course.description, course.category]
+    .filter(Boolean)
+    .some((text) => text.toLowerCase().includes(query));
+}
+
+// The API's course -> the shape CourseCard displays.
+function toCard(course) {
+  return {
+    emoji: course.icon || "📘",
+    title: course.title,
+    description: course.description || "No description yet.",
+    lessons: course.lessons_count ?? 0,
+    hue: course.accent_color,
+  };
+}
 
 function CourseListPage() {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { courses, isLoading, error, reload } = useTeacherCourses();
 
-  const { token } = useAuth();
+  const [status, setStatus] = useState("all");
+  const [search, setSearch] = useState("");
 
-  const [courses, setCourses] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  // One-off message handed over by another page (e.g. after creating a course).
+  const [flash, setFlash] = useState(() => location.state?.flash ?? null);
 
-  const [activeFilter, setActiveFilter] =
-    useState("all");
-
-  const successMessage =
-    location.state?.successMessage || "";
-
-  /* =========================================
-     Load Teacher Courses
-  ========================================= */
-
+  // Clear it from history so a refresh or "back" doesn't show it again.
   useEffect(() => {
-    const loadCourses = async () => {
-      setIsLoading(true);
-      setError("");
-
-      try {
-        const response = await fetch(
-          "http://127.0.0.1:8000/api/teacher/courses",
-          {
-            method: "GET",
-
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (response.status === 401) {
-          setError(
-            "Your login session is no longer valid. Please sign in again."
-          );
-
-          return;
-        }
-
-        if (response.status === 403) {
-          setError(
-            data.message ||
-              "Teacher access is required."
-          );
-
-          return;
-        }
-
-        if (!response.ok) {
-          setError(
-            data.message ||
-              "Unable to load your courses."
-          );
-
-          return;
-        }
-
-        setCourses(data.courses || []);
-      } catch (requestError) {
-        console.error(
-          "Load courses error:",
-          requestError
-        );
-
-        setError(
-          "Unable to connect to the server. Please make sure the Laravel API is running."
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (token) {
-      loadCourses();
-    } else {
-      setIsLoading(false);
+    if (location.state?.flash) {
+      navigate(location.pathname, { replace: true, state: null });
     }
-  }, [token]);
+  }, [location.pathname, location.state, navigate]);
 
-  /* =========================================
-     Navigation
-  ========================================= */
+  const query = search.trim().toLowerCase();
+  const countFor = (value) =>
+    value === "all" ? courses.length : courses.filter((course) => course.status === value).length;
 
-  const handleCreateCourse = () => {
-    navigate("/teacher/courses/create");
+  const visible = courses.filter(
+    (course) => (status === "all" || course.status === status) && matchesSearch(course, query)
+  );
+
+  const isFiltered = status !== "all" || query;
+
+  const clearFilters = () => {
+    setStatus("all");
+    setSearch("");
   };
 
-  /* =========================================
-     Statistics
-  ========================================= */
-
-  const totalCourses = courses.length;
-
-  const draftCourses = courses.filter(
-    (course) => course.status === "draft"
-  ).length;
-
-  const publishedCourses = courses.filter(
-    (course) => course.status === "published"
-  ).length;
-
-  /*
-   * Student enrolments are not connected yet.
-   * Keep this at zero until the enrolment
-   * system is implemented.
-   */
-  const totalStudents = 0;
-
-  /* =========================================
-     Course Filtering
-  ========================================= */
-
-  const filteredCourses = useMemo(() => {
-    if (activeFilter === "all") {
-      return courses;
-    }
-
-    return courses.filter(
-      (course) =>
-        course.status === activeFilter
-    );
-  }, [courses, activeFilter]);
-
-  const hasCourses =
-    courses.length > 0;
-
-  const hasFilteredCourses =
-    filteredCourses.length > 0;
-
-  /* =========================================
-     Render
-  ========================================= */
-
   return (
-    <div className="teacher-courses-page">
-      {/* =====================================
-          Page Header
-      ===================================== */}
-
-      <section className="teacher-courses-header">
+    <div className="mx-page mx-course-list">
+      <header className="mx-course-list__head">
         <div>
-          <div className="teacher-courses-eyebrow">
-            📚 COURSE MANAGEMENT
-          </div>
-
-          <h1>My Courses</h1>
-
-          <p>
-            Create and manage your learning
-            adventures, lessons and interactive
-            activities.
+          <h1>My courses</h1>
+          <p className="mx-hint">
+            Everything you've built. Open a course to add lessons and
+            interactive blocks in the builder.
           </p>
         </div>
 
-        <button
-          type="button"
-          className="teacher-primary-button"
-          onClick={handleCreateCourse}
-        >
-          <span>+</span>
-          Create Course
-        </button>
-      </section>
+        <Link className="mx-btn" to="/teacher/courses/create">
+          ➕ Create a course
+        </Link>
+      </header>
 
-      {/* =====================================
-          Success Message
-      ===================================== */}
-
-      {successMessage && (
-        <div className="teacher-course-success">
-          <span>✓</span>
-
-          <div>
-            <strong>Course created</strong>
-
-            <p>{successMessage}</p>
-          </div>
+      {flash && (
+        <div className={`mx-feedback mx-feedback--${flash.tone || "good"} mx-flash`} role="status">
+          <span>{flash.text}</span>
+          <button
+            type="button"
+            className="mx-flash__close"
+            onClick={() => setFlash(null)}
+            aria-label="Dismiss message"
+          >
+            ✕
+          </button>
         </div>
       )}
 
-      {/* =====================================
-          Error
-      ===================================== */}
+      {isLoading && <p className="mx-hint">Loading your courses…</p>}
 
-      {error && (
-        <div className="teacher-course-error">
-          <span>⚠️</span>
-
-          <div>
-            <strong>
-              Unable to load courses
-            </strong>
-
-            <p>{error}</p>
-          </div>
+      {!isLoading && error && (
+        <div className="mx-feedback mx-feedback--bad" role="alert">
+          {error}{" "}
+          <button type="button" className="mx-btn mx-btn--ghost mx-btn--sm" onClick={reload}>
+            Try again
+          </button>
         </div>
       )}
 
-      {/* =====================================
-          Summary
-      ===================================== */}
-
-      <section className="teacher-course-summary">
-        <article className="teacher-course-summary-card">
-          <div className="summary-icon courses">
-            📚
-          </div>
-
-          <div>
-            <strong>{totalCourses}</strong>
-            <span>Total Courses</span>
-          </div>
-        </article>
-
-        <article className="teacher-course-summary-card">
-          <div className="summary-icon drafts">
-            📝
-          </div>
-
-          <div>
-            <strong>{draftCourses}</strong>
-            <span>Drafts</span>
-          </div>
-        </article>
-
-        <article className="teacher-course-summary-card">
-          <div className="summary-icon published">
+      {!isLoading && !error && courses.length === 0 && (
+        <div className="mx-empty">
+          <span className="mx-empty__emoji" aria-hidden="true">
             🚀
-          </div>
-
-          <div>
-            <strong>
-              {publishedCourses}
-            </strong>
-
-            <span>Published</span>
-          </div>
-        </article>
-
-        <article className="teacher-course-summary-card">
-          <div className="summary-icon students">
-            👨‍🎓
-          </div>
-
-          <div>
-            <strong>{totalStudents}</strong>
-            <span>Students</span>
-          </div>
-        </article>
-      </section>
-
-      {/* =====================================
-          Main Content
-      ===================================== */}
-
-      <section className="teacher-courses-content">
-        <div className="teacher-courses-toolbar">
-          <div>
-            <div className="teacher-courses-section-label">
-              YOUR COURSES
-            </div>
-
-            <h2>
-              Your Learning Adventures
-            </h2>
-
-            <p>
-              Build, organise and publish courses
-              for your students.
-            </p>
-          </div>
-
-          {hasCourses && (
-            <div
-              className="teacher-course-filters"
-              aria-label="Filter courses"
-            >
-              <button
-                type="button"
-                className={
-                  activeFilter === "all"
-                    ? "active"
-                    : ""
-                }
-                aria-pressed={
-                  activeFilter === "all"
-                }
-                onClick={() =>
-                  setActiveFilter("all")
-                }
-              >
-                All
-                <span>{totalCourses}</span>
-              </button>
-
-              <button
-                type="button"
-                className={
-                  activeFilter === "draft"
-                    ? "active"
-                    : ""
-                }
-                aria-pressed={
-                  activeFilter === "draft"
-                }
-                onClick={() =>
-                  setActiveFilter("draft")
-                }
-              >
-                Draft
-                <span>{draftCourses}</span>
-              </button>
-
-              <button
-                type="button"
-                className={
-                  activeFilter === "published"
-                    ? "active"
-                    : ""
-                }
-                aria-pressed={
-                  activeFilter === "published"
-                }
-                onClick={() =>
-                  setActiveFilter("published")
-                }
-              >
-                Published
-                <span>{publishedCourses}</span>
-              </button>
-            </div>
-          )}
+          </span>
+          <h2>No courses yet</h2>
+          <p>
+            Create your first course — keep it as a draft while you build the
+            lessons, then publish when it's ready.
+          </p>
+          <Link className="mx-btn" to="/teacher/courses/create">
+            ➕ Create your first course
+          </Link>
         </div>
+      )}
 
-        {/* =================================
-            Loading
-        ================================= */}
-
-        {isLoading && (
-          <div className="teacher-courses-loading">
-            <div
-              className="teacher-course-loader"
-              aria-hidden="true"
+      {!isLoading && !error && courses.length > 0 && (
+        <>
+          <div className="mx-course-list__controls">
+            <input
+              type="search"
+              className="mx-search"
+              placeholder="Search your courses…"
+              aria-label="Search your courses"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
             />
 
-            <strong>
-              Loading your courses...
-            </strong>
-
-            <span>
-              Preparing your learning
-              adventures.
-            </span>
-          </div>
-        )}
-
-        {/* =================================
-            Empty State
-        ================================= */}
-
-        {!isLoading &&
-          !error &&
-          !hasCourses && (
-            <div className="teacher-courses-empty">
-              <div className="teacher-empty-illustration">
-                <div className="empty-decoration decoration-one">
-                  ✦
-                </div>
-
-                <div className="empty-decoration decoration-two">
-                  ●
-                </div>
-
-                <div className="teacher-empty-book">
-                  📚
-                </div>
-
-                <div className="empty-decoration decoration-three">
-                  ✦
-                </div>
-              </div>
-
-              <div className="teacher-empty-label">
-                START YOUR JOURNEY
-              </div>
-
-              <h2>No courses yet</h2>
-
-              <p>
-                Create your first course and start
-                building an interactive learning
-                adventure for your students.
-              </p>
-
-              <button
-                type="button"
-                className="teacher-empty-button"
-                onClick={handleCreateCourse}
-              >
-                <span>+</span>
-                Create Your First Course
-              </button>
-
-              <div className="teacher-empty-hint">
-                💡 You can keep courses as drafts
-                while you build the content.
-              </div>
-            </div>
-          )}
-
-        {/* =================================
-            No Filter Results
-        ================================= */}
-
-        {!isLoading &&
-          !error &&
-          hasCourses &&
-          !hasFilteredCourses && (
-            <div className="teacher-courses-filter-empty">
-              <div className="teacher-filter-empty-icon">
-                🔎
-              </div>
-
-              <h3>
-                No {activeFilter} courses
-              </h3>
-
-              <p>
-                You do not currently have any{" "}
-                {activeFilter} courses.
-              </p>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setActiveFilter("all")
-                }
-              >
-                View All Courses
-              </button>
-            </div>
-          )}
-
-        {/* =================================
-            Course Grid
-        ================================= */}
-
-        {!isLoading &&
-          !error &&
-          hasFilteredCourses && (
-            <div className="teacher-course-grid">
-              {filteredCourses.map((course) => (
-                <article
-                  className="teacher-course-card"
-                  key={course.id}
+            <div className="mx-course-list__chips" role="group" aria-label="Filter by status">
+              {STATUS_FILTERS.map((filter) => (
+                <button
+                  key={filter.value}
+                  type="button"
+                  className={`mx-chip${status === filter.value ? " is-on" : ""}`}
+                  aria-pressed={status === filter.value}
+                  onClick={() => setStatus(filter.value)}
                 >
-                  {/* Course Banner */}
-
-                  <div
-                    className="teacher-course-card-banner"
-                    style={{
-                      background:
-                        course.accent_color ||
-                        "#2f8f5b",
-                    }}
-                  >
-                    <div className="teacher-course-card-icon">
-                      {course.icon || "🚀"}
-                    </div>
-
-                    <span
-                      className={`teacher-course-status ${course.status}`}
-                    >
-                      {course.status ===
-                      "published"
-                        ? "Published"
-                        : "Draft"}
-                    </span>
-                  </div>
-
-                  {/* Course Content */}
-
-                  <div className="teacher-course-card-body">
-                    <div className="teacher-course-card-meta">
-                      <span>
-                        {course.category ||
-                          "General"}
-                      </span>
-
-                      <span>
-                        {course.level ||
-                          "Beginner"}
-                      </span>
-                    </div>
-
-                    <h3>{course.title}</h3>
-
-                    <p>
-                      {course.description ||
-                        "No course description yet."}
-                    </p>
-
-                    <div className="teacher-course-card-stats">
-                      <span>
-                        🗺️ 0 Worlds
-                      </span>
-
-                      <span>
-                        📝 0 Lessons
-                      </span>
-
-                      <span>
-                        👨‍🎓 0 Students
-                      </span>
-                    </div>
-
-                    <div className="teacher-course-card-footer">
-                      <Link
-                        to={`/teacher/courses/${course.id}/playground`}
-                        className="teacher-course-manage-button"
-                      >
-                        <span>
-                          Open Playground
-                        </span>
-
-                        <span
-                          className="teacher-course-manage-arrow"
-                          aria-hidden="true"
-                        >
-                          →
-                        </span>
-                      </Link>
-                    </div>
-                  </div>
-                </article>
+                  {filter.label} <span className="mx-chip__count">{countFor(filter.value)}</span>
+                </button>
               ))}
             </div>
+          </div>
+
+          <p className="mx-course-list__count" aria-live="polite">
+            {isFiltered
+              ? `${visible.length} of ${courses.length} courses`
+              : `${courses.length} course${courses.length === 1 ? "" : "s"}`}
+          </p>
+
+          {visible.length > 0 ? (
+            <div className="mx-grid">
+              {visible.map((course) => (
+                // The card opens the builder; "Edit details" sits on top of it as a
+                // sibling, because a link can't contain another link.
+                <div key={course.id} className="mx-course-tile">
+                  <CourseCard
+                    course={toCard(course)}
+                    to={`/teacher/courses/${course.id}/playground`}
+                    actionLabel=""
+                    badge={<StatusTag status={course.status} />}
+                    eyebrow={[course.category, course.level].filter(Boolean).join(" · ")}
+                  />
+                  <Link
+                    className="mx-btn mx-btn--ghost mx-btn--sm mx-course-tile__edit"
+                    to={`/teacher/courses/${course.id}/edit`}
+                    aria-label={`Edit details of ${course.title}`}
+                  >
+                    ✏️ Edit details
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mx-empty">
+              <span className="mx-empty__emoji" aria-hidden="true">
+                🔍
+              </span>
+              <h2>No matching courses</h2>
+              <p>Try a different search or filter.</p>
+              <button type="button" className="mx-btn mx-btn--ghost" onClick={clearFilters}>
+                Show all courses
+              </button>
+            </div>
           )}
-      </section>
+        </>
+      )}
     </div>
   );
 }

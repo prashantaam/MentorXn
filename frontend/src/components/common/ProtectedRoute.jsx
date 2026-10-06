@@ -1,6 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
+import { LOGIN_BY_ROLE } from "../layout/navigation";
+
+import "../../styles/layout/auth-checking.css";
 
 function ProtectedRoute({ requiredRole }) {
   const {
@@ -24,7 +27,7 @@ function ProtectedRoute({ requiredRole }) {
   if (!isAuthenticated) {
     return (
       <Navigate
-        to="/login"
+        to={LOGIN_BY_ROLE[requiredRole] || "/login"}
         replace
       />
     );

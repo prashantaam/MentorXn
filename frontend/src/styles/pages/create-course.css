@@ -1,0 +1,313 @@
+/* ============================================================
+   Create a course (pages/teacher/courses/CourseCreatePage.jsx)
+   ============================================================ */
+
+.mx-create {
+  max-width: var(--mx-max-width);
+  margin: 0 auto;
+  padding: 26px var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-create p {
+  margin: 0.4em 0 0.6em;
+}
+
+.mx-create__head {
+  padding: 14px 0 6px;
+}
+
+.mx-create__head h1 {
+  font-size: clamp(1.8rem, 4.4vw, 2.5rem);
+}
+
+/* ---------- two-column layout ---------- */
+.mx-create__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+  margin-top: 24px;
+}
+
+.mx-form-card {
+  padding: 22px 24px 24px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--mx-shadow-c);
+}
+
+.mx-form-card h2 {
+  margin: 30px 0 14px;
+  font-size: 1.2rem;
+}
+
+.mx-form-card h2:first-of-type {
+  margin-top: 0;
+}
+
+/* Short underline bar under each section heading, from the design. */
+.mx-form-card h2::after {
+  content: "";
+  display: block;
+  width: 52px;
+  height: 5px;
+  margin-top: 6px;
+
+  background: var(--mx-accent);
+  border: 2px solid var(--mx-ink);
+  border-radius: 8px;
+}
+
+.mx-create .mx-create__section-hint {
+  margin: -6px 0 12px;
+}
+
+.mx-inline-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.mx-inline-fields > .mx-field {
+  flex: 1;
+  /* Wide enough for "Web Development" before the pair stacks. */
+  min-width: 200px;
+}
+
+.mx-field__label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+
+/* ---------- icon ---------- */
+.mx-quick-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: -6px 0 18px;
+}
+
+.mx-quick-icon {
+  width: 40px;
+  height: 40px;
+
+  background: var(--mx-surface2);
+  border: 2px solid var(--mx-ink);
+  border-radius: 10px;
+
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.mx-quick-icon.is-on {
+  background: var(--mx-accent);
+  box-shadow: 2px 2px 0 var(--mx-shadow-c);
+}
+
+/* ---------- colour swatches ---------- */
+.mx-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.mx-swatch {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  border: 3px solid var(--mx-ink);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.mx-swatch.is-on {
+  box-shadow:
+    0 0 0 3px var(--mx-surface),
+    0 0 0 6px var(--mx-ink);
+}
+
+.mx-swatch--custom {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  background: var(--mx-surface2);
+  color: var(--mx-text);
+  font-weight: 800;
+}
+
+.mx-swatch--custom:has(input:focus-visible) {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 4px;
+}
+
+/* ---------- lesson outline editor ---------- */
+.mx-outline-editor__list {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.mx-outline-editor__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mx-outline-editor__num {
+  flex: none;
+  width: 26px;
+
+  color: var(--mx-muted);
+  font-family: var(--mx-font-display);
+  font-weight: 700;
+  text-align: right;
+}
+
+.mx-outline-editor__row input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 11px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 10px;
+
+  font: inherit;
+}
+
+.mx-outline-editor__row .mx-btn {
+  flex: none;
+  min-width: 36px;
+  padding: 4px 8px;
+}
+
+/* ---------- visibility ---------- */
+.mx-status-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.mx-status-option {
+  display: flex;
+  flex-direction: column;
+  /* Explicit: adventure-land.css styles every <label> (centred, bold). */
+  align-items: flex-start;
+  font-weight: 400;
+  padding: 12px 14px;
+
+  background: var(--mx-surface);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.mx-status-option.is-on {
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+}
+
+.mx-status-option.is-on .mx-hint {
+  color: var(--mx-on-accent);
+}
+
+.mx-status-option:has(input:focus-visible) {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.mx-create__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+/* ---------- preview column ---------- */
+.mx-create__preview {
+  position: sticky;
+  top: calc(var(--mx-header-h) + 20px);
+}
+
+.mx-create__preview-label {
+  margin-bottom: 14px;
+
+  color: var(--mx-muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.mx-create__preview .mx-course-card {
+  cursor: default;
+}
+
+/* The preview isn't clickable, so it doesn't lift on hover. */
+.mx-create__preview .mx-course-card:hover {
+  transform: none;
+  box-shadow: 6px 6px 0 var(--mx-shadow-c);
+}
+
+.mx-outline-preview {
+  margin-top: 20px;
+  padding: 16px 18px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 18px;
+  box-shadow: 5px 5px 0 var(--mx-shadow-c);
+}
+
+.mx-outline-preview h3 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.mx-outline-preview ol {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.mx-outline-preview li {
+  padding: 3px 0;
+  font-size: 0.93rem;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+  .mx-create__split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mx-create__preview {
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .mx-form-card {
+    padding: 18px 16px 20px;
+  }
+}
+
+.mx-create__section-hint a {
+  color: var(--mx-text);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

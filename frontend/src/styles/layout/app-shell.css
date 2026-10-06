@@ -1,0 +1,326 @@
+/* ============================================================
+   MentorXn app shell — shared top nav + footer
+   Used by the landing page and by both the student and teacher
+   areas (see components/layout/SiteHeader.jsx / SiteFooter.jsx).
+   ============================================================ */
+
+.mx-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--mx-paper);
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--mx-ink) 9%, transparent) 1px,
+    transparent 1.5px
+  );
+  background-size: 26px 26px;
+  background-attachment: fixed;
+
+  font-family: var(--mx-font-body);
+}
+
+.mx-shell__main {
+  flex: 1 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+/* ---------- top nav ---------- */
+.mx-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  /* Pages offset their sticky panels by --mx-header-h (tokens.css). */
+  min-height: var(--mx-header-h);
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 7px var(--mx-gutter);
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border-bottom: 3px solid var(--mx-ink);
+
+  font-family: var(--mx-font-body);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--mx-text);
+  font-family: var(--mx-font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mx-brand sup {
+  font-size: 0.55em;
+}
+
+.mx-brand__logo {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+
+  background: var(--mx-logo);
+  color: #fff;
+  border: 3px solid var(--mx-ink);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+
+  font-size: 1.05rem;
+  transform: rotate(-6deg);
+}
+
+/* Nav links are chips: a soft bordered chip on hover, and a solid
+   accent chip with the hard shadow for the current page. */
+.mx-navlinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.mx-navlinks a {
+  padding: 4px 12px;
+
+  color: inherit;
+  border: 2.5px solid transparent;
+  border-radius: 10px;
+
+  line-height: 1.5;
+  text-decoration: none;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s, transform 0.12s;
+}
+
+.mx-navlinks a:hover {
+  background: var(--mx-surface2);
+  border-color: var(--mx-ink);
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--mx-shadow-c);
+}
+
+.mx-navlinks a.active {
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  border-color: var(--mx-ink);
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+  transform: rotate(-1.5deg); /* a little of the logo's tilt */
+}
+
+.mx-navlinks a.active:hover {
+  transform: rotate(-1.5deg) translate(-1px, -1px);
+}
+
+.mx-nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Theme toggle + avatar: slightly smaller for the slimmer bar, and tilted
+   away from each other — the toggle leans left (like the logo), the avatar
+   leans right. Both straighten up when hovered. */
+.mx-header .mx-icon-btn,
+.mx-header .mx-user-menu__button .mx-avatar {
+  width: 38px;
+  height: 38px;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.mx-header .mx-icon-btn {
+  transform: rotate(-6deg);
+}
+
+.mx-header .mx-user-menu__button .mx-avatar {
+  transform: rotate(6deg);
+}
+
+.mx-header .mx-icon-btn:hover,
+.mx-header .mx-user-menu__button:hover .mx-avatar {
+  transform: rotate(0deg);
+}
+
+/* Pressed: keep each one's own tilt while sinking into its shadow. */
+.mx-header .mx-icon-btn:active {
+  transform: rotate(-6deg) translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--mx-shadow-c);
+}
+
+.mx-header .mx-user-menu__button[aria-expanded="true"] .mx-avatar {
+  transform: rotate(6deg) translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--mx-shadow-c);
+}
+
+/* ---------- account menu (avatar dropdown) ---------- */
+.mx-user-menu {
+  position: relative;
+}
+
+.mx-user-menu__button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+
+  background: none;
+  color: var(--mx-text);
+  border: 0;
+
+  cursor: pointer;
+}
+
+.mx-user-menu__caret {
+  font-size: 0.8rem;
+}
+
+.mx-user-menu__panel {
+  position: absolute;
+  z-index: 1100;
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 270px;
+  padding: 8px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 16px;
+  box-shadow: 6px 6px 0 var(--mx-shadow-c);
+}
+
+.mx-user-menu__who {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding: 8px 8px 12px;
+
+  border-bottom: 2px dashed var(--mx-surface2);
+  line-height: 1.35;
+}
+
+.mx-user-menu__who b {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.mx-user-menu__email {
+  display: block;
+  color: var(--mx-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.mx-user-menu__role {
+  margin-top: 6px;
+  background: var(--mx-surface2);
+  font-size: 0.75rem;
+  text-transform: capitalize;
+}
+
+.mx-user-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+
+  background: none;
+  color: var(--mx-text);
+  border: 2px solid transparent;
+  border-radius: 10px;
+
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mx-user-menu__item:hover,
+.mx-user-menu__item:focus-visible {
+  background: var(--mx-surface2);
+  border-color: var(--mx-ink);
+  outline: none;
+}
+
+.mx-user-menu__item--danger {
+  color: var(--mx-bad);
+}
+
+.mx-user-menu__divider {
+  height: 0;
+  margin: 6px 4px;
+  border-top: 2px dashed var(--mx-surface2);
+}
+
+/* ---------- footer ---------- */
+.mx-footer {
+  padding: 14px var(--mx-gutter) 16px;
+
+  color: var(--mx-muted);
+  font-family: var(--mx-font-body);
+  font-size: 0.92rem;
+  text-align: center;
+}
+
+.mx-footer sup {
+  font-size: 0.6em;
+}
+
+.mx-footer__links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 4px;
+  font-weight: 800;
+}
+
+.mx-footer__links a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mx-footer__links a:hover {
+  color: var(--mx-text);
+}
+
+@media (max-width: 640px) {
+  .mx-navlinks {
+    order: 3;
+    width: 100%;
+  }
+}
+
+/* Fixed-width icon column so the labels line up. */
+.mx-user-menu__item > span:first-child {
+  flex: none;
+  width: 1.4em;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-navlinks a,
+  .mx-header .mx-icon-btn,
+  .mx-header .mx-avatar {
+    transition: none;
+  }
+}

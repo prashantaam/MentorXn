@@ -1,0 +1,286 @@
+/* ============================================================
+   Dashboards — teacher and student
+   (pages/teacher/dashboard/TeacherDashboard.jsx,
+    pages/student/StudentDashboard.jsx)
+   ============================================================ */
+
+.mx-dashboard {
+  max-width: var(--mx-max-width);
+  margin: 0 auto;
+  padding: 0 var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-dashboard p {
+  margin: 0.4em 0 0.6em;
+}
+
+/* ---------- hero ---------- */
+.mx-dash-hero {
+  padding: 38px 0 6px;
+}
+
+.mx-dash-hero h1 {
+  font-size: clamp(1.8rem, 4.4vw, 2.5rem);
+}
+
+.mx-dash-hero__wave {
+  display: inline-block;
+  transform: rotate(-2deg);
+}
+
+/* ---------- stats ---------- */
+.mx-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 22px 0 10px;
+}
+
+.mx-stat-card {
+  padding: 14px 16px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--mx-shadow-c);
+
+  text-align: center;
+}
+
+.mx-stat-card b {
+  display: block;
+  font-family: var(--mx-font-display);
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+
+.mx-stat-card span {
+  display: block;
+  margin-top: 4px;
+  line-height: 1.3;
+  color: var(--mx-muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+/* ---------- sections ---------- */
+.mx-dash-section {
+  margin: 40px 0;
+}
+
+.mx-dash-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mx-dash-section h2 {
+  font-size: 1.4rem;
+}
+
+.mx-dash-section__more {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+/* ---------- progress track ---------- */
+.mx-track {
+  height: 14px;
+  margin: 6px 0 4px;
+  overflow: hidden;
+
+  background: var(--mx-surface2);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 99px;
+}
+
+.mx-track__fill {
+  height: 100%;
+  background: var(--mx-accent);
+  transition: width 0.3s;
+}
+
+/* ---------- shared "hue tab" for cards ---------- */
+/* No overflow: hidden here — the tab hangs over the top border on purpose. */
+.mx-progress-card,
+.mx-explore-card {
+  position: relative;
+}
+
+.mx-progress-card::before,
+.mx-explore-card::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 14px;
+  right: 14px;
+  height: 12px; /* thicker tab (was 7px) */
+
+  background: var(--mx-hue, var(--mx-accent));
+  border: 3px solid var(--mx-ink);
+  border-top: none;
+  border-radius: 0 0 9px 9px;
+}
+
+/* ---------- continue learning ---------- */
+.mx-progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.mx-progress-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 16px 14px; /* top: clear the tab */
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 3px solid var(--mx-ink);
+  border-radius: 18px;
+  box-shadow: 5px 5px 0 var(--mx-shadow-c);
+
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+a.mx-progress-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--mx-shadow-c);
+}
+
+.mx-progress-card h3 {
+  margin-bottom: 2px;
+  font-size: 1.05rem;
+}
+
+.mx-progress-card .mx-tag {
+  flex: none;
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+}
+
+/* ---------- certificates ---------- */
+.mx-cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.mx-cert-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+
+  background: var(--mx-warn-bg);
+  color: var(--mx-text);
+  border: 3px solid var(--mx-ink);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--mx-shadow-c);
+}
+
+.mx-cert-card b,
+.mx-cert-card .mx-hint {
+  display: block;
+}
+
+/* ---------- explore more ---------- */
+.mx-explore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.mx-explore-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 14px 10px; /* top: clear the tab */
+
+  background: var(--mx-surface2);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+}
+
+.mx-explore-card b {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.mx-explore-card .mx-hint {
+  display: block;
+}
+
+/* ---------- teacher: "My courses" tiles ----------
+   Same card as the student's explore grid, but each opens the builder
+   and carries a Draft / Published tag, so columns are a little wider. */
+.mx-teacher-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.mx-teacher-tile {
+  padding: 20px 14px 12px; /* top: clear the tab */
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.mx-teacher-tile:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--mx-shadow-c);
+}
+
+.mx-teacher-tile b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mx-teacher-tile .mx-tag {
+  flex: none;
+  align-self: flex-start;
+  font-size: 0.78rem;
+}
+
+/* ---------- shared bits ---------- */
+.mx-card-emoji {
+  flex: none;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.mx-grow {
+  flex: 1;
+  min-width: 0;
+}
+
+
+@media (max-width: 560px) {
+  /* Four stats: 2 x 2 rather than 3 + 1 orphan */
+  .mx-stat-row:has(> :nth-child(4):last-child) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-track__fill,
+  .mx-progress-card,
+  .mx-teacher-tile {
+    transition: none;
+  }
+}
+
+.mx-dash-section > h2 {
+  margin-bottom: 14px;
+}

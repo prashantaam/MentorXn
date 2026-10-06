@@ -1,218 +1,83 @@
-import { useState } from "react";
-import {
-  Link,
-  useNavigate,
-} from "react-router-dom";
+import AuthCard from "../../../components/auth/AuthCard";
+import AuthField from "../../../components/auth/AuthField";
+import { useAuthForm, validateLogin } from "../../../hooks/useAuthForm";
 
-import AuthLayout from "../../../components/AuthLayout";
-import { useAuth } from "../../../context/AuthContext";
-
-import "../../../auth.css";
+import "../../../styles/pages/auth.css";
 
 function LoginPage() {
-  const navigate = useNavigate();
-  const { saveAuth } = useAuth();
-
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [remember, setRemember] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [generalError, setGeneralError] =
-    useState("");
-  const [isLoading, setIsLoading] =
-    useState(false);
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setFormData((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-
-    setErrors((previous) => ({
-      ...previous,
-      [name]: null,
-    }));
-
-    setGeneralError("");
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    setErrors({});
-    setGeneralError("");
-    setIsLoading(true);
-
-    try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/student/login",
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          setGeneralError(
-            data.message ||
-              "Sign in failed. Please try again."
-          );
-        }
-
-        return;
-      }
-
-      saveAuth({
-        user: data.user,
-        token: data.token,
-        remember,
-      });
-
-      navigate("/student/dashboard");
-    } catch (error) {
-      console.error(
-        "Student login error:",
-        error
-      );
-
-      setGeneralError(
-        "Unable to connect to the server. Please try again."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { values, errors, generalError, isSubmitting, handleChange, handleSubmit } =
+    useAuthForm({
+      endpoint: "/api/student/login",
+      initialValues: { email: "", password: "", remember: false },
+      validate: validateLogin,
+      redirectTo: "/student/dashboard",
+    });
 
   return (
-    <AuthLayout
+    <AuthCard
+      badge="🎓 Learner"
       title="Welcome back!"
-      subtitle="Sign in and continue your learning adventure."
-      footerText="New to Learning Adventure?"
-      footerLinkText="Create an account"
-      footerLink="/register"
+      subtitle="Log in to pick up right where you left off."
+      switchText="New to MentorXn?"
+      switchLabel="Create an account"
+      switchTo="/register"
+      otherPortal={{
+        emoji: "🧑‍🏫",
+        text: "Are you a teacher?",
+        label: "Teacher log in →",
+        to: "/teacher/login",
+      }}
     >
-      <form
-        className="auth-form"
-        onSubmit={handleSubmit}
-      >
+      <form onSubmit={handleSubmit} noValidate>
         {generalError && (
-          <div
-            className="auth-error"
-            role="alert"
-          >
+          <div className="mx-feedback mx-feedback--bad" role="alert">
             {generalError}
           </div>
         )}
 
-        <div className="form-group">
-          <label htmlFor="email">
-            Email address
-          </label>
+        <AuthField
+          id="email"
+          name="email"
+          type="email"
+          label="Email"
+          placeholder="you@example.com"
+          autoComplete="email"
+          value={values.email}
+          onChange={handleChange}
+          error={errors.email}
+        />
 
-          <div className="input-wrapper">
-            <span className="input-icon">
-              ✉️
-            </span>
+        <AuthField
+          id="password"
+          name="password"
+          type="password"
+          label="Password"
+          placeholder="Your password"
+          autoComplete="current-password"
+          value={values.password}
+          onChange={handleChange}
+          error={errors.password}
+        />
 
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          {errors.email && (
-            <small className="field-error">
-              {errors.email[0]}
-            </small>
-          )}
-        </div>
-
-        <div className="form-group">
-          <div className="label-row">
-            <label htmlFor="password">
-              Password
-            </label>
-
-            <Link
-              to="/forgot-password"
-              className="small-link"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          <div className="input-wrapper">
-            <span className="input-icon">
-              🔐
-            </span>
-
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter your password"
-              autoComplete="current-password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          {errors.password && (
-            <small className="field-error">
-              {errors.password[0]}
-            </small>
-          )}
-        </div>
-
-        <label className="remember-row">
+        <label className="mx-check">
           <input
             type="checkbox"
             name="remember"
-            checked={remember}
-            onChange={(event) =>
-              setRemember(event.target.checked)
-            }
+            checked={values.remember}
+            onChange={handleChange}
           />
-
           <span>Keep me signed in</span>
         </label>
 
         <button
-          className="auth-submit"
+          className="mx-btn mx-auth-card__submit"
           type="submit"
-          disabled={isLoading}
+          disabled={isSubmitting}
         >
-          {isLoading
-            ? "Signing in..."
-            : "Sign In"}
-
-          <span>
-            {isLoading ? "⏳" : "→"}
-          </span>
+          {isSubmitting ? "Logging in…" : "Log in"}
         </button>
       </form>
-    </AuthLayout>
+    </AuthCard>
   );
 }
 

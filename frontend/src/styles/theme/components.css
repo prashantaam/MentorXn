@@ -1,0 +1,695 @@
+/* ============================================================
+   MentorXn design system — shared UI primitives
+   Reused by the landing page now, and by the student/teacher
+   pages as they move onto the new design.
+   ============================================================ */
+
+.mx-page :where(h1, h2, h3, h4),
+.mx-header :where(h1, h2, h3, h4) {
+  margin: 0;
+  font-family: var(--mx-font-display);
+  line-height: 1.15;
+}
+
+.mx-page :focus-visible,
+.mx-header :focus-visible,
+.mx-footer :focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* ---------- buttons ---------- */
+.mx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  border: 3px solid var(--mx-ink);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--mx-shadow-c);
+
+  font-family: var(--mx-font-body);
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+
+.mx-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 var(--mx-shadow-c);
+}
+
+.mx-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--mx-shadow-c);
+}
+
+.mx-btn--ghost {
+  background: var(--mx-surface);
+  color: var(--mx-text);
+}
+
+.mx-btn--sm {
+  padding: 6px 14px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+  font-size: 0.92rem;
+}
+
+.mx-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0 var(--mx-shadow-c);
+}
+
+.mx-icon-btn {
+  flex: none;
+  width: 42px;
+  height: 42px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 3px solid var(--mx-ink);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.mx-icon-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--mx-shadow-c);
+}
+
+/* ---------- chips / tags / hints ---------- */
+.mx-chip {
+  padding: 6px 16px;
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 99px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mx-chip.is-on {
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+}
+
+.mx-tag {
+  display: inline-block;
+  padding: 0 8px;
+  border: 2px solid var(--mx-ink);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.mx-hint {
+  color: var(--mx-muted);
+  font-size: 0.92rem;
+}
+
+/* ---------- card grid + course card ---------- */
+.mx-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin: 20px 0;
+}
+
+.mx-course-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 28px 20px 18px; /* top: clear the colour tab */
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 3px solid var(--mx-ink);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--mx-shadow-c);
+
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+/* Outlined colour tab hanging from the top edge, inset from the corners —
+   the same tab as the dashboard tiles (dashboard.css). It overlaps the
+   card's top border on purpose, so the card must not clip overflow.
+   Colour from --mx-hue. */
+.mx-course-card::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 16px;
+  right: 16px;
+  height: 12px;
+
+  background: var(--mx-hue, var(--mx-accent));
+  border: 3px solid var(--mx-ink);
+  border-top: none;
+  border-radius: 0 0 9px 9px;
+}
+
+.mx-course-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0 var(--mx-shadow-c);
+}
+
+.mx-course-card__emoji {
+  font-size: 2.2rem;
+}
+
+.mx-course-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mx-course-card__eyebrow {
+  margin-top: 4px;
+  color: var(--mx-muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.mx-course-card__eyebrow + h3 {
+  margin-top: 0;
+}
+
+/* Status tags (teacher views): Draft / Published */
+.mx-status-tag--draft {
+  background: var(--mx-warn-bg);
+  color: var(--mx-warn);
+}
+
+.mx-status-tag--published {
+  background: var(--mx-good-bg);
+  color: var(--mx-good);
+}
+
+.mx-course-card h3 {
+  margin-top: 4px;
+  font-size: 1.25rem;
+}
+
+.mx-course-card p {
+  flex: 1;
+  margin: 0.4em 0 0.6em;
+  color: var(--mx-muted);
+  font-size: 0.96rem;
+}
+
+.mx-course-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-top: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mx-btn,
+  .mx-course-card {
+    transition: none;
+  }
+}
+
+/* ---------- empty state ---------- */
+.mx-empty {
+  padding: 40px 20px;
+  color: var(--mx-muted);
+  text-align: center;
+}
+
+.mx-empty__emoji {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 2.4rem;
+}
+
+.mx-empty h2 {
+  margin-bottom: 8px;
+  color: var(--mx-text);
+}
+
+.mx-empty .mx-btn {
+  margin-top: 8px;
+}
+
+/* ---------- forms ---------- */
+.mx-field {
+  margin-bottom: 16px;
+}
+
+.mx-field__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mx-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+
+.mx-field input,
+.mx-field textarea,
+.mx-field select {
+  width: 100%;
+  padding: 9px 12px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 10px;
+
+  font: inherit;
+}
+
+.mx-field.has-error input,
+.mx-field.has-error textarea,
+.mx-field.has-error select {
+  border-color: var(--mx-bad);
+}
+
+.mx-field__error {
+  margin-top: 5px;
+  color: var(--mx-bad);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.mx-field__hint {
+  margin-top: 5px;
+  color: var(--mx-muted);
+  font-size: 0.88rem;
+}
+
+.mx-field textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* Error/hint on the left, optional counter on the right. */
+/* Short input for a single emoji. */
+.mx-field .mx-icon-input {
+  width: 90px;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.mx-field__message {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.mx-field__message > span {
+  margin-top: 0;
+}
+
+.mx-check {
+  display: flex;
+  /* Explicit: adventure-land.css sets a global `label { flex-wrap: wrap }`. */
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mx-check input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 3px 0 0;
+  accent-color: var(--mx-logo);
+}
+
+/* ---------- feedback banners ---------- */
+.mx-feedback {
+  margin: 8px 0 14px;
+  padding: 10px 14px;
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.mx-feedback--bad {
+  background: var(--mx-bad-bg);
+  color: var(--mx-bad);
+}
+
+.mx-feedback--good {
+  background: var(--mx-good-bg);
+  color: var(--mx-good);
+}
+
+.mx-feedback--warn {
+  background: var(--mx-warn-bg);
+  color: var(--mx-warn);
+}
+
+/* ---------- utilities ---------- */
+
+/* Hidden visually, still read by screen readers and focusable. */
+.mx-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Radio/checkbox styled as a chip: show focus on the chip itself. */
+.mx-chip:has(input:focus-visible) {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* ---------- destructive button ---------- */
+.mx-btn--danger {
+  background: var(--mx-bad-bg);
+  color: var(--mx-bad);
+}
+
+/* ---------- modal dialog ---------- */
+.mx-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+  padding: 20px;
+
+  background: rgba(10, 12, 8, 0.55);
+}
+
+.mx-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  padding: 22px 24px 24px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 3px solid var(--mx-ink);
+  border-radius: 20px;
+  box-shadow: 7px 7px 0 var(--mx-shadow-c);
+
+  font-family: var(--mx-font-body);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.mx-modal__kicker {
+  color: var(--mx-muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mx-modal h2 {
+  margin: 2px 0 0;
+  font-family: var(--mx-font-display);
+  font-size: 1.4rem;
+  line-height: 1.15;
+}
+
+.mx-modal p {
+  margin: 0.4em 0 0.8em;
+}
+
+.mx-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.mx-modal :focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* ---------- side navigation (course builder, block library) ---------- */
+/* A coloured section ("world"): a lesson in the course builder, a block
+   category in the block library. Colour comes from --mx-wc. */
+.mx-world {
+  margin-bottom: 16px;
+}
+
+.mx-world__head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.mx-world__title {
+  min-width: 0;
+  padding: 3px 10px;
+
+  background: var(--mx-wc, var(--mx-accent));
+  color: #141414; /* lesson colours are all light, in both themes */
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+
+  font-family: var(--mx-font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.mx-world__title.is-active {
+  outline: 3px solid var(--mx-ink);
+  outline-offset: 2px;
+}
+
+.mx-world__actions,
+.mx-navi__actions {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  margin-left: auto;
+}
+
+/* Small icon-only action (edit / delete) shown on hover or focus. */
+.mx-mini-btn {
+  flex: none;
+  display: inline-grid; /* also used on <a> links */
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mx-mini-btn:hover {
+  background: var(--mx-surface);
+  border-color: var(--mx-ink);
+}
+
+/* One item in a section: a topic, or a block type. */
+.mx-navi {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+  padding-right: 4px;
+
+  border: 2.5px solid transparent;
+  border-radius: 12px;
+}
+
+.mx-navi:hover {
+  background: var(--mx-surface);
+}
+
+.mx-navi.is-active {
+  background: var(--mx-surface);
+  border-color: var(--mx-ink);
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+}
+
+.mx-navi__main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 8px;
+
+  background: transparent;
+  color: var(--mx-text);
+  border: 0;
+
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mx-navi__icon {
+  flex: none;
+  width: 1.4rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.mx-navi__title {
+  flex: 1;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+/* Actions stay out of the way until the row is hovered/focused/active. */
+.mx-navi .mx-navi__actions,
+.mx-world__head .mx-world__actions {
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.mx-navi:hover .mx-navi__actions,
+.mx-navi:focus-within .mx-navi__actions,
+.mx-navi.is-active .mx-navi__actions,
+.mx-world__head:hover .mx-world__actions,
+.mx-world__head:focus-within .mx-world__actions {
+  opacity: 1;
+}
+
+/* Touch screens have no hover — always show the actions there. */
+@media (hover: none) {
+  .mx-navi .mx-navi__actions,
+  .mx-world__head .mx-world__actions {
+    opacity: 1;
+  }
+}
+
+/* Non-interactive version of the section header chip. */
+.mx-world__label {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 3px 10px;
+
+  background: var(--mx-wc, var(--mx-accent));
+  color: #141414;
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+
+  font-family: var(--mx-font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* ---------- "← Back" link (works on <a> and <button>) ---------- */
+.mx-back-link {
+  padding: 0;
+
+  background: none;
+  color: var(--mx-muted);
+  border: 0;
+
+  font: inherit;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mx-back-link:hover {
+  color: var(--mx-text);
+  text-decoration: underline;
+}
+
+/* ---------- user avatar (initial) ----------
+   Rounded square, matching .mx-icon-btn (the theme toggle) beside it. */
+.mx-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  border: 3px solid var(--mx-ink);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+
+  font-family: var(--mx-font-display);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mx-avatar--md {
+  width: 42px;
+  height: 42px;
+  font-size: 1.15rem;
+}
+
+.mx-avatar--lg {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 1.35rem;
+  box-shadow: none;
+}
+
+.mx-avatar--xl {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  font-size: 2rem;
+  box-shadow: 4px 4px 0 var(--mx-shadow-c);
+}

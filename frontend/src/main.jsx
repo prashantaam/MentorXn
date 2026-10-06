@@ -2,13 +2,12 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 
+/* Base + design system (new pages use the --mx-* tokens and .mx-* classes) */
 import "./styles/variables.css";
 import "./styles/global.css";
+import "./styles/theme/tokens.css";
+import "./styles/theme/components.css";
 
-// IMPORTANT:
-// Keep your original index.css because it contains
-// the complete landing-page design.
-import "./index.css";
 import "./styles/learning/learning-text.css";
 
 import App from "./App.jsx";

@@ -1,0 +1,147 @@
+/* ============================================================
+   Account settings (pages/account/AccountSettingsPage.jsx)
+   ============================================================ */
+
+.mx-account {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-account p {
+  margin: 0.2em 0 0.8em;
+}
+
+.mx-account__head {
+  padding: 40px 0 10px;
+}
+
+.mx-account__head h1 {
+  font-size: clamp(1.9rem, 4.6vw, 2.5rem);
+}
+
+.mx-account__card {
+  margin-top: 22px;
+  padding: 20px 24px 22px;
+
+  background: var(--mx-surface);
+  border: 3px solid var(--mx-ink);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--mx-shadow-c);
+}
+
+.mx-account__card h2 {
+  margin-bottom: 6px;
+  font-size: 1.2rem;
+}
+
+/* ---------- profile ---------- */
+.mx-account__identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 14px 0 18px;
+}
+
+.mx-account__name {
+  display: block;
+  font-family: var(--mx-font-display);
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.mx-account__identity .mx-hint {
+  overflow-wrap: anywhere;
+}
+
+.mx-account__details {
+  display: grid;
+  gap: 0;
+  margin: 0;
+
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.mx-account__details > div {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 14px;
+}
+
+.mx-account__details > div + div {
+  border-top: 2px dashed var(--mx-surface2);
+}
+
+.mx-account__details dt {
+  color: var(--mx-muted);
+  font-weight: 800;
+}
+
+.mx-account__details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.mx-account__role {
+  text-transform: capitalize;
+}
+
+.mx-account .mx-account__note {
+  margin: 12px 0 0;
+}
+
+/* ---------- appearance ---------- */
+.mx-account__themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.mx-account__theme {
+  display: flex;
+  flex-direction: column;
+  /* Explicit: adventure-land.css styles every <label> (centred, bold). */
+  align-items: flex-start;
+  padding: 12px 14px;
+
+  background: var(--mx-surface);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.mx-account__theme.is-on {
+  background: var(--mx-accent);
+  color: var(--mx-on-accent);
+  box-shadow: 3px 3px 0 var(--mx-shadow-c);
+}
+
+.mx-account__theme.is-on .mx-hint {
+  color: var(--mx-on-accent);
+}
+
+.mx-account__theme:has(input:focus-visible) {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+@media (max-width: 520px) {
+  .mx-account__card {
+    padding: 18px 16px 20px;
+  }
+
+  .mx-account__details > div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
