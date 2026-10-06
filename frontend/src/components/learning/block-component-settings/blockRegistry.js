@@ -9,7 +9,10 @@ import CodeActionBlock from "../block-components/CodeActionBlock";
 import DragBucketBlock from "../block-components/DragBucketBlock";
 import ArrangeTextBlock from "../block-components/ArrangeTextBlock";
 import RichTextBlock from "../block-components/RichTextBlock";
-
+import AccordionBlock from "../block-components/AccordionBlock";
+import SentenceBuilderBlock from "../block-components/SentenceBuilderBlock";
+import InlineGlossaryBlock from "../block-components/InlineGlossaryBlock";
+import MatchingPairsBlock from "../block-components/MatchingPairsBlock";
 const blockRegistry = {
   /*
    * Big Ideas
@@ -34,6 +37,21 @@ const blockRegistry = {
     component: RichTextBlock,
   },
 
+  AccordionBlock: {
+    component: AccordionBlock,
+  },
+
+  SentenceBuilderBlock: {
+    component: SentenceBuilderBlock,
+  },
+
+  InlineGlossaryBlock: {
+    component: InlineGlossaryBlock,
+  },
+
+  MatchingPairsBlock: {
+    component: MatchingPairsBlock,
+  },
   CodeExampleBlock: {
     component: CodeExampleBlock,
   },

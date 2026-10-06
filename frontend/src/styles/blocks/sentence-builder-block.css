@@ -1,0 +1,58 @@
+/* =========================================================
+   Live sentence builder block (SentenceBuilderBlock.jsx)
+   .form, .panel and the text input look come from
+   adventure-land.css (same as the Block Library).
+   ========================================================= */
+
+.sentence-builder-block__field {
+  display: flex;
+  flex: 1 1 180px;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sentence-builder-block__field label {
+  font-weight: 800;
+}
+
+.sentence-builder-block__field input {
+  width: 100%;
+}
+
+.sentence-builder-block__field input:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.sentence-builder-block__output {
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+/* What the student typed, dropped into the sentence. */
+.sentence-builder-block__value {
+  padding: 0 4px;
+  background: var(--w);
+  color: var(--on-w);
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.sentence-builder-block__value.is-empty {
+  background: transparent;
+  color: var(--muted);
+  border-bottom: 2px dashed var(--ink);
+  border-radius: 0;
+}
+
+/* {{key}} in the template with no matching field. */
+.sentence-builder-block__missing {
+  padding: 0 4px;
+  background: #ffe1e1;
+  color: #8a1010;
+  border: 2px dashed #c62828;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}

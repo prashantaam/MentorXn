@@ -1,0 +1,58 @@
+/* =========================================================
+   Accordion block (AccordionBlock.jsx)
+   Same look as the Block Library accordion.
+   ========================================================= */
+
+.accordion-block .accItem {
+  margin: 8px 0;
+  overflow: hidden;
+
+  background: var(--surface2);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+}
+
+.accordion-block .accHead {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+
+  background: transparent;
+  color: var(--text);
+  border: none;
+
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+
+.accordion-block .accHead:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: -3px;
+  border-radius: 12px;
+}
+
+.accordion-block .chev {
+  flex: none;
+  font-size: 0.8em;
+  transition: transform 0.15s;
+}
+
+.accordion-block .accItem.open .chev {
+  transform: rotate(90deg);
+}
+
+.accordion-block .accBody {
+  padding: 0 14px 12px;
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-block .chev {
+    transition: none;
+  }
+}

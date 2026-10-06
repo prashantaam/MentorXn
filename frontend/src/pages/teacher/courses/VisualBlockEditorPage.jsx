@@ -149,11 +149,11 @@ function VisualBlockEditorPage() {
       template?.example_data ||
       {};
 
+    // Includes shared fields such as messages.
     const fields =
-      template
-        ?.configuration_schema
-        ?.fields ||
-      [];
+      withSharedBlockFields(
+        template?.configuration_schema
+      ).fields;
 
     const initialForm = {};
 
@@ -248,11 +248,11 @@ function VisualBlockEditorPage() {
         ? learningBlock.data
         : {};
 
+    // Includes shared fields such as messages.
     const fields =
-      template
-        ?.configuration_schema
-        ?.fields ||
-      [];
+      withSharedBlockFields(
+        template?.configuration_schema
+      ).fields;
 
     fields.forEach(
       (field) => {
@@ -542,6 +542,19 @@ function VisualBlockEditorPage() {
    * =========================================
    */
 
+  /*
+   * The selected template's schema plus the
+   * shared fields (messages) every block has.
+   */
+  const activeSchema =
+    useMemo(
+      () =>
+        withSharedBlockFields(
+          selectedTemplate?.configuration_schema
+        ),
+      [selectedTemplate]
+    );
+
   const previewBlock =
     useMemo(() => {
       if (!selectedTemplate) {
@@ -603,10 +616,7 @@ function VisualBlockEditorPage() {
     }
 
     const fields =
-      selectedTemplate
-        .configuration_schema
-        ?.fields ||
-      [];
+      activeSchema.fields;
 
     /*
      * Validate required fields before
@@ -1002,7 +1012,7 @@ function VisualBlockEditorPage() {
                 {previewBlock && (
                   <VisualBlockCanvas
                     block={previewBlock}
-                    schema={selectedTemplate.configuration_schema}
+                    schema={activeSchema}
                     selection={visualSelection}
                     onSelect={setVisualSelection}
                   />
@@ -1045,7 +1055,7 @@ function VisualBlockEditorPage() {
           <div className="mx-editor__props-scroll">
             {selectedTemplate ? (
               <VisualPropertiesPanel
-                schema={selectedTemplate.configuration_schema}
+                schema={activeSchema}
                 form={templateForm}
                 selection={visualSelection}
                 onChange={setTemplateForm}

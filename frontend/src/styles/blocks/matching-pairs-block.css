@@ -1,0 +1,83 @@
+/* =========================================================
+   Matching pairs block (MatchingPairsBlock.jsx)
+   Same look as the Block Library's matching pairs.
+   .fb, .row and .btn come from adventure-land.css.
+   ========================================================= */
+
+.matching-pairs-block .matchgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.matching-pairs-block__label {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.matching-pairs-block .matchitem {
+  width: 100%;
+  margin-bottom: 7px;
+  padding: 7px 11px;
+
+  background: var(--surface2);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+  border-radius: 11px;
+
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.matching-pairs-block .matchitem:hover:not(.matched) {
+  transform: translateY(-1px);
+}
+
+.matching-pairs-block .matchitem:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.matching-pairs-block .matchitem.selected {
+  background: var(--w);
+  color: var(--on-w);
+  box-shadow: 3px 3px 0 var(--shadow-c);
+}
+
+.matching-pairs-block .matchitem.matched {
+  background: var(--good-bg);
+  color: var(--good);
+  border-color: var(--good);
+  cursor: default;
+  opacity: 0.85;
+}
+
+.matching-pairs-block .matchitem.wrongflash {
+  background: var(--bad-bg);
+  color: var(--bad);
+  animation: shake 0.3s;
+}
+
+@media (max-width: 420px) {
+  .matching-pairs-block .matchgrid {
+    gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .matching-pairs-block .matchitem {
+    transition: none;
+  }
+
+  .matching-pairs-block .matchitem.wrongflash {
+    animation: none;
+  }
+}
