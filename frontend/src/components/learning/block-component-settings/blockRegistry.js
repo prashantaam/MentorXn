@@ -13,6 +13,14 @@ import AccordionBlock from "../block-components/AccordionBlock";
 import SentenceBuilderBlock from "../block-components/SentenceBuilderBlock";
 import InlineGlossaryBlock from "../block-components/InlineGlossaryBlock";
 import MatchingPairsBlock from "../block-components/MatchingPairsBlock";
+import WorkedExampleBlock from "../block-components/WorkedExampleBlock";
+import HierarchyBlock from "../block-components/HierarchyBlock";
+import WordBankBlock from "../block-components/WordBankBlock";
+import TrueFalseBlock from "../block-components/TrueFalseBlock";
+import FillBlanksBlock from "../block-components/FillBlanksBlock";
+import SpeedQuizBlock from "../block-components/SpeedQuizBlock";
+import HintLadderBlock from "../block-components/HintLadderBlock";
+import DecisionTreeBlock from "../block-components/DecisionTreeBlock";
 const blockRegistry = {
   /*
    * Big Ideas
@@ -51,6 +59,38 @@ const blockRegistry = {
 
   MatchingPairsBlock: {
     component: MatchingPairsBlock,
+  },
+
+  WorkedExampleBlock: {
+    component: WorkedExampleBlock,
+  },
+
+  HierarchyBlock: {
+    component: HierarchyBlock,
+  },
+
+  WordBankBlock: {
+    component: WordBankBlock,
+  },
+
+  TrueFalseBlock: {
+    component: TrueFalseBlock,
+  },
+
+  FillBlanksBlock: {
+    component: FillBlanksBlock,
+  },
+
+  SpeedQuizBlock: {
+    component: SpeedQuizBlock,
+  },
+
+  HintLadderBlock: {
+    component: HintLadderBlock,
+  },
+
+  DecisionTreeBlock: {
+    component: DecisionTreeBlock,
   },
   CodeExampleBlock: {
     component: CodeExampleBlock,

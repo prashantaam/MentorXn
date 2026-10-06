@@ -282,6 +282,44 @@ function MCQQuizBlock({ block }) {
   const questionFinished =
     solved || locked;
 
+  /*
+   * =========================================
+   * Select All That Apply
+   * =========================================
+   *
+   * A question with multiple_answers on (or
+   * more than one answer marked correct) is
+   * answered by selecting options and then
+   * pressing Check answer.
+   * =========================================
+   */
+
+  const isAnswerCorrect = (answer) =>
+    toBoolean(
+      answer?.correct ??
+        answer?.is_correct ??
+        answer?.isCorrect,
+      false
+    );
+
+  const correctIndexes =
+    answers
+      .map((answer, index) =>
+        isAnswerCorrect(answer) ? index : null
+      )
+      .filter((index) => index !== null);
+
+  const isMultiple =
+    toBoolean(
+      currentQuestion?.multiple_answers,
+      false
+    ) || correctIndexes.length > 1;
+
+  const picks =
+    Array.isArray(currentState.picks)
+      ? currentState.picks
+      : [];
+
   const isLastQuestion =
     currentPosition ===
     totalQuestions - 1;
@@ -322,7 +360,8 @@ function MCQQuizBlock({ block }) {
 
         if (
           previousWrongAnswers.length ===
-          0
+            0 &&
+          !state.failedChecks
         ) {
           return total + 1;
         }
@@ -459,6 +498,118 @@ function MCQQuizBlock({ block }) {
         };
       }
     );
+  };
+
+  /*
+   * =========================================
+   * Select All That Apply: toggle + check
+   * =========================================
+   */
+
+  const handleTogglePick = (
+    answerIndex
+  ) => {
+    if (
+      currentQuestionIndex === undefined ||
+      solved ||
+      locked
+    ) {
+      return;
+    }
+
+    setQuestionStates((current) => {
+      const previous =
+        current[currentQuestionIndex] || {};
+
+      const previousPicks =
+        Array.isArray(previous.picks)
+          ? previous.picks
+          : [];
+
+      return {
+        ...current,
+        [currentQuestionIndex]: {
+          ...previous,
+          picks: previousPicks.includes(answerIndex)
+            ? previousPicks.filter(
+                (index) => index !== answerIndex
+              )
+            : [...previousPicks, answerIndex],
+          missing: false,
+        },
+      };
+    });
+  };
+
+  const handleCheckPicks = () => {
+    if (
+      currentQuestionIndex === undefined ||
+      solved ||
+      locked ||
+      picks.length === 0
+    ) {
+      return;
+    }
+
+    const wrongPicks = picks.filter(
+      (index) => !correctIndexes.includes(index)
+    );
+
+    const missing = correctIndexes.filter(
+      (index) => !picks.includes(index)
+    );
+
+    setQuestionStates((current) => {
+      const previous =
+        current[currentQuestionIndex] || {};
+
+      /*
+       * Exactly the correct set.
+       */
+      if (
+        wrongPicks.length === 0 &&
+        missing.length === 0
+      ) {
+        return {
+          ...current,
+          [currentQuestionIndex]: {
+            ...previous,
+            solved: true,
+            missing: false,
+          },
+        };
+      }
+
+      const previousWrong =
+        Array.isArray(previous.wrongAnswers)
+          ? previous.wrongAnswers
+          : [];
+
+      /*
+       * Wrong picks are marked and removed
+       * from the selection; correct picks stay.
+       */
+      return {
+        ...current,
+        [currentQuestionIndex]: {
+          ...previous,
+          wrongAnswers: [
+            ...new Set([
+              ...previousWrong,
+              ...wrongPicks,
+            ]),
+          ],
+          picks: picks.filter(
+            (index) => !wrongPicks.includes(index)
+          ),
+          failedChecks:
+            (previous.failedChecks || 0) + 1,
+          missing:
+            wrongPicks.length === 0,
+          locked: !retryWrongAnswers,
+        },
+      };
+    });
   };
 
   /*
@@ -748,7 +899,17 @@ function MCQQuizBlock({ block }) {
           className="quiz-block-question-text"
         />
 
-        <div className="quiz-block-options">
+        {isMultiple && (
+          <p className="quiz-block-multi-hint">
+            ☑ Select all that apply.
+          </p>
+        )}
+
+        <div
+          className="quiz-block-options"
+          role={isMultiple ? "group" : undefined}
+          aria-label={isMultiple ? "Select all that apply" : undefined}
+        >
           {answerOrder.map(
             (answerIndex) => {
               const answer =
@@ -765,11 +926,17 @@ function MCQQuizBlock({ block }) {
                   answerIndex
                 );
 
+              const isPicked =
+                isMultiple &&
+                picks.includes(answerIndex);
+
               const selectedCorrect =
                 solved &&
-                currentState
-                  .selectedAnswer ===
-                  answerIndex;
+                (isMultiple
+                  ? isPicked
+                  : currentState
+                      .selectedAnswer ===
+                    answerIndex);
 
               const answerIsCorrect =
                 toBoolean(
@@ -799,6 +966,14 @@ function MCQQuizBlock({ block }) {
                   " is-wrong";
               }
 
+              if (
+                isPicked &&
+                !questionFinished
+              ) {
+                className +=
+                  " is-picked";
+              }
+
               return (
                 <button
                   key={
@@ -816,12 +991,34 @@ function MCQQuizBlock({ block }) {
                       retryWrongAnswers
                     )
                   }
+                  aria-pressed={
+                    isMultiple
+                      ? isPicked
+                      : undefined
+                  }
                   onClick={() =>
-                    handleAnswer(
-                      answerIndex
-                    )
+                    isMultiple
+                      ? handleTogglePick(
+                          answerIndex
+                        )
+                      : handleAnswer(
+                          answerIndex
+                        )
                   }
                 >
+                  {isMultiple && (
+                    <span
+                      className="quiz-block-option-box"
+                      aria-hidden="true"
+                    >
+                      {isPicked ||
+                      selectedCorrect ||
+                      revealCorrect
+                        ? "☑"
+                        : "☐"}
+                    </span>
+                  )}
+
                   <LearningText
                     text={
                       answer.text ||
@@ -836,12 +1033,33 @@ function MCQQuizBlock({ block }) {
 
         {/*
          * =====================================
+         * Select All That Apply - Check
+         * =====================================
+         */}
+
+        {isMultiple &&
+          !questionFinished && (
+            <div className="quiz-block-navigation quiz-block-navigation--check">
+              <button
+                type="button"
+                className="block-button block-button--primary"
+                disabled={picks.length === 0}
+                onClick={handleCheckPicks}
+              >
+                ✅ Check answer
+              </button>
+            </div>
+          )}
+
+        {/*
+         * =====================================
          * Wrong - Retry Enabled
          * =====================================
          */}
 
         {!solved &&
-          hasWrongAnswer &&
+          (hasWrongAnswer ||
+            currentState.failedChecks > 0) &&
           !locked && (
             <div
               className="quiz-block-feedback quiz-block-feedback--incorrect"
@@ -849,8 +1067,10 @@ function MCQQuizBlock({ block }) {
             >
               <LearningText
                 text={
-                  currentQuestion.incorrect_message ||
-                  "Not quite. Pick another answer, you can do it! 💪"
+                  currentState.missing
+                    ? "Nearly! Everything you picked is right, but some correct answers are still missing."
+                    : currentQuestion.incorrect_message ||
+                      "Not quite. Pick another answer, you can do it! 💪"
                 }
               />
             </div>

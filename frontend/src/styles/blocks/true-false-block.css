@@ -1,0 +1,79 @@
+/* =========================================================
+   True / False check block (TrueFalseBlock.jsx)
+   Same look as the Block Library's true / false check.
+   .row, .btn and .fb come from adventure-land.css.
+   ========================================================= */
+
+.true-false-block__item + .true-false-block__item {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.true-false-block__statement {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 4px 0 6px;
+}
+
+.true-false-block__statement b {
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.true-false-block__statement .num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+
+  background: var(--surface2);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+
+  font-family: Fredoka, sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.true-false-block .btn {
+  min-width: 96px;
+  font: inherit;
+  font-weight: 800;
+}
+
+.true-false-block .btn:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* After answering: the student's pick, right or wrong ... */
+.true-false-block .btn.is-right,
+.true-false-block .btn.is-right:disabled {
+  background: var(--good-bg);
+  color: var(--good);
+  opacity: 1;
+}
+
+.true-false-block .btn.is-wrong,
+.true-false-block .btn.is-wrong:disabled {
+  background: var(--bad-bg);
+  color: var(--bad);
+  text-decoration: line-through;
+  opacity: 1;
+}
+
+/* ... and the correct answer they didn't pick. */
+.true-false-block .btn.is-answer:disabled {
+  border-style: dashed;
+  border-color: var(--good);
+  color: var(--good);
+  opacity: 1;
+}
+
+.true-false-block__score {
+  margin: 16px 0 0;
+  font-weight: 800;
+}

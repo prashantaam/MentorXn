@@ -189,6 +189,37 @@ class MCQQuizBlockSeeder extends Seeder
 
                         /*
                          * =========================
+                         * More Than One Correct
+                         * =========================
+                         *
+                         * When on, the answer builder
+                         * uses checkboxes and students
+                         * "select all that apply".
+                         * =========================
+                         */
+
+                        [
+                            'name' =>
+                                'multiple_answers',
+
+                            'label' =>
+                                'More than one correct answer',
+
+                            'type' =>
+                                'boolean',
+
+                            'required' =>
+                                false,
+
+                            'default' =>
+                                false,
+
+                            'help' =>
+                                'Students select all that apply, then press Check answer.',
+                        ],
+
+                        /*
+                         * =========================
                          * Answers
                          * =========================
                          *
@@ -201,7 +232,11 @@ class MCQQuizBlockSeeder extends Seeder
                          * - adding answers
                          * - removing answers
                          * - selecting the correct
-                         *   answer
+                         *   answer(s)
+                         *
+                         * multiple_from: the sibling
+                         * field that switches it to
+                         * several correct answers.
                          * =========================
                          */
 
@@ -221,11 +256,14 @@ class MCQQuizBlockSeeder extends Seeder
                             'min_items' =>
                                 2,
 
+                            'multiple_from' =>
+                                'multiple_answers',
+
                             'placeholder' =>
                                 'Type an answer...',
 
                             'help' =>
-                                'Add the possible answers, then select the correct answer.',
+                                'Add the possible answers, then select the correct answer(s).',
                         ],
 
                         /*

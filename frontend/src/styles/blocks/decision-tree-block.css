@@ -1,0 +1,88 @@
+/* =========================================================
+   Decision tree block (DecisionTreeBlock.jsx)
+   Same look as the Block Library's branching scenario.
+   .panel, .chip(s), .tag, .row and .btn come from adventure-land.css.
+   ========================================================= */
+
+.decision-tree-block__trail {
+  margin: 4px 0 8px;
+  line-height: 2;
+  font-size: 0.9rem;
+}
+
+.decision-tree-block__trail .tag {
+  font-weight: 700;
+}
+
+.decision-tree-block__node {
+  margin-top: 8px;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+  animation: pop 0.2s;
+}
+
+/* Endings get the outcome colour. */
+.decision-tree-block__node.is-ending {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.decision-tree-block__node.is-good {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.decision-tree-block__node.is-bad {
+  background: var(--bad-bg);
+  color: var(--bad);
+}
+
+.decision-tree-block__node.is-neutral {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.decision-tree-block__badge {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.decision-tree-block__choices {
+  margin-top: 12px;
+}
+
+.decision-tree-block .chip {
+  padding: 6px 16px;
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+}
+
+.decision-tree-block .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* A choice that points at a step key that doesn't exist. */
+.decision-tree-block__broken {
+  padding: 3px 10px;
+  background: #ffe1e1;
+  color: #8a1010;
+  border: 2px dashed #c62828;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decision-tree-block__node {
+    animation: none;
+  }
+}

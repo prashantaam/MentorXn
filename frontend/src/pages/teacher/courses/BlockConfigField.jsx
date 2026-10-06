@@ -351,6 +351,19 @@ function BlockConfigField({
 
 
 
+    /*
+     * Several correct answers when the sibling field
+     * named by multiple_from is on (e.g. multiple_answers).
+     */
+    const allowMultipleCorrect =
+      Boolean(field.multiple_from) &&
+      [true, 1, "1", "true"].includes(
+        siblingValues?.[field.multiple_from]
+      );
+
+    const correctCount =
+      answers.filter((answer) => Boolean(answer.correct)).length;
+
 
 
     const handleAddAnswer =
@@ -457,11 +470,12 @@ function BlockConfigField({
 
 
 
-            correct:
-
-              index ===
-
-              selectedIndex,
+            correct: allowMultipleCorrect
+              ? index === selectedIndex
+                ? !answer.correct
+                : Boolean(answer.correct)
+              : index ===
+                selectedIndex,
 
           })
 
@@ -705,13 +719,15 @@ function BlockConfigField({
 
                       <input
 
-                        type="radio"
+                        type={allowMultipleCorrect ? "checkbox" : "radio"}
 
                         name={
 
                           `correct-answer-${field.name}`
 
                         }
+
+                        aria-label={`${answer.text} is correct`}
 
                         checked={
 
@@ -831,14 +847,24 @@ function BlockConfigField({
 
               <p className="course-playground-answer-hint">
 
-                Select the correct
-
-                answer using the
-
-                radio button.
+                {allowMultipleCorrect
+                  ? "Tick every correct answer."
+                  : "Select the correct answer using the radio button."}
 
               </p>
 
+            )}
+
+
+
+          {!allowMultipleCorrect &&
+            field.multiple_from &&
+            correctCount > 1 && (
+              <p className="course-playground-answer-hint">
+                More than one answer is marked correct. Turn on
+                the "more than one correct answer" setting, or
+                pick a single correct answer.
+              </p>
             )}
 
         </div>

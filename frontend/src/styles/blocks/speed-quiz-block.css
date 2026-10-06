@@ -1,0 +1,96 @@
+/* =========================================================
+   Timed / speed quiz block (SpeedQuizBlock.jsx)
+   Same look as the Block Library's timed quiz.
+   .tag, .opt, .row, .btn, .panel and .fb come from adventure-land.css.
+   ========================================================= */
+
+.speed-quiz-block__intro p,
+.speed-quiz-block__result p {
+  margin: 0 0 10px;
+}
+
+.speed-quiz-block__score {
+  font-size: 1.2rem;
+}
+
+.speed-quiz-block__status {
+  flex-wrap: nowrap;
+}
+
+.speed-quiz-block__timer {
+  flex: none;
+  min-width: 4.2em;
+  padding: 2px 10px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.speed-quiz-block__timer.is-low {
+  background: var(--bad-bg);
+  color: var(--bad);
+  animation: shake 0.3s;
+}
+
+/* Countdown bar (the library's striped progress bar). */
+.speed-quiz-block__bar {
+  flex: 1;
+  height: 14px;
+  overflow: hidden;
+
+  background: var(--surface2);
+  border: 2.5px solid var(--ink);
+  border-radius: 99px;
+}
+
+.speed-quiz-block__bar i {
+  display: block;
+  height: 100%;
+  background: repeating-linear-gradient(45deg, #ffd84d 0 10px, #ffc21a 10px 20px);
+  transition: width 0.2s linear;
+}
+
+.speed-quiz-block__prompt {
+  margin: 10px 0 8px;
+  font-size: 1.05rem;
+}
+
+.speed-quiz-block__prompt b {
+  font-weight: 800;
+}
+
+.speed-quiz-block__options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.speed-quiz-block .opt {
+  width: 100%;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+}
+
+.speed-quiz-block .opt:disabled:not(.right):not(.wrong) {
+  opacity: 0.55;
+}
+
+/* The right answer the student didn't pick. */
+.speed-quiz-block .opt.is-answer {
+  border-style: dashed;
+}
+
+.speed-quiz-block .opt:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speed-quiz-block__bar i {
+    transition: none;
+  }
+
+  .speed-quiz-block__timer.is-low {
+    animation: none;
+  }
+}

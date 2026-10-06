@@ -1,0 +1,82 @@
+/* =========================================================
+   Clickable hierarchy block (HierarchyBlock.jsx)
+   Same look as the Block Library's clickable hierarchy.
+   .panel comes from adventure-land.css.
+   ========================================================= */
+
+.hierarchy-block__levels {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each level sits a little further in than the one above. */
+.hierarchy-block--indent .hierarchy-block__levels > li {
+  margin-left: min(calc(var(--depth, 0) * 22px), 45%);
+}
+
+.hierarchy-block .lyr {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  padding: 8px 12px;
+
+  background: var(--surface2);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.hierarchy-block .lyr:hover {
+  transform: translateX(3px);
+}
+
+.hierarchy-block .lyr:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.hierarchy-block .lyr.on {
+  background: var(--w);
+  color: var(--on-w);
+  box-shadow: 3px 3px 0 var(--shadow-c);
+}
+
+.hierarchy-block .lyr .num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+
+  font-family: Fredoka, sans-serif;
+  font-weight: 700;
+}
+
+.hierarchy-block .lyr b {
+  min-width: 0;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hierarchy-block .lyr {
+    transition: none;
+  }
+
+  .hierarchy-block .lyr:hover {
+    transform: none;
+  }
+}

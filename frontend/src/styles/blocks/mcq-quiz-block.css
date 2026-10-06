@@ -174,6 +174,56 @@
 
 
 /* =========================================================
+   Select All That Apply
+   ========================================================= */
+
+.quiz-block
+  .quiz-block-multi-hint {
+  margin: 4px 0 10px;
+
+  color: var(--muted);
+
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+/* Picked but not checked yet. */
+.quiz-block
+  .quiz-block-option.is-picked {
+  background: var(--w);
+
+  color: var(--on-w);
+
+  box-shadow:
+    2px 2px 0
+    var(--shadow-c);
+}
+
+.quiz-block
+  .quiz-block-option-box {
+  flex: none;
+
+  margin-right: 10px;
+
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.quiz-block
+  .quiz-block-navigation--check {
+  justify-content: flex-start;
+}
+
+.quiz-block
+  .quiz-block-navigation--check
+  .block-button:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
    Disabled Answer
    ========================================================= */
 

@@ -1,0 +1,81 @@
+/* =========================================================
+   Fill in the blanks block (FillBlanksBlock.jsx)
+   .row, .btn, .panel and .fb come from adventure-land.css.
+   ========================================================= */
+
+.fill-blanks-block__item + .fill-blanks-block__item {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+/* Blanks inside the sentence. */
+.fill-blanks-block__sentence {
+  margin: 4px 0 6px;
+  font-size: 1.05rem;
+  line-height: 2.2;
+}
+
+.fill-blanks-block__question {
+  margin: 4px 0 8px;
+  font-weight: 800;
+}
+
+.fill-blanks-block .fill-blanks-block__input {
+  max-width: 100%;
+  margin: 0 3px;
+  padding: 2px 8px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+  border-bottom-width: 3.5px;
+  border-radius: 8px;
+
+  font: inherit;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* A question's own answer box. */
+.fill-blanks-block .fill-blanks-block__input.is-wide {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 0;
+  padding: 7px 12px;
+  text-align: left;
+}
+
+.fill-blanks-block .fill-blanks-block__input:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.fill-blanks-block .fill-blanks-block__input.is-right {
+  background: var(--good-bg);
+  color: var(--good);
+  border-color: var(--good);
+}
+
+.fill-blanks-block .fill-blanks-block__input.is-wrong {
+  background: var(--bad-bg);
+  color: var(--bad);
+  border-color: var(--bad);
+  animation: shake 0.3s;
+}
+
+.fill-blanks-block__answer {
+  margin-top: 8px;
+}
+
+.fill-blanks-block__summary {
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill-blanks-block .fill-blanks-block__input.is-wrong {
+    animation: none;
+  }
+}

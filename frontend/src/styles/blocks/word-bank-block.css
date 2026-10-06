@@ -1,0 +1,73 @@
+/* =========================================================
+   Word bank block (WordBankBlock.jsx)
+   Same look as the Block Library's word bank.
+   .tag, .chip(s), .row, .btn and .fb come from adventure-land.css.
+   ========================================================= */
+
+.word-bank-block__sentence {
+  font-size: 1.1rem;
+  line-height: 2;
+}
+
+.word-bank-block .word-bank-block__blank {
+  min-width: 3.5em;
+  margin: 0 2px;
+
+  background: var(--w);
+  color: var(--on-w);
+
+  font: inherit;
+  font-size: 1em;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+  cursor: pointer;
+}
+
+.word-bank-block .word-bank-block__blank.is-empty {
+  background: var(--surface2);
+  color: var(--muted);
+  border-style: dashed;
+  cursor: default;
+}
+
+/* After Check: right / wrong. */
+.word-bank-block .word-bank-block__blank.good {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.word-bank-block .word-bank-block__blank.bad {
+  background: var(--bad-bg);
+  color: var(--bad);
+  animation: shake 0.3s;
+}
+
+.word-bank-block .chip {
+  font: inherit;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* A chip already placed in a blank. */
+.word-bank-block .chip.on {
+  opacity: 0.35;
+  box-shadow: none;
+  cursor: default;
+}
+
+.word-bank-block .chip:disabled:not(.on) {
+  cursor: default;
+}
+
+.word-bank-block .word-bank-block__blank:focus-visible,
+.word-bank-block .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-bank-block .word-bank-block__blank.bad {
+    animation: none;
+  }
+}

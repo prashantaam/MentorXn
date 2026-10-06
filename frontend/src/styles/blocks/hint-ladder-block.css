@@ -1,0 +1,67 @@
+/* =========================================================
+   Progressive hint ladder block (HintLadderBlock.jsx)
+   Same look as the Block Library's hint ladder.
+   .row, .btn, .panel and .fb come from adventure-land.css.
+   ========================================================= */
+
+.hint-ladder-block__question {
+  margin: 4px 0 10px;
+  font-size: 1.05rem;
+}
+
+.hint-ladder-block__question b {
+  font-weight: 800;
+}
+
+/* One rung per hint; used rungs fill with the highlight colour. */
+.hint-ladder-block__rungs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.hint-ladder-block__rungs span {
+  flex: 1;
+  max-width: 56px;
+  height: 10px;
+
+  background: var(--surface2);
+  border: 2px solid var(--ink);
+  border-radius: 99px;
+}
+
+.hint-ladder-block__rungs span.is-used {
+  background: var(--w);
+}
+
+.hint-ladder-block__hints {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hint-ladder-block__hint {
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  animation: pop 0.2s;
+}
+
+.hint-ladder-block__answer {
+  margin-top: 10px;
+}
+
+.hint-ladder-block__count {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.hint-ladder-block .btn:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint-ladder-block__hint {
+    animation: none;
+  }
+}
