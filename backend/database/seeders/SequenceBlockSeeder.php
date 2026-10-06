@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class SequenceBlockSeeder extends Seeder
@@ -16,13 +16,13 @@ class SequenceBlockSeeder extends Seeder
          * This prevents duplicate templates.
          */
 
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where('component', 'SequenceBlock')
             ->orWhere('name', 'Sequence')
             ->first();
 
         if (!$template) {
-            $template = new LBlockTemplate();
+            $template = new BlockTemplate();
         }
 
         /*

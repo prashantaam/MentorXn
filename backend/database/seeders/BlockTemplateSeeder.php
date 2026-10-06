@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
-class LBlockTemplateSeeder extends Seeder
+class BlockTemplateSeeder extends Seeder
 {
     public function run(): void
     {
@@ -15,7 +15,7 @@ class LBlockTemplateSeeder extends Seeder
          * =========================================
          */
 
-        LBlockTemplate::updateOrCreate(
+        BlockTemplate::updateOrCreate(
             [
                 'type' => 'content',
             ],
@@ -58,7 +58,7 @@ class LBlockTemplateSeeder extends Seeder
          * =========================================
          */
 
-        LBlockTemplate::updateOrCreate(
+        BlockTemplate::updateOrCreate(
             [
                 'type' => 'quiz',
             ],
@@ -125,7 +125,7 @@ class LBlockTemplateSeeder extends Seeder
          * =========================================
          */
 
-        LBlockTemplate::updateOrCreate(
+        BlockTemplate::updateOrCreate(
             [
                 'type' =>
                     'practice_terminal',

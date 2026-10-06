@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class KeyTerminologyBlockSeeder extends Seeder
@@ -12,7 +12,7 @@ class KeyTerminologyBlockSeeder extends Seeder
      */
     public function run(): void
     {
-        LBlockTemplate::updateOrCreate(
+        BlockTemplate::updateOrCreate(
             [
                 'name' => 'Key Terminology',
                 'component' => 'FlipCardsBlock',

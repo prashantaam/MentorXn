@@ -340,7 +340,7 @@ function VisualBlockEditorPage() {
 
           const templatesResponse =
             await fetch(
-              "/api/teacher/lblock-templates",
+              "/api/teacher/block-templates",
               {
                 headers:
                   getHeaders(),
@@ -360,7 +360,7 @@ function VisualBlockEditorPage() {
           }
 
           const loadedTemplates =
-            templatesData.lblock_templates ||
+            templatesData.block_templates ||
             [];
 
           setTemplates(
@@ -443,9 +443,9 @@ function VisualBlockEditorPage() {
 
           const templateId =
             learningBlock
-              .lblock_template_id ??
+              .block_template_id ??
             learningBlock
-              .lblock_template
+              .block_template
               ?.id;
 
           const matchingTemplate =
@@ -590,7 +590,7 @@ function VisualBlockEditorPage() {
           existingBlock?.status ||
           "draft",
 
-        lblock_template:
+        block_template:
           selectedTemplate,
       };
     }, [
@@ -720,7 +720,7 @@ function VisualBlockEditorPage() {
     };
 
     /*
-     * lblock_template_id is required only
+     * block_template_id is required only
      * when creating.
      *
      * The backend intentionally does not
@@ -728,7 +728,7 @@ function VisualBlockEditorPage() {
      */
 
     if (!isEditMode) {
-      requestBody.lblock_template_id =
+      requestBody.block_template_id =
         selectedTemplate.id;
     }
 

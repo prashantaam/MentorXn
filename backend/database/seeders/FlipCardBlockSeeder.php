@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class FlipCardBlockSeeder extends Seeder
@@ -12,7 +12,7 @@ class FlipCardBlockSeeder extends Seeder
      */
     public function run(): void
     {
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where(
                 'component',
                 'FlipCardBlock'
@@ -269,7 +269,7 @@ class FlipCardBlockSeeder extends Seeder
          * =========================================
          */
 
-        LBlockTemplate::create([
+        BlockTemplate::create([
             'name' =>
                 'Flip Cards',
 

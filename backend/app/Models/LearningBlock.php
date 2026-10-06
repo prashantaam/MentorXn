@@ -12,7 +12,7 @@ class LearningBlock extends Model
 
     protected $fillable = [
         'topic_id',
-        'lblock_template_id',
+        'block_template_id',
         'title',
         'icon',
         'data',
@@ -35,11 +35,11 @@ class LearningBlock extends Model
         );
     }
 
-    public function lblockTemplate(): BelongsTo
+    public function blockTemplate(): BelongsTo
     {
         return $this->belongsTo(
-            LBlockTemplate::class,
-            'lblock_template_id'
+            BlockTemplate::class,
+            'block_template_id'
         );
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class ProcessFlowBlockSeeder extends Seeder
@@ -12,7 +12,7 @@ class ProcessFlowBlockSeeder extends Seeder
      */
     public function run(): void
     {
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where(
                 'component',
                 'ProcessFlowBlock'
@@ -358,7 +358,7 @@ class ProcessFlowBlockSeeder extends Seeder
          * =========================================
          */
 
-        LBlockTemplate::create([
+        BlockTemplate::create([
             'name' =>
                 'Process Flow',
 

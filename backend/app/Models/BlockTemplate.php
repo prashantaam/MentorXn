@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class LBlockTemplate extends Model
+class BlockTemplate extends Model
 {
-    protected $table = 'lblock_templates';
+    protected $table = 'block_templates';
 
     protected $fillable = [
         'name',
@@ -38,7 +38,7 @@ class LBlockTemplate extends Model
     {
         return $this->hasMany(
             LearningBlock::class,
-            'lblock_template_id'
+            'block_template_id'
         );
     }
 }

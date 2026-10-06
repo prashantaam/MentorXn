@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class MCQQuizBlockSeeder extends Seeder
@@ -23,7 +23,7 @@ class MCQQuizBlockSeeder extends Seeder
          * =========================================
          */
 
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where(
                 'component',
                 'MCQQuizBlock'
@@ -646,7 +646,7 @@ class MCQQuizBlockSeeder extends Seeder
             return;
         }
 
-        LBlockTemplate::create(
+        BlockTemplate::create(
             $templateData
         );
     }

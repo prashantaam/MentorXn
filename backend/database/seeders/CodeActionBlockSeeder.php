@@ -6,7 +6,7 @@ namespace Database\Seeders;
 
 
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 
 
 
@@ -30,7 +30,7 @@ class CodeActionBlockSeeder extends Seeder
 
 
 
-$template = LBlockTemplate::query()
+$template = BlockTemplate::query()
 
 
 
@@ -78,7 +78,7 @@ $template = LBlockTemplate::query()
 
 
 
-                new LBlockTemplate();
+                new BlockTemplate();
 
 
 

@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\Teacher\CourseController;
 use App\Http\Controllers\Api\Teacher\LessonController;
 use App\Http\Controllers\Api\Teacher\TopicController;
 use App\Http\Controllers\Api\Teacher\LearningBlockController;
-use App\Http\Controllers\Api\Teacher\LBlockTemplateController;
+use App\Http\Controllers\Api\Teacher\BlockTemplateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -194,28 +194,28 @@ Route::middleware('auth:sanctum')->group(function () {
         */
 
         Route::get(
-            '/lblock-templates',
-            [LBlockTemplateController::class, 'index']
+            '/block-templates',
+            [BlockTemplateController::class, 'index']
         );
 
         Route::post(
-            '/lblock-templates',
-            [LBlockTemplateController::class, 'store']
+            '/block-templates',
+            [BlockTemplateController::class, 'store']
         );
 
         Route::get(
-            '/lblock-templates/{lblockTemplate}',
-            [LBlockTemplateController::class, 'show']
+            '/block-templates/{blockTemplate}',
+            [BlockTemplateController::class, 'show']
         );
 
         Route::put(
-            '/lblock-templates/{lblockTemplate}',
-            [LBlockTemplateController::class, 'update']
+            '/block-templates/{blockTemplate}',
+            [BlockTemplateController::class, 'update']
         );
 
         Route::delete(
-            '/lblock-templates/{lblockTemplate}',
-            [LBlockTemplateController::class, 'destroy']
+            '/block-templates/{blockTemplate}',
+            [BlockTemplateController::class, 'destroy']
         );
     });
 });

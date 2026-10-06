@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class BigIdeasBlockSeeder extends Seeder
@@ -19,7 +19,7 @@ class BigIdeasBlockSeeder extends Seeder
          * =====================================================
          */
 
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where('component', 'ChipSelectorBlock')
             ->orWhere('name', 'Four Big Ideas')
             ->first();
@@ -30,7 +30,7 @@ class BigIdeasBlockSeeder extends Seeder
          */
 
         if (!$template) {
-            $template = LBlockTemplate::query()
+            $template = BlockTemplate::query()
                 ->where('component', 'BigIdeasBlock')
                 ->orWhere('name', 'Big Ideas')
                 ->first();
@@ -41,7 +41,7 @@ class BigIdeasBlockSeeder extends Seeder
          */
 
         if (!$template) {
-            $template = new LBlockTemplate();
+            $template = new BlockTemplate();
         }
 
         /*

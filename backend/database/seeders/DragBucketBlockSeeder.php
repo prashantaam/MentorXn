@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class DragBucketBlockSeeder extends Seeder
@@ -18,7 +18,7 @@ class DragBucketBlockSeeder extends Seeder
          * =========================================
          */
 
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where('component', 'DragBucketBlock')
             ->orWhere('name', 'Drag Into Buckets')
             ->first();
@@ -337,7 +337,7 @@ class DragBucketBlockSeeder extends Seeder
             return;
         }
 
-        LBlockTemplate::create(
+        BlockTemplate::create(
             $templateData
         );
     }

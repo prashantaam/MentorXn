@@ -40,7 +40,7 @@ function LearningBlockRenderer({
 
   const componentName =
     block
-      ?.lblock_template
+      ?.block_template
       ?.component;
 
 

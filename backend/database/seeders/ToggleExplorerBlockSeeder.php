@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class ToggleExplorerBlockSeeder extends Seeder
@@ -12,7 +12,7 @@ class ToggleExplorerBlockSeeder extends Seeder
      */
     public function run(): void
     {
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where(
                 'component',
                 'ToggleExplorerBlock'
@@ -335,7 +335,7 @@ class ToggleExplorerBlockSeeder extends Seeder
          * =========================================
          */
 
-        LBlockTemplate::create([
+        BlockTemplate::create([
             'name' =>
                 'Toggle Explorer',
 

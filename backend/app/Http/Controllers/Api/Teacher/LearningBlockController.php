@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use App\Models\LearningBlock;
 use App\Models\Topic;
 use Illuminate\Http\JsonResponse;
@@ -38,7 +38,7 @@ class LearningBlockController extends Controller
 
         $learningBlocks = $topic
             ->learningBlocks()
-            ->with('lblockTemplate')
+            ->with('blockTemplate')
             ->orderBy('position')
             ->get();
 
@@ -75,7 +75,7 @@ class LearningBlockController extends Controller
          */
         $learningBlock->loadMissing(
             'topic.lesson.course',
-            'lblockTemplate'
+            'blockTemplate'
         );
 
         /*
@@ -130,10 +130,10 @@ class LearningBlockController extends Controller
         }
 
         $validated = $request->validate([
-            'lblock_template_id' => [
+            'block_template_id' => [
                 'required',
                 'integer',
-                'exists:lblock_templates,id',
+                'exists:block_templates,id',
             ],
             'title' => [
                 'nullable',
@@ -158,10 +158,10 @@ class LearningBlockController extends Controller
             ],
         ]);
 
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where(
                 'id',
-                $validated['lblock_template_id']
+                $validated['block_template_id']
             )
             ->where('status', 'active')
             ->first();
@@ -196,7 +196,7 @@ class LearningBlockController extends Controller
         $learningBlock = $topic
             ->learningBlocks()
             ->create([
-                'lblock_template_id' =>
+                'block_template_id' =>
                     $template->id,
                 'title' =>
                     $validated['title']
@@ -213,7 +213,7 @@ class LearningBlockController extends Controller
             ]);
 
         $learningBlock->load(
-            'lblockTemplate'
+            'blockTemplate'
         );
 
         return response()->json([
@@ -245,7 +245,7 @@ class LearningBlockController extends Controller
 
         $learningBlock->loadMissing(
             'topic.lesson.course',
-            'lblockTemplate'
+            'blockTemplate'
         );
 
         if (
@@ -289,7 +289,7 @@ class LearningBlockController extends Controller
         ]);
 
         $template =
-            $learningBlock->lblockTemplate;
+            $learningBlock->blockTemplate;
 
         if (
             !$template ||
@@ -327,7 +327,7 @@ class LearningBlockController extends Controller
         ]);
 
         $learningBlock->load(
-            'lblockTemplate'
+            'blockTemplate'
         );
 
         return response()->json([
@@ -404,7 +404,7 @@ public function reorder(
 
     $learningBlocks = $topic
         ->learningBlocks()
-        ->with('lblockTemplate')
+        ->with('blockTemplate')
         ->orderBy('position')
         ->get();
 
@@ -463,7 +463,7 @@ public function reorder(
      * by the selected template.
      */
     private function validateTemplateData(
-        LBlockTemplate $template,
+        BlockTemplate $template,
         array $data
     ): ?string {
         $schema =

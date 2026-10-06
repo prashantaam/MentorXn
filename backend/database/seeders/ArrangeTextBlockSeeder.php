@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class ArrangeTextBlockSeeder extends Seeder
@@ -12,7 +12,7 @@ class ArrangeTextBlockSeeder extends Seeder
      */
     public function run(): void
     {
-        $template = LBlockTemplate::query()
+        $template = BlockTemplate::query()
             ->where('component', 'ArrangeTextBlock')
             ->orWhere('name', 'Arrange Text')
             ->first();
@@ -165,6 +165,6 @@ class ArrangeTextBlockSeeder extends Seeder
             return;
         }
 
-        LBlockTemplate::create($templateData);
+        BlockTemplate::create($templateData);
     }
 }

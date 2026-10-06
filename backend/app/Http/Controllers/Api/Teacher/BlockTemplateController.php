@@ -3,26 +3,26 @@
 namespace App\Http\Controllers\Api\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class LBlockTemplateController extends Controller
+class BlockTemplateController extends Controller
 {
     /**
      * Return all active learning block templates.
      */
     public function index(): JsonResponse
     {
-        $templates = LBlockTemplate::query()
+        $templates = BlockTemplate::query()
             ->where('status', 'active')
             ->orderBy('position')
             ->orderBy('name')
             ->get();
 
         return response()->json([
-            'lblock_templates' => $templates,
+            'block_templates' => $templates,
         ]);
     }
 
@@ -30,10 +30,10 @@ class LBlockTemplateController extends Controller
      * Return one learning block template.
      */
     public function show(
-        LBlockTemplate $lblockTemplate
+        BlockTemplate $blockTemplate
     ): JsonResponse {
         return response()->json([
-            'lblock_template' => $lblockTemplate,
+            'block_template' => $blockTemplate,
         ]);
     }
 
@@ -139,7 +139,7 @@ class LBlockTemplateController extends Controller
             ],
         ]);
 
-        $template = LBlockTemplate::create([
+        $template = BlockTemplate::create([
             'name' =>
                 $validated['name'],
 
@@ -178,7 +178,7 @@ class LBlockTemplateController extends Controller
             'message' =>
                 'Learning block template created successfully.',
 
-            'lblock_template' =>
+            'block_template' =>
                 $template,
         ], 201);
     }
@@ -188,7 +188,7 @@ class LBlockTemplateController extends Controller
      */
     public function update(
         Request $request,
-        LBlockTemplate $lblockTemplate
+        BlockTemplate $blockTemplate
     ): JsonResponse {
         $validated = $request->validate([
             'name' => [
@@ -278,7 +278,7 @@ class LBlockTemplateController extends Controller
                 );
         }
 
-        $lblockTemplate->update(
+        $blockTemplate->update(
             $validated
         );
 
@@ -286,8 +286,8 @@ class LBlockTemplateController extends Controller
             'message' =>
                 'Learning block template updated successfully.',
 
-            'lblock_template' =>
-                $lblockTemplate->fresh(),
+            'block_template' =>
+                $blockTemplate->fresh(),
         ]);
     }
 
@@ -295,12 +295,12 @@ class LBlockTemplateController extends Controller
      * Delete a learning block template.
      *
      * Existing course blocks are preserved because
-     * lblock_template_id uses nullOnDelete().
+     * block_template_id uses nullOnDelete().
      */
     public function destroy(
-        LBlockTemplate $lblockTemplate
+        BlockTemplate $blockTemplate
     ): JsonResponse {
-        $lblockTemplate->delete();
+        $blockTemplate->delete();
 
         return response()->json([
             'message' =>

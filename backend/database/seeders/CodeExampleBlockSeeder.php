@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use App\Models\LBlockTemplate;
+use App\Models\BlockTemplate;
 use Illuminate\Database\Seeder;
 
 class CodeExampleBlockSeeder extends Seeder
 {
     public function run(): void
     {
-        LBlockTemplate::updateOrCreate(
+        BlockTemplate::updateOrCreate(
             [
                 'name' => 'Coding Example',
                 'component' => 'CodeExampleBlock',
