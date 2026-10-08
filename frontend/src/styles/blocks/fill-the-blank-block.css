@@ -1,0 +1,173 @@
+/* =========================================================
+   Fill the blank block (FillTheBlankBlock.jsx, was "Word bank")
+   Same look as the Block Library's word bank.
+   .tag, .chip(s), .row, .btn and .fb come from adventure-land.css.
+   ========================================================= */
+
+.fill-the-blank-block__sentence {
+  font-size: 1.1rem;
+  line-height: 2;
+}
+
+.fill-the-blank-block .fill-the-blank-block__blank {
+  min-width: 3.5em;
+  margin: 0 2px;
+
+  background: var(--w);
+  color: var(--on-w);
+
+  font: inherit;
+  font-size: 1em;
+  font-weight: 800;
+  line-height: 1.5;
+  text-align: center;
+  cursor: pointer;
+}
+
+.fill-the-blank-block .fill-the-blank-block__blank.is-empty {
+  background: var(--surface2);
+  color: var(--muted);
+  border-style: dashed;
+  cursor: default;
+}
+
+/* After Check: right / wrong. */
+.fill-the-blank-block .fill-the-blank-block__blank.good {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.fill-the-blank-block .fill-the-blank-block__blank.bad {
+  background: var(--bad-bg);
+  color: var(--bad);
+  animation: shake 0.3s;
+}
+
+.fill-the-blank-block .chip {
+  font: inherit;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* A chip already placed in a blank. */
+.fill-the-blank-block .chip.on {
+  opacity: 0.35;
+  box-shadow: none;
+  cursor: default;
+}
+
+.fill-the-blank-block .chip:disabled:not(.on) {
+  cursor: default;
+}
+
+.fill-the-blank-block .fill-the-blank-block__blank:focus-visible,
+.fill-the-blank-block .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* ---------- dark box (Word Quest's "Pick the correct form") ---------- */
+
+.fill-the-blank-block .fill-the-blank-block__sentence--dark {
+  margin: 4px 0 12px;
+  padding: 12px 16px;
+
+  /* readable sentence text, not code */
+  font: 17px/2.1 Nunito, "Segoe UI", system-ui, sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* **bold** words in yellow, like Word Quest */
+.fill-the-blank-block .fill-the-blank-block__sentence--dark strong {
+  color: #ffd84d;
+  font-weight: 800;
+}
+
+.fill-the-blank-block .fill-the-blank-block__sentence--dark .fill-the-blank-block__blank {
+  border-color: #eef0ea;
+}
+
+.fill-the-blank-block .fill-the-blank-block__sentence--dark .fill-the-blank-block__blank.is-empty {
+  background: transparent;
+  color: #8a8f86;
+  border-color: #8a8f86;
+}
+
+/* ---------- several sentences ---------- */
+
+.fill-the-blank-block .fill-the-blank-block__progress {
+  margin-bottom: 6px;
+}
+
+.fill-the-blank-block__done {
+  padding: 18px;
+  background: var(--good-bg);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.fill-the-blank-block__done p {
+  margin: 6px 0 14px;
+  font-weight: 700;
+}
+
+.fill-the-blank-block .fill-the-blank-block__blank:disabled {
+  cursor: default;
+}
+
+/* ---------- typed answers ---------- */
+
+.fill-the-blank-block .fill-the-blank-block__input {
+  min-width: 4em;
+  max-width: 100%;
+  padding: 0 6px;
+  background: var(--surface);
+  color: var(--text);
+  border-style: dashed;
+  cursor: text;
+}
+
+.fill-the-blank-block .fill-the-blank-block__input:focus {
+  border-style: solid;
+  outline: 3px solid #ff4fa3;
+  outline-offset: 1px;
+}
+
+.fill-the-blank-block .fill-the-blank-block__sentence--dark .fill-the-blank-block__input:not(.good):not(.bad) {
+  background: #262626;
+  color: #eef0ea;
+  border-color: #8a8f86;
+}
+
+/* ---------- all at once ---------- */
+
+.fill-the-blank-block__list {
+  display: grid;
+  gap: 14px;
+}
+
+.fill-the-blank-block__item--listed {
+  padding-bottom: 14px;
+  border-bottom: 2px dashed color-mix(in srgb, var(--ink) 25%, transparent);
+}
+
+.fill-the-blank-block__item--listed .fill-the-blank-block__sentence {
+  margin: 0 0 6px;
+}
+
+.fill-the-blank-block__item--listed .chips {
+  margin: 4px 0;
+}
+
+.fill-the-blank-block__number {
+  margin-right: 6px;
+  font-weight: 900;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill-the-blank-block .fill-the-blank-block__blank.bad {
+    animation: none;
+  }
+}

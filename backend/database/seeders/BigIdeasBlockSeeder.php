@@ -178,6 +178,20 @@ class BigIdeasBlockSeeder extends Seeder
                 ],
 
                 /*
+                 * Start with the first idea selected, so its
+                 * example / explanation shows straight away.
+                 */
+
+                [
+                    'name' => 'open_first',
+                    'label' => 'Open the first idea by default',
+                    'type' => 'boolean',
+                    'required' => false,
+                    'default' => false,
+                    'help' => 'Cards and Buttons: the first idea starts selected, so its example and explanation show straight away.',
+                ],
+
+                /*
                  * Unlimited ideas
                  *
                  * The nth rendered element matching selector
@@ -211,6 +225,21 @@ class BigIdeasBlockSeeder extends Seeder
                             'label' => 'Title',
                             'type' => 'text',
                             'required' => true,
+                        ],
+
+                        /*
+                         * Optional example in a dark box (Word Quest
+                         * style). **word** is highlighted in bold
+                         * yellow; the explanation shows below it.
+                         */
+                        [
+                            'name' => 'example',
+                            'label' => 'Example (optional)',
+                            'type' => 'textarea',
+                            'rows' => 2,
+                            'required' => false,
+                            'placeholder' => 'e.g. I **have visited** Paris three times.',
+                            'help' => 'Shown in a dark box above the explanation. Wrap words in **double stars** to make them bold and yellow.',
                         ],
 
                         [

@@ -1,0 +1,48 @@
+/* =========================================================
+   Step through an expression block (ExpressionStepperBlock.jsx)
+   Same look as Math Quest's "Step through an expression".
+   .chip(s), .row, .btn, .panel and .code / .ln.hit come from
+   adventure-land.css.
+   ========================================================= */
+
+.expression-stepper-block .chip {
+  font: inherit;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.expression-stepper-block .chip.on {
+  color: var(--on-w);
+}
+
+.expression-stepper-block .btn:focus-visible,
+.expression-stepper-block .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.expression-stepper-block__count {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.expression-stepper-block__out .code {
+  margin-top: 0;
+  font-size: 16px; /* Math Quest size; another stylesheet shrinks pre */
+  line-height: 1.65;
+}
+
+/* The newest line pops in. */
+.expression-stepper-block__out .code .ln.hit {
+  animation: pop 0.2s;
+}
+
+.expression-stepper-block__note {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expression-stepper-block__out .code .ln.hit {
+    animation: none;
+  }
+}

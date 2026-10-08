@@ -1,0 +1,59 @@
+/* =========================================================
+   Operators block (OperatorsBlock.jsx)
+   Same look as Code Quest's "Operators: math, comparison & logic".
+   .form, .row, .panel, .tag, .code and inputs come from
+   adventure-land.css.
+   ========================================================= */
+
+.operators-block__part + .operators-block__part {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.operators-block__part h3 {
+  margin-bottom: 2px;
+  font-size: 1.1rem;
+}
+
+.operators-block .form label {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-weight: 800;
+}
+
+.operators-block .form input[type="number"] {
+  width: 7em;
+}
+
+.operators-block .row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.operators-block input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #2f8f5b;
+}
+
+/* Code Quest's code panel size. */
+.operators-block .operators-block__code {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.operators-block .panel {
+  margin-top: 8px;
+}
+
+.operators-block input:focus-visible,
+.operators-block select:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}

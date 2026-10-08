@@ -1,0 +1,46 @@
+/* =========================================================
+   Variable Box block (VariableBoxBlock.jsx)
+   Same look as Code Quest's variables playground.
+   .form, .btn, .code, .fb, .shake, .row, .box and .big come
+   from adventure-land.css.
+   ========================================================= */
+
+.variable-box-block .form label {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-weight: 800;
+}
+
+.variable-box-block .form input {
+  width: 11em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.variable-box-block .btn {
+  font: inherit;
+  font-weight: 800;
+}
+
+.variable-box-block input:focus-visible,
+.variable-box-block .btn:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* Code Quest's code panel size. */
+.variable-box-block .variable-box-block__code {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.variable-box-block__shelf {
+  margin-top: 12px;
+}
+
+.variable-box-block__shelf .box b {
+  max-width: 12em;
+  overflow-wrap: anywhere;
+  text-align: center;
+}

@@ -120,10 +120,6 @@ function DraggableItem({
       {...attributes}
       {...listeners}
     >
-      <span className="drag-bucket-item-handle">
-        ⋮⋮
-      </span>
-
       <LearningText
         text={item.text}
       />
@@ -622,10 +618,6 @@ function DragBucketBlock({ block }) {
         <DragOverlay>
           {activeItem ? (
             <div className="drag-bucket-item drag-bucket-item--overlay">
-              <span className="drag-bucket-item-handle">
-                ⋮⋮
-              </span>
-
               <LearningText
                 text={
                   activeItem.text

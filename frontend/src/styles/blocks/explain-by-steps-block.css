@@ -1,16 +1,16 @@
 /* =========================================================
-   Explain step by step block (WorkedExampleBlock.jsx)
+   Explain step by step block (ExplainByStepsBlock.jsx)
    Same look as the Block Library's worked-example stepper.
    .row, .btn, .panel, .fb and code come from adventure-land.css.
    ========================================================= */
 
-.worked-example-block__problem {
+.explain-by-steps-block__problem {
   margin: 6px 0 4px;
   font-weight: 700;
 }
 
 /* The running "current state", e.g. 2 + 12 */
-.worked-example-block__state {
+.explain-by-steps-block__state {
   display: inline-block;
   padding: 2px 10px;
   font-size: 1.05em;
@@ -18,40 +18,40 @@
   overflow-wrap: anywhere;
 }
 
-.worked-example-block__count {
+.explain-by-steps-block__count {
   margin-left: auto;
   font-weight: 700;
 }
 
-.worked-example-block__steps {
+.explain-by-steps-block__steps {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.worked-example-block__step {
+.explain-by-steps-block__step {
   margin-top: 10px;
   overflow-wrap: anywhere;
   animation: pop 0.2s;
 }
 
 /* Keep a step's result together instead of breaking mid-expression. */
-.worked-example-block__step code {
+.explain-by-steps-block__step code {
   display: inline-block;
 }
 
-.worked-example-block__step.is-latest {
+.explain-by-steps-block__step.is-latest {
   border-style: solid;
   box-shadow: 3px 3px 0 var(--shadow-c);
 }
 
-.worked-example-block .btn[aria-disabled="true"] {
+.explain-by-steps-block .btn[aria-disabled="true"] {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .worked-example-block__step {
+  .explain-by-steps-block__step {
     animation: none;
   }
 }

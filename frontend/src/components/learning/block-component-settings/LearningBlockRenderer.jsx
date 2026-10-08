@@ -87,7 +87,7 @@ function LearningBlockRenderer({
    * block.data.messages
    *
    * without MCQQuizBlock, SequenceBlock,
-   * CodeActionBlock, etc. containing
+   * etc. containing
    * message-specific code.
    *
    * =========================================

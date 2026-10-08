@@ -13,7 +13,7 @@ import LearningText from "../shared/LearningText";
  * data.steps         = [{ action, state }]  (state = result after the step)
  * data.final_message = shown once the last step is revealed
  */
-function WorkedExampleBlock({ block }) {
+function ExplainByStepsBlock({ block }) {
   const data = block?.data || {};
   const steps = (Array.isArray(data.steps) ? data.steps : []).filter(
     (step) => String(step?.action ?? "").trim() || String(step?.state ?? "").trim()
@@ -46,11 +46,11 @@ function WorkedExampleBlock({ block }) {
       title={block?.title}
       icon={block?.icon}
       subtitle={data.subtitle}
-      className="worked-example-block"
+      className="explain-by-steps-block"
     >
-      <p className="worked-example-block__problem">
+      <p className="explain-by-steps-block__problem">
         {data.problem_label && <LearningText as="span" text={`${data.problem_label} `} />}
-        <code className="worked-example-block__state" aria-live="polite">
+        <code className="explain-by-steps-block__state" aria-live="polite">
           {currentState || "…"}
         </code>
       </p>
@@ -74,16 +74,16 @@ function WorkedExampleBlock({ block }) {
             >
               ↺ Restart
             </button>
-            <span className="hint worked-example-block__count">
+            <span className="hint explain-by-steps-block__count">
               {Math.max(shown + 1, 0)} / {steps.length}
             </span>
           </div>
 
-          <ol className="worked-example-block__steps" aria-live="polite">
+          <ol className="explain-by-steps-block__steps" aria-live="polite">
             {steps.slice(0, shown + 1).map((step, index) => (
               <li
                 key={index}
-                className={`panel worked-example-block__step${index === shown ? " is-latest" : ""}`}
+                className={`panel explain-by-steps-block__step${index === shown ? " is-latest" : ""}`}
                 data-visual-index={index}
               >
                 <strong>Step {index + 1}:</strong>{" "}
@@ -113,4 +113,4 @@ function WorkedExampleBlock({ block }) {
   );
 }
 
-export default WorkedExampleBlock;
+export default ExplainByStepsBlock;

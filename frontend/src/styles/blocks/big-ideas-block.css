@@ -293,6 +293,43 @@
 
 
 /* =========================================================
+   Example box (Word Quest style): a sentence in a dark box,
+   **highlighted** words in bold yellow; explanation below.
+   ========================================================= */
+
+.big-ideas-block
+  .big-ideas-example {
+  margin: 0 0 8px;
+  padding: 12px 14px;
+
+  /* readable sentence text, not code */
+  font: 17px/1.7 Nunito, "Segoe UI", system-ui, sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.big-ideas-block
+  .big-ideas-example
+  b.hlword {
+  color: #ffd84d; /* always yellow, like Word Quest */
+  font-weight: 800;
+}
+
+/* The explanation under an example box. */
+.big-ideas-block
+  .big-ideas-explanation {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.big-ideas-block
+  .big-ideas-info-card
+  .big-ideas-example {
+  margin-top: 8px;
+}
+
+
+/* =========================================================
    Responsive
    ========================================================= */
 

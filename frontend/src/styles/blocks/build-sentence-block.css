@@ -1,0 +1,233 @@
+/* =========================================================
+   Build a sentence block (BuildSentenceBlock.jsx)
+   Word Quest's sentence builder: .chips/.chip, .panel, .code,
+   .tag, .fb, .hint and .big come from adventure-land.css.
+   Each part of the sentence has its own colour (--role), used
+   on its row label, its word in the sentence and its badge.
+   ========================================================= */
+
+.build-sentence-block__role--0 { --role: #ffd84d; } /* yellow */
+.build-sentence-block__role--1 { --role: #5ee0ff; } /* cyan */
+.build-sentence-block__role--2 { --role: #ff8fc7; } /* pink */
+.build-sentence-block__role--3 { --role: #8ef08e; } /* green */
+.build-sentence-block__role--4 { --role: #ffb36b; } /* orange */
+.build-sentence-block__role--5 { --role: #c9a7ff; } /* violet */
+
+/* ---------- challenge prompt ---------- */
+
+.build-sentence-block__challenge {
+  margin-bottom: 10px;
+}
+
+.build-sentence-block__challenge p {
+  margin: 6px 0 0;
+  font-weight: 700;
+}
+
+.build-sentence-block .build-sentence-block__warning {
+  color: var(--bad);
+  font-size: 0.92rem;
+}
+
+/* ---------- rows of word choices ---------- */
+
+.build-sentence-block__parts {
+  display: grid;
+  gap: 4px;
+}
+
+.build-sentence-block__part {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 2px 8px;
+  border-left: 6px solid var(--role);
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.build-sentence-block__part .chips {
+  flex: 1;
+  margin: 6px 0;
+}
+
+.build-sentence-block__label {
+  min-width: 6.5em;
+  font-family: Fredoka, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.build-sentence-block__label small {
+  color: var(--muted);
+  font-family: Nunito, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.build-sentence-block .chip {
+  font: inherit;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.build-sentence-block .chip.on {
+  color: var(--on-w);
+}
+
+.build-sentence-block .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.build-sentence-block .chip:disabled {
+  cursor: default;
+}
+
+.build-sentence-block .chip:disabled:not(.on) {
+  opacity: 0.55;
+}
+
+.build-sentence-block__none {
+  border-style: dashed !important;
+  font-style: italic;
+}
+
+/* After Check. */
+.build-sentence-block__part.is-wrong {
+  background: var(--bad-bg);
+  border-left-color: var(--bad);
+  animation: shake 0.35s;
+}
+
+.build-sentence-block__part.is-wrong .chip.on {
+  background: var(--bad-bg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.build-sentence-block__part.is-right .chip.on {
+  background: var(--good-bg);
+  color: var(--good);
+  border-color: var(--good);
+}
+
+/* ---------- the sentence ---------- */
+
+.build-sentence-block__pattern {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+}
+
+.build-sentence-block__pattern-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.build-sentence-block__badge {
+  display: inline-block;
+  padding: 0 9px;
+  background: var(--role);
+  color: #141414;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Readable sentence text in the dark box, not code. */
+.build-sentence-block .build-sentence-block__sentence {
+  margin: 10px 0;
+  font: 19px/1.7 Nunito, "Segoe UI", system-ui, sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.build-sentence-block__word {
+  color: var(--role);
+  font-weight: 800;
+  border-bottom: 3px solid var(--role);
+  animation: pop 0.25s ease;
+}
+
+.build-sentence-block__placeholder {
+  color: #8a8f86;
+  font-style: italic;
+}
+
+.build-sentence-block__breakdown {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.build-sentence-block__breakdown li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+
+.build-sentence-block__description {
+  color: var(--muted);
+}
+
+.build-sentence-block .build-sentence-block__hint {
+  margin: 10px 0 0;
+}
+
+/* ---------- buttons, finish ---------- */
+
+.build-sentence-block__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.build-sentence-block__actions:empty {
+  display: none;
+}
+
+.build-sentence-block .block-button {
+  border-radius: 14px;
+}
+
+.build-sentence-block__done {
+  padding: 18px;
+  background: var(--good-bg);
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.build-sentence-block__done p {
+  margin: 6px 0 14px;
+  font-weight: 700;
+}
+
+@media (max-width: 560px) {
+  .build-sentence-block__label {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .build-sentence-block__part .chips {
+    margin-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .build-sentence-block__word,
+  .build-sentence-block__part.is-wrong {
+    animation: none;
+  }
+}

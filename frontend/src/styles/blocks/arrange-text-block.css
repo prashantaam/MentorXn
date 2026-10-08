@@ -1,37 +1,76 @@
+/* =========================================================
+   Arrange Text block (ArrangeTextBlock.jsx)
+   In the app's theme, matching Drag Into Buckets: the pieces
+   are chips in a dashed tray, the dragged copy takes the lesson
+   colour (--w). Colours come from the theme tokens, so light
+   and dark mode both work.
+   ========================================================= */
+
 .arrange-text-block .arrange-text-block-instructions {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
+
+/* ---------- the tray ---------- */
 
 .arrange-text-block .arrange-text-area {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  min-height: 92px;
-  padding: 18px;
-  border: 2px dashed #cfd5df;
-  border-radius: 16px;
-  background: #fafbfc;
+  min-height: 80px;
+  padding: 16px;
+
+  background: var(--surface2);
+  border: 2.5px dashed var(--ink);
+  border-radius: 14px;
 }
 
-.arrange-text-block .arrange-text-item {
+/* ---------- pieces (chips) ---------- */
+
+.arrange-text-block .arrange-text-item,
+.arrange-text-item--overlay {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 44px;
-  padding: 9px 13px;
-  border: 1px solid #d7dce5;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 7%);
+  gap: 8px;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 6px 16px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+  border-radius: 99px;
+  box-shadow: 2px 2px 0 var(--shadow-c);
+
   font: inherit;
+  font-weight: 800;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+  text-align: left;
+
   cursor: grab;
   touch-action: none;
   user-select: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+/* Keep the pill shape in the block editor's preview too, where
+   clickable parts get a 6px radius (block-editor.css). */
+.arrange-text-block .arrange-text-area .arrange-text-item[data-visual-index] {
+  border-radius: 99px;
+}
+
+.arrange-text-block .arrange-text-item:hover:not(:disabled) {
+  box-shadow: 3px 3px 0 var(--shadow-c);
 }
 
 .arrange-text-block .arrange-text-item:active {
   cursor: grabbing;
+}
+
+.arrange-text-block .arrange-text-item:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
 }
 
 .arrange-text-block .arrange-text-item:disabled {
@@ -39,101 +78,162 @@
   opacity: 1;
 }
 
+/* The piece's spot while it's being dragged. */
 .arrange-text-block .arrange-text-item.is-dragging {
-  opacity: 0.35;
+  opacity: 0.3;
 }
 
+/* The copy that follows the pointer. */
+.arrange-text-block .arrange-text-item.arrange-text-item--overlay,
+.arrange-text-item--overlay {
+  background: var(--w);
+  color: var(--on-w);
+  box-shadow: 5px 5px 0 var(--shadow-c);
+  transform: rotate(-3deg);
+  cursor: grabbing;
+}
+
+/* After Submit. */
 .arrange-text-block .arrange-text-item.is-correct {
-  border-color: #70c994;
-  background: #eefaf3;
+  background: var(--good-bg);
+  color: var(--good);
+  border-color: var(--good);
 }
 
 .arrange-text-block .arrange-text-item.is-incorrect {
-  border-color: #e59b9b;
-  background: #fff1f1;
+  background: var(--bad-bg);
+  color: var(--bad);
+  border-color: var(--bad);
 }
 
-.arrange-text-block .arrange-text-item--overlay {
-  opacity: 1;
-  cursor: grabbing;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
-}
-
-.arrange-text-block .arrange-text-item-handle {
-  font-weight: 800;
-  opacity: 0.55;
-}
-
+/* ✓ / ✕ badge on each piece. */
 .arrange-text-block .arrange-text-item-result {
-  margin-left: 2px;
-  font-weight: 800;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: -6px;
+  border-radius: 50%;
+
+  font-size: 0.8rem;
+  font-weight: 900;
+  line-height: 1;
 }
+
+.arrange-text-block .arrange-text-item.is-correct .arrange-text-item-result {
+  background: var(--good);
+  color: var(--good-bg);
+}
+
+.arrange-text-block .arrange-text-item.is-incorrect .arrange-text-item-result {
+  background: var(--bad);
+  color: var(--bad-bg);
+}
+
+/* ---------- feedback, answer, score ---------- */
 
 .arrange-text-block .arrange-text-feedback {
   margin-top: 18px;
-  padding: 14px 16px;
+  padding: 10px 14px;
+  border: 2.5px solid var(--ink);
   border-radius: 12px;
+  font-weight: 700;
 }
 
 .arrange-text-block .arrange-text-feedback--correct {
-  border: 1px solid #9ddab5;
-  background: #eefaf3;
+  background: var(--good-bg);
+  color: var(--good);
 }
 
 .arrange-text-block .arrange-text-feedback--incorrect {
-  border: 1px solid #efb2b2;
-  background: #fff4f4;
+  background: var(--warn-bg);
+  color: var(--warn);
 }
 
 .arrange-text-block .arrange-text-answer {
-  margin-top: 18px;
-  padding: 16px;
-  border: 1px dashed #cfd5df;
+  margin-top: 16px;
+  padding: 14px;
+  background: var(--surface2);
+  border: 2.5px dashed var(--ink);
   border-radius: 14px;
-  background: #fafbfc;
 }
 
 .arrange-text-block .arrange-text-answer-title {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
+  font-size: 1.05rem;
 }
 
 .arrange-text-block .arrange-text-correct-order {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
+  counter-reset: arrange-answer;
 }
 
+/* Correct order as numbered green chips. */
 .arrange-text-block .arrange-text-answer-item {
   display: inline-flex;
   align-items: center;
-  min-height: 38px;
-  padding: 7px 11px;
-  border-radius: 9px;
-  background: #fff;
-  border: 1px solid #d7dce5;
+  gap: 6px;
+  padding: 3px 12px 3px 4px;
+
+  background: var(--good-bg);
+  color: var(--good);
+  border: 2px solid var(--good);
+  border-radius: 99px;
+
+  font-size: 0.92rem;
+  font-weight: 800;
+  counter-increment: arrange-answer;
+}
+
+.arrange-text-block .arrange-text-answer-item::before {
+  content: counter(arrange-answer);
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  background: var(--good);
+  color: var(--good-bg);
+  border-radius: 50%;
+  font-size: 0.75rem;
 }
 
 .arrange-text-block .arrange-text-score {
   margin-top: 14px;
+  font-weight: 700;
 }
 
 .arrange-text-block .arrange-text-complete-message {
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .arrange-text-block .arrange-text-actions {
-  margin-top: 20px;
+  margin-top: 18px;
+}
+
+.arrange-text-block .arrange-text-actions .block-button {
+  border-radius: 14px;
 }
 
 .arrange-text-block .arrange-text-empty {
   padding: 18px;
-  border: 1px dashed #cfd5df;
-  border-radius: 12px;
+  background: var(--surface2);
+  border: 2.5px dashed var(--ink);
+  border-radius: 14px;
+  color: var(--muted);
   text-align: center;
 }
 
 @media (max-width: 640px) {
   .arrange-text-block .arrange-text-area {
-    padding: 14px;
+    padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrange-text-block .arrange-text-item {
+    transition: none;
   }
 }

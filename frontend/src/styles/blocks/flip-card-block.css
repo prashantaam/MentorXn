@@ -1,265 +1,186 @@
 /* =========================================================
-   MentorXn - Flip Cards Block
+   MentorXn - Flip Cards Block (FlipCardBlock.jsx)
+   Same as Code Quest's "Flip the cards": .grid, .flip, .em,
+   .front / .back and .on come from adventure-land.css.
+   This only adds what a <button> card needs.
    ========================================================= */
 
-
-/* =========================================================
-   Block
-   ========================================================= */
-
-.flip-cards-block {
-  width: 100%;
-}
-
-
-/* =========================================================
-   Cards Grid
-   ========================================================= */
-
-.flip-cards-block
-  .flip-cards-grid {
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(180px, 1fr)
-    );
-
-  gap: 18px;
-
-  margin-top: 20px;
-}
-
-
-/* =========================================================
-   Flip Card
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card {
-  appearance: none;
-
-  min-height: 190px;
-
-  padding: 0;
-
-  background: transparent;
-
-  border: 0;
-
+.flip-cards-block .flip {
+  color: var(--text);
   font: inherit;
-  text-align: inherit;
-
-  cursor: pointer;
-
-  perspective: 1000px;
+  font-weight: 800;
+  line-height: 1.3;
+  transition: transform 0.1s, box-shadow 0.1s;
 }
 
-
-/* =========================================================
-   Card Inner
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card-inner {
-  position: relative;
-
-  display: block;
-
-  width: 100%;
-  height: 100%;
-  min-height: 190px;
-
-  transition:
-    transform 0.55s ease;
-
-  transform-style:
-    preserve-3d;
+.flip-cards-block .flip:hover:not(.on) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 var(--shadow-c);
 }
 
-
-/* =========================================================
-   Flipped State
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card.is-flipped
-  .flip-card-inner {
-  transform:
-    rotateY(180deg);
+.flip-cards-block .flip.on {
+  color: var(--on-w);
 }
 
+/*
+ * Front: icon and title on one line, exactly like Code Quest
+ * (plain inline text; the 2rem .em icon comes from adventure-land.css).
+ */
+.flip-cards-block .flip .front {
+  display: inline;
+}
+
+.flip-cards-block .flip .back {
+  overflow-wrap: anywhere;
+}
+
+.flip-cards-block .flip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
 
 /* =========================================================
-   Card Faces
+   Cards / Reading switch
    ========================================================= */
 
-.flip-cards-block
-  .flip-card-face {
-  position: absolute;
-
-  inset: 0;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 12px;
-
-  padding: 22px;
+.flip-cards-block__views {
+  display: inline-flex;
+  gap: 6px;
+  margin: 6px 0 4px;
+  padding: 4px;
 
   background: var(--surface2);
+  border: 2.5px solid var(--ink);
+  border-radius: 99px;
+}
 
-  border: 2px solid
-    var(--w);
+.flip-cards-block__views .chip {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
 
-  border-radius: 18px;
+.flip-cards-block__views .chip.on {
+  background: var(--w);
+  color: var(--on-w);
+  border-color: var(--ink);
+}
 
-  box-shadow:
-    0 8px 20px
-    rgba(
-      0,
-      0,
-      0,
-      0.08
-    );
-
-  backface-visibility:
-    hidden;
-
-  -webkit-backface-visibility:
-    hidden;
+.flip-cards-block__views .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
 }
 
 
 /* =========================================================
-   Front
+   Reading mode: icon + title first; click to show
+   the definition
    ========================================================= */
 
-.flip-cards-block
-  .flip-card-front {
-  text-align: center;
+.flip-cards-block__reading {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
+.flip-cards-block__entry {
+  overflow: hidden;
 
-/* =========================================================
-   Back
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card-back {
-  transform:
-    rotateY(180deg);
-
-  text-align: center;
+  background: var(--surface2);
+  border: 2.5px solid var(--ink);
+  border-left: 8px solid var(--w);
+  border-radius: 16px;
+  box-shadow: 3px 3px 0 var(--shadow-c);
 }
 
+/* The clickable row: icon, title, arrow. */
+.flip-cards-block__entry-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
 
-/* =========================================================
-   Icon
-   ========================================================= */
+  background: transparent;
+  color: var(--text);
+  border: none;
 
-.flip-cards-block
-  .flip-card-icon {
-  display: block;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
 
-  font-size: 2.4rem;
+.flip-cards-block__entry-head:hover {
+  background: color-mix(in srgb, var(--w) 18%, transparent);
+}
+
+.flip-cards-block__entry-head:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: -3px;
+  border-radius: 12px;
+}
+
+.flip-cards-block__term-icon {
+  flex: none;
+  font-size: 1.6rem;
   line-height: 1;
 }
 
+.flip-cards-block__term {
+  flex: 1;
+  min-width: 0;
+  font-family: Fredoka, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
 
-/* =========================================================
-   Card Title
-   ========================================================= */
+.flip-cards-block__chevron {
+  flex: none;
+  font-size: 0.8rem;
+  transition: transform 0.15s;
+}
 
-.flip-cards-block
-  .flip-card-title {
+.flip-cards-block__entry.is-open .flip-cards-block__chevron {
+  transform: rotate(90deg);
+}
+
+/* The definition, lined up under the title. */
+.flip-cards-block__definition {
+  padding: 0 16px 14px;
   color: var(--text);
-
-  font-size: 1.05rem;
-  font-weight: 900;
-  line-height: 1.3;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  animation: pop 0.2s;
 }
 
-
-/* =========================================================
-   Back Text
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card-back-text {
-  color: var(--text);
-
-  line-height: 1.6;
-}
-
-
-/* =========================================================
-   Hint
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card-hint {
-  color: var(--muted);
-
-  font-size: 0.78rem;
-}
-
-
-/* =========================================================
-   Hover
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card:hover
-  .flip-card-inner {
-  transform:
-    translateY(-3px);
-}
-
-.flip-cards-block
-  .flip-card.is-flipped:hover
-  .flip-card-inner {
-  transform:
-    translateY(-3px)
-    rotateY(180deg);
-}
-
-
-/* =========================================================
-   Focus
-   ========================================================= */
-
-.flip-cards-block
-  .flip-card:focus-visible {
-  outline: 3px solid
-    var(--w);
-
-  outline-offset: 4px;
-
-  border-radius: 18px;
-}
-
-
-/* =========================================================
-   Responsive
-   ========================================================= */
-
-@media (
-  max-width: 700px
-) {
-  .flip-cards-block
-    .flip-cards-grid {
-    grid-template-columns:
-      1fr;
+@media (max-width: 560px) {
+  .flip-cards-block__entry-head {
+    gap: 10px;
+    padding: 12px;
   }
 
-  .flip-cards-block
-    .flip-card,
-  .flip-cards-block
-    .flip-card-inner {
-    min-height: 170px;
+  .flip-cards-block__definition {
+    padding: 0 12px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-cards-block .flip,
+  .flip-cards-block__chevron {
+    transition: none;
+  }
+
+  .flip-cards-block__definition {
+    animation: none;
+  }
+
+  .flip-cards-block .flip:hover:not(.on) {
+    transform: none;
   }
 }

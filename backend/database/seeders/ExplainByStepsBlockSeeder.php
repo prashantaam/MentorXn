@@ -12,19 +12,24 @@ use Illuminate\Database\Seeder;
  * "current state" — for arithmetic or logic worked examples, as
  * opposed to the abstract stages of Process Flow.
  *
- * Frontend: WorkedExampleBlock (component). Messages are added to
+ * Frontend: ExplainByStepsBlock (component). Messages are added to
  * every block by the editor (SharedBlockConfig.js).
  *
- *   php artisan db:seed --class=WorkedExampleBlockSeeder
+ *   php artisan db:seed --class=ExplainByStepsBlockSeeder
  */
-class WorkedExampleBlockSeeder extends Seeder
+class ExplainByStepsBlockSeeder extends Seeder
 {
     public function run(): void
     {
         $categoryId = BlockCategory::where('slug', 'process')->value('id');
 
+        // The component used to be WorkedExampleBlock: rename that
+        // row (keeping its id) instead of adding a second template.
+        BlockTemplate::where('component', 'WorkedExampleBlock')
+            ->update(['component' => 'ExplainByStepsBlock']);
+
         BlockTemplate::updateOrCreate(
-            ['component' => 'WorkedExampleBlock'],
+            ['component' => 'ExplainByStepsBlock'],
             [
                 'name' => 'Explain step by step',
                 'icon' => '📝',
@@ -42,7 +47,7 @@ class WorkedExampleBlockSeeder extends Seeder
                             'default' => 'Explain step by step',
                             'required' => true,
                             'visual' => [
-                                'selector' => '.worked-example-block > h2',
+                                'selector' => '.explain-by-steps-block > h2',
                                 'group' => 'heading',
                             ],
                         ],
@@ -53,7 +58,7 @@ class WorkedExampleBlockSeeder extends Seeder
                             'default' => '📝',
                             'required' => false,
                             'visual' => [
-                                'selector' => '.worked-example-block > h2',
+                                'selector' => '.explain-by-steps-block > h2',
                                 'group' => 'heading',
                             ],
                         ],
@@ -64,7 +69,7 @@ class WorkedExampleBlockSeeder extends Seeder
                             'required' => false,
                             'placeholder' => 'e.g. Press Next to see each step.',
                             'visual' => [
-                                'selector' => '.worked-example-block > .sub',
+                                'selector' => '.explain-by-steps-block > .sub',
                             ],
                         ],
                         [
@@ -75,7 +80,7 @@ class WorkedExampleBlockSeeder extends Seeder
                             'required' => false,
                             'placeholder' => 'e.g. Solve:',
                             'visual' => [
-                                'selector' => '.worked-example-block__problem',
+                                'selector' => '.explain-by-steps-block__problem',
                                 'group' => 'problem',
                             ],
                         ],
@@ -87,7 +92,7 @@ class WorkedExampleBlockSeeder extends Seeder
                             'placeholder' => 'e.g. 2 + 3 × 4',
                             'help' => 'Shown before any step. Each step\'s result then replaces it.',
                             'visual' => [
-                                'selector' => '.worked-example-block__problem',
+                                'selector' => '.explain-by-steps-block__problem',
                                 'group' => 'problem',
                             ],
                         ],
@@ -99,7 +104,7 @@ class WorkedExampleBlockSeeder extends Seeder
                             'min_items' => 1,
                             'item_label' => 'Step',
                             'visual' => [
-                                'selector' => '.worked-example-block__step',
+                                'selector' => '.explain-by-steps-block__step',
                                 'selection_type' => 'repeater',
                                 'index_attribute' => 'data-visual-index',
                             ],

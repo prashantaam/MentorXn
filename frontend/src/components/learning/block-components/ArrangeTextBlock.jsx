@@ -127,10 +127,6 @@ function SortableItem({
       {...attributes}
       {...listeners}
     >
-      <span className="arrange-text-item-handle">
-        ⋮⋮
-      </span>
-
       <LearningText
         text={item.text}
       />
@@ -497,10 +493,6 @@ function ArrangeTextBlock({
         <DragOverlay>
           {activeItem ? (
             <div className="arrange-text-item arrange-text-item--overlay">
-              <span className="arrange-text-item-handle">
-                ⋮⋮
-              </span>
-
               <LearningText
                 text={
                   activeItem.text

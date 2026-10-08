@@ -163,6 +163,27 @@ class FlipCardBlockSeeder extends Seeder
                         ],
                     ],
                 ],
+
+                /*
+                 * =================================
+                 * Reading Mode
+                 * =================================
+                 *
+                 * Adds a Cards / Reading switch. Reading
+                 * lists every card with its icon and title;
+                 * clicking one shows its definition.
+                 */
+
+                [
+                    'name' => 'reading_mode',
+                    'label' => 'Let students switch to a reading view',
+                    'type' => 'boolean',
+                    'default' => false,
+                    'required' => false,
+
+                    'help' =>
+                        'Adds a "Cards / Reading" switch. Reading lists every card with its icon and title; students click one to read its definition.',
+                ],
             ],
         ];
 
@@ -225,6 +246,9 @@ class FlipCardBlockSeeder extends Seeder
                         'A condition allows a program to make decisions and execute different code depending on whether something is true or false.',
                 ],
             ],
+
+            'reading_mode' =>
+                false,
         ];
 
         /*

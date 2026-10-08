@@ -5,7 +5,6 @@ import SequenceBlock from "../block-components/SequenceBlock";
 import MCQQuizBlock from "../block-components/MCQQuizBlock";
 import ProcessFlowBlock from "../block-components/ProcessFlowBlock";
 import ToggleExplorerBlock from "../block-components/ToggleExplorerBlock";
-import CodeActionBlock from "../block-components/CodeActionBlock";
 import DragBucketBlock from "../block-components/DragBucketBlock";
 import ArrangeTextBlock from "../block-components/ArrangeTextBlock";
 import RichTextBlock from "../block-components/RichTextBlock";
@@ -13,14 +12,21 @@ import AccordionBlock from "../block-components/AccordionBlock";
 import SentenceBuilderBlock from "../block-components/SentenceBuilderBlock";
 import InlineGlossaryBlock from "../block-components/InlineGlossaryBlock";
 import MatchingPairsBlock from "../block-components/MatchingPairsBlock";
-import WorkedExampleBlock from "../block-components/WorkedExampleBlock";
+import ExplainByStepsBlock from "../block-components/ExplainByStepsBlock";
 import HierarchyBlock from "../block-components/HierarchyBlock";
-import WordBankBlock from "../block-components/WordBankBlock";
+import FillTheBlankBlock from "../block-components/FillTheBlankBlock";
 import TrueFalseBlock from "../block-components/TrueFalseBlock";
-import FillBlanksBlock from "../block-components/FillBlanksBlock";
+import QandABlock from "../block-components/QandABlock";
 import SpeedQuizBlock from "../block-components/SpeedQuizBlock";
 import HintLadderBlock from "../block-components/HintLadderBlock";
 import DecisionTreeBlock from "../block-components/DecisionTreeBlock";
+import ExpressionStepperBlock from "../block-components/ExpressionStepperBlock";
+import OperatorsBlock from "../block-components/OperatorsBlock";
+import VariableBoxBlock from "../block-components/VariableBoxBlock";
+import FunctionCodeBlock from "../block-components/FunctionCodeBlock";
+import PracticeTerminalBlock from "../block-components/PracticeTerminalBlock";
+import BuildSentenceBlock from "../block-components/BuildSentenceBlock";
+
 const blockRegistry = {
   /*
    * Big Ideas
@@ -61,24 +67,24 @@ const blockRegistry = {
     component: MatchingPairsBlock,
   },
 
-  WorkedExampleBlock: {
-    component: WorkedExampleBlock,
+  ExplainByStepsBlock: {
+    component: ExplainByStepsBlock,
   },
 
   HierarchyBlock: {
     component: HierarchyBlock,
   },
 
-  WordBankBlock: {
-    component: WordBankBlock,
+  FillTheBlankBlock: {
+    component: FillTheBlankBlock,
   },
 
   TrueFalseBlock: {
     component: TrueFalseBlock,
   },
 
-  FillBlanksBlock: {
-    component: FillBlanksBlock,
+  QandABlock: {
+    component: QandABlock,
   },
 
   SpeedQuizBlock: {
@@ -91,6 +97,30 @@ const blockRegistry = {
 
   DecisionTreeBlock: {
     component: DecisionTreeBlock,
+  },
+
+  ExpressionStepperBlock: {
+    component: ExpressionStepperBlock,
+  },
+
+  OperatorsBlock: {
+    component: OperatorsBlock,
+  },
+
+  VariableBoxBlock: {
+    component: VariableBoxBlock,
+  },
+
+  FunctionCodeBlock: {
+    component: FunctionCodeBlock,
+  },
+
+  PracticeTerminalBlock: {
+    component: PracticeTerminalBlock,
+  },
+
+  BuildSentenceBlock: {
+    component: BuildSentenceBlock,
   },
   CodeExampleBlock: {
     component: CodeExampleBlock,
@@ -115,10 +145,6 @@ const blockRegistry = {
    ToggleExplorerBlock: {
   component: ToggleExplorerBlock,
   },
-  CodeActionBlock: {
-  component: CodeActionBlock,
-  },
-  
 };
 
 export const getBlockComponent = (componentName) => {

@@ -157,6 +157,38 @@
   margin: 0.2em 0 0.4em;
 }
 
+/*
+ * Topic / lesson / course introduction, as students see it: the
+ * course icon bobbing beside a speech bubble (.mascot, .mface and
+ * .bubble come from adventure-land.css, like Code Quest).
+ */
+.mx-intro {
+  margin: 10px 0 8px;
+}
+
+.mx-intro__bubble {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.mx-intro__bubble p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Teacher-only edit button, tucked into the bubble's corner. */
+.mx-intro__edit {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+/* Leave room so the text never runs under the ✏️. */
+.mx-intro__bubble:has(.mx-intro__edit) {
+  padding-right: 34px;
+}
+
 .mx-builder__loading {
   margin: 26px 0;
 }

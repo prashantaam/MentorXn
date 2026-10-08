@@ -6,6 +6,46 @@ import {
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 import LearningText from "../shared/LearningText";
 
+/*
+ * Optional example for an idea, shown in a dark box like Word
+ * Quest's sentences. Words wrapped in **double stars** are
+ * highlighted in bold yellow; the explanation goes below the box.
+ */
+function ExampleBox({ text }) {
+  const parts = String(text ?? "").split(/(\*\*[^*]+\*\*)/g);
+
+  return (
+    <pre className="code big-ideas-example">
+      {parts.map((part, index) =>
+        part.startsWith("**") && part.endsWith("**") && part.length > 4 ? (
+          <b key={index} className="hlword">
+            {part.slice(2, -2)}
+          </b>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      )}
+    </pre>
+  );
+}
+
+/* Example box (if any) + explanation underneath. */
+function IdeaDetails({ item, explanationClassName }) {
+  const hasExample = Boolean(String(item?.example ?? "").trim());
+
+  return (
+    <>
+      {hasExample && <ExampleBox text={item.example} />}
+      {item?.content && (
+        <LearningText
+          text={item.content}
+          className={`${explanationClassName}${hasExample ? " big-ideas-explanation" : ""}`}
+        />
+      )}
+    </>
+  );
+}
+
 function BigIdeasBlock({
   block,
 }) {
@@ -45,6 +85,26 @@ function BigIdeasBlock({
   const isInfoCards =
     displayStyle ===
     "info_cards";
+
+  /*
+   * "Open the first idea by default": until the student picks
+   * one, the first idea counts as selected.
+   */
+  const rawOpenFirst =
+    data.open_first ?? false;
+
+  const openFirst =
+    rawOpenFirst === true ||
+    rawOpenFirst === 1 ||
+    rawOpenFirst === "1" ||
+    rawOpenFirst === "true";
+
+  const activeIndex =
+    selected === null &&
+    openFirst &&
+    items.length > 0
+      ? 0
+      : selected;
 
   /*
    * If the items change and the currently selected
@@ -108,7 +168,7 @@ function BigIdeasBlock({
       );
 
     const isSelected =
-      selected === index;
+      activeIndex === index;
 
     /*
      * =====================================================
@@ -142,12 +202,10 @@ function BigIdeasBlock({
             />
           </div>
 
-          {item?.content && (
-            <LearningText
-              text={item.content}
-              className="big-ideas-info-card-content"
-            />
-          )}
+          <IdeaDetails
+            item={item}
+            explanationClassName="big-ideas-info-card-content"
+          />
         </article>
       );
     }
@@ -305,14 +363,13 @@ function BigIdeasBlock({
               className="big-ideas-panel"
               aria-live="polite"
             >
-              {selected === null ? (
+              {activeIndex === null ||
+              !items[activeIndex] ? (
                 "👆 Select an idea to explore it."
               ) : (
-                <LearningText
-                  text={
-                    items[selected]
-                      ?.content
-                  }
+                <IdeaDetails
+                  item={items[activeIndex]}
+                  explanationClassName="big-ideas-panel-text"
                 />
               )}
             </div>

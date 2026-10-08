@@ -1,0 +1,227 @@
+/* =========================================================
+   Practice Terminal block (PracticeTerminalBlock.jsx)
+   A pretend terminal (git / linux / custom). .term (+ .pr .ok .bad .dim),
+   .termin, .chips, .mini and .tag come from adventure-land.css;
+   the Run button uses the shared .block-button.
+   ========================================================= */
+
+.practice-terminal-block .term {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.practice-terminal-block .termin input {
+  min-width: 0;
+  padding: 8px 12px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+  border-radius: 10px;
+
+  font-size: 0.95rem;
+}
+
+.practice-terminal-block .termin input:focus-visible,
+.practice-terminal-block .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.practice-terminal-block__run {
+  flex: none;
+  border-radius: 14px;
+}
+
+/* Visible to screen readers only. */
+.practice-terminal-block__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.practice-terminal-block__spells .chip {
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* The shell prompt, e.g. student@mentorxn:~/projects */
+.practice-terminal-block__prompt {
+  margin-right: 2px;
+  color: #7ef0bd;
+}
+
+/* Folders in ls / tree output, and highlighted commands in messages. */
+.practice-terminal-block .term .dir,
+.practice-terminal-block .term b {
+  color: #7cd4ff;
+}
+
+.practice-terminal-block__input-prompt {
+  flex: none;
+  align-self: center;
+  max-width: 45%;
+  overflow: hidden;
+
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- task checklist / side panel ---------- */
+.practice-terminal-block__tasks,
+.practice-terminal-block__panel {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.practice-terminal-block__tasks h3,
+.practice-terminal-block__panel h3 {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.practice-terminal-block__tasks ol {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+/* One task: checkbox + instruction (+ its command). */
+.practice-terminal-block__task {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+
+  background: var(--surface2);
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.practice-terminal-block__task.is-done {
+  background: var(--good-bg);
+  color: var(--good);
+  border-color: var(--good);
+}
+
+/* "Do tasks in order": the later ones wait. */
+.practice-terminal-block__task.is-waiting {
+  opacity: 0.55;
+}
+
+.practice-terminal-block__check {
+  flex: none;
+  line-height: 1.5;
+}
+
+.practice-terminal-block__task-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  min-width: 0;
+}
+
+.practice-terminal-block__task-command {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* 💡 Show commands / Show command */
+.practice-terminal-block__toggle {
+  padding: 3px 12px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 2px dashed var(--ink);
+  border-radius: 99px;
+
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.practice-terminal-block__toggle.is-small {
+  padding: 1px 10px;
+  font-size: 0.8rem;
+}
+
+.practice-terminal-block__toggle:hover {
+  border-style: solid;
+}
+
+.practice-terminal-block__toggle:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.practice-terminal-block__spells {
+  margin: 8px 0;
+}
+
+.practice-terminal-block__spells .chips {
+  margin-bottom: 0;
+}
+
+/* Linux folder tree. */
+.practice-terminal-block__tree {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.practice-terminal-block__tree ul {
+  margin: 4px 0 0;
+  padding-left: 22px;
+  list-style: none;
+  border-left: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+.practice-terminal-block__tree li {
+  margin: 3px 0;
+}
+
+.practice-terminal-block__tree .is-current {
+  padding: 0 6px;
+  background: var(--w);
+  color: var(--on-w);
+  border-radius: 6px;
+}
+
+.practice-terminal-block__branches {
+  display: grid;
+  gap: 10px;
+}
+
+.practice-terminal-block__branches .mini.is-current {
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 var(--shadow-c);
+}
+
+.practice-terminal-block__commits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.practice-terminal-block__commits .tag {
+  overflow-wrap: anywhere;
+}

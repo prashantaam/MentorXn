@@ -1,0 +1,100 @@
+/* =========================================================
+   FunctionCode block (FunctionCodeBlock.jsx)
+   A reusable Code Quest-style playground.
+   .code, .chip(s), .form, .row, .box, .panel and .fb come from
+   adventure-land.css; buttons use .block-button (shared/block-ui.css).
+   ========================================================= */
+
+/* Code Quest's code panel size. */
+.function-code-block .function-code-block__code {
+  margin: 10px 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.function-code-block__list {
+  margin: 8px 0;
+}
+
+.function-code-block__list-name {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.function-code-block__list .box b {
+  max-width: 10em;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.function-code-block .chip {
+  font: inherit;
+  font-weight: 800;
+}
+
+/* Buttons use the shared .block-button styles (shared/block-ui.css). */
+.function-code-block__buttons {
+  margin: 10px 0;
+}
+
+/* Rounder than the shared 10px, like the site's buttons (.mx-btn). */
+.function-code-block__buttons .block-button {
+  border-radius: 14px;
+}
+
+.function-code-block .chip {
+  color: var(--text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92rem;
+}
+
+.function-code-block .chip.on {
+  color: var(--on-w);
+}
+
+.function-code-block .form label {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-weight: 800;
+}
+
+.function-code-block .form input {
+  width: 11em;
+}
+
+.function-code-block .form input[type="text"] {
+  width: min(18em, 100%);
+}
+
+.function-code-block input:focus-visible,
+.function-code-block .chip:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+.function-code-block__result {
+  overflow-wrap: anywhere;
+}
+
+/* The result, shown like a value in code. */
+.function-code-block__value {
+  font-size: 0.95em;
+}
+
+/* A setup mistake in the teacher's formulas. */
+.function-code-block__setup {
+  margin: 8px 0;
+  padding: 6px 10px;
+
+  background: #ffe1e1;
+  color: #8a1010;
+  border: 2px dashed #c62828;
+  border-radius: 10px;
+
+  font-size: 0.88rem;
+  font-weight: 700;
+}

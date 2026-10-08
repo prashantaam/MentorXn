@@ -71,6 +71,35 @@ const STRUCTURE_TITLES = {
   "edit-topic": "✏️ Edit topic",
 };
 
+/*
+ * An introduction the way students see it (Code Quest style): the
+ * course icon bobbing beside a speech bubble. Teachers get a small
+ * ✏️ in the bubble's corner to edit it.
+ */
+function MascotIntro({ icon, text, onEdit, editLabel }) {
+  return (
+    <div className="mascot mx-intro">
+      <div className="mface" aria-hidden="true">
+        {icon}
+      </div>
+      <div className="bubble mx-intro__bubble">
+        <LearningText text={text} as="p" />
+        {onEdit && (
+          <button
+            type="button"
+            className="mx-mini-btn mx-intro__edit"
+            onClick={onEdit}
+            aria-label={editLabel}
+            title={editLabel}
+          >
+            ✏️
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CoursePlaygroundPage() {
   const { courseId } =
     useParams();
@@ -1612,21 +1641,12 @@ function CoursePlaygroundPage() {
                 </span>
               </h1>
 
-              <div className="mx-blurb">
-                <div className="mx-blurb__head">
-                  <b>Introduction</b>
-                  <button
-                    type="button"
-                    className="mx-mini-btn"
-                    onClick={() => editTopic(currentLesson, selectedTopic)}
-                    aria-label="Edit topic"
-                    title="Edit topic"
-                  >
-                    ✏️
-                  </button>
-                </div>
-                <LearningText text={selectedTopic.introduction} as="p" />
-              </div>
+              <MascotIntro
+                icon={course.icon || "🦊"}
+                text={selectedTopic.introduction}
+                onEdit={() => editTopic(currentLesson, selectedTopic)}
+                editLabel="Edit topic"
+              />
 
               {isLoadingBlocks ? (
                 <p className="mx-hint mx-builder__loading">Loading learning blocks…</p>
@@ -1709,21 +1729,12 @@ function CoursePlaygroundPage() {
                 </span>
               </h1>
 
-              <div className="mx-blurb">
-                <div className="mx-blurb__head">
-                  <b>About this lesson</b>
-                  <button
-                    type="button"
-                    className="mx-mini-btn"
-                    onClick={() => handleOpenEditLesson(currentLesson)}
-                    aria-label="Edit lesson"
-                    title="Edit lesson"
-                  >
-                    ✏️
-                  </button>
-                </div>
-                <p>{currentLesson.description || "No description yet."}</p>
-              </div>
+              <MascotIntro
+                icon={course.icon || "🦊"}
+                text={currentLesson.description || "No description yet."}
+                onEdit={() => handleOpenEditLesson(currentLesson)}
+                editLabel="Edit lesson"
+              />
 
               <h2 className="mx-builder__section-title">Topics</h2>
               {(currentLesson.topics || []).length > 0 ? (
@@ -1770,10 +1781,7 @@ function CoursePlaygroundPage() {
               </h1>
 
               {course.description && (
-                <div className="mx-blurb">
-                  <b>About this course</b>
-                  <p>{course.description}</p>
-                </div>
+                <MascotIntro icon={course.icon || "🦊"} text={course.description} />
               )}
 
               <div className="mx-empty">
