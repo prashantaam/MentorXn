@@ -35,7 +35,6 @@ import ConfirmDialog from "../../../components/course-builder/ConfirmDialog";
 import CourseOutline from "../../../components/course-builder/CourseOutline";
 import SortableBlock from "../../../components/course-builder/SortableBlock";
 import FormField from "../../../components/forms/FormField";
-import LearningText from "../../../components/learning/shared/LearningText";
 import { useAuth } from "../../../context/AuthContext";
 
 // The student-facing lesson look (crumb, highlighted title, block styles)
@@ -43,24 +42,8 @@ import { useAuth } from "../../../context/AuthContext";
 import "../../../styles/adventure-land.css";
 import "../../../styles/pages/course-builder.css";
 
-// One colour per lesson, in order — the same palette the course player uses.
-const LESSON_ACCENT_COLORS = [
-  "#8fd9a8", // Mint Green
-  "#ffd84d", // Sunny Yellow
-  "#7cd4ff", // Sky Blue
-  "#ff9a8b", // Coral
-  "#6ee7b7", // Aqua Green
-  "#ffb3e1", // Soft Pink
-  "#c4b5fd", // Lavender
-  "#fdba8c", // Peach
-  "#fde68a", // Lemon
-  "#a5f3fc", // Soft Cyan
-  "#fda4af", // Light Rose
-  "#bef264", // Light Lime
-];
-
-const lessonColor = (index) =>
-  LESSON_ACCENT_COLORS[Math.max(index, 0) % LESSON_ACCENT_COLORS.length];
+import { lessonColor } from "../../../lib/lessonColors";
+import MascotIntro from "../../../components/learning/shared/MascotIntro";
 
 const STRUCTURE_MODES = ["add-lesson", "edit-lesson", "add-topic", "edit-topic"];
 
@@ -70,35 +53,6 @@ const STRUCTURE_TITLES = {
   "add-topic": "📑 Add a topic",
   "edit-topic": "✏️ Edit topic",
 };
-
-/*
- * An introduction the way students see it (Code Quest style): the
- * course icon bobbing beside a speech bubble. Teachers get a small
- * ✏️ in the bubble's corner to edit it.
- */
-function MascotIntro({ icon, text, onEdit, editLabel }) {
-  return (
-    <div className="mascot mx-intro">
-      <div className="mface" aria-hidden="true">
-        {icon}
-      </div>
-      <div className="bubble mx-intro__bubble">
-        <LearningText text={text} as="p" />
-        {onEdit && (
-          <button
-            type="button"
-            className="mx-mini-btn mx-intro__edit"
-            onClick={onEdit}
-            aria-label={editLabel}
-            title={editLabel}
-          >
-            ✏️
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function CoursePlaygroundPage() {
   const { courseId } =

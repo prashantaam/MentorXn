@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import StatRow from "../../components/dashboard/StatRow";
 import { useAuth } from "../../context/AuthContext";
-import { COURSES } from "../../data/courseCatalog";
+import { useStudentCourses } from "../../hooks/useStudentCourses";
 import { useStudentProgress } from "../../hooks/useStudentProgress";
 import { hueStyle } from "../../lib/hue";
 
@@ -53,6 +53,7 @@ function ProgressCard({ entry }) {
 function StudentDashboard() {
   const { user } = useAuth();
   const { progress } = useStudentProgress();
+  const { courses, isLoading: isLoadingCourses } = useStudentCourses();
 
   const firstName = user?.name?.split(" ")[0] || "there";
 
@@ -61,7 +62,7 @@ function StudentDashboard() {
   );
   const certificates = progress.filter((entry) => entry.certified);
   const startedSlugs = new Set(progress.map((entry) => entry.course.slug));
-  const notStarted = COURSES.filter((course) => !startedSlugs.has(course.slug));
+  const notStarted = courses.filter((course) => !startedSlugs.has(course.slug));
 
   const lessonsDone = progress.reduce((sum, entry) => sum + entry.completedLessons, 0);
 
@@ -81,7 +82,9 @@ function StudentDashboard() {
         <p className="mx-hint">
           {progress.length
             ? "Here's where you left off."
-            : "Pick a course below to start your first lesson."}
+            : courses.length
+              ? "Pick a course below to start your first lesson."
+              : "New courses will show up here as teachers publish them."}
         </p>
       </section>
 
@@ -123,24 +126,38 @@ function StudentDashboard() {
             🚀
           </span>
           <h2>You haven't started a course yet</h2>
-          <p>Pick anything below — your progress will show up here as you go.</p>
+          <p>
+            {courses.length
+              ? "Pick anything below — your progress will show up here as you go."
+              : "No courses are published yet — check back soon."}
+          </p>
         </div>
       )}
 
-      {notStarted.length > 0 && (
+      {!isLoadingCourses && notStarted.length > 0 && (
         <section className="mx-dash-section">
-          <h2>🧭 {progress.length ? "Explore more" : "Explore courses"}</h2>
+          <h2>
+            🧭 {progress.length ? "Explore more" : "Explore courses"}{" "}
+            <Link className="mx-hint mx-dash-section__see-all" to="/student/courses">
+              See all →
+            </Link>
+          </h2>
           <div className="mx-explore-grid">
             {notStarted.map((course) => (
-              <div key={course.slug} className="mx-explore-card" style={hueStyle(course.hue)}>
+              <Link
+                key={course.id}
+                className="mx-explore-card"
+                style={hueStyle(course.accent_color)}
+                to={`/student/courses/${course.id}`}
+              >
                 <span className="mx-card-emoji" aria-hidden="true">
-                  {course.emoji}
+                  {course.icon || "📘"}
                 </span>
                 <div>
                   <b>{course.title}</b>
-                  <span className="mx-hint">{plural(course.lessons, "lesson")}</span>
+                  <span className="mx-hint">{plural(course.lessons_count ?? 0, "lesson")}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

@@ -1,0 +1,169 @@
+/* =========================================================
+   Student course player (pages/student/CoursePlayerPage.jsx)
+   Built on the course builder's layout (course-builder.css);
+   these are the player-only bits.
+   ========================================================= */
+
+/* The course card at the top of the outline is a link here. */
+.mx-player .mx-player__course-link {
+  color: var(--mx-text);
+  text-decoration: none;
+}
+
+.mx-player .mx-player__course-link:hover h2 {
+  text-decoration: underline;
+}
+
+.mx-player .mx-player__course-link .mx-hint {
+  font-size: 0.82rem;
+}
+
+/* Lesson headings in the outline are labels, not buttons. */
+.mx-player .mx-player__lesson-title {
+  cursor: default;
+}
+
+.mx-player .mx-navi__main {
+  text-decoration: none;
+}
+
+.mx-player__no-topics {
+  margin: 0 8px 6px;
+  font-size: 0.85rem;
+}
+
+/* ---------- course overview ---------- */
+
+.mx-player__section-title {
+  margin: 26px 0 12px;
+  font-size: 1.3rem;
+}
+
+.mx-player__lessons {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 0;
+  list-style: none;
+}
+
+.mx-player__lesson {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+
+  background: var(--mx-surface);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 14px;
+}
+
+.mx-player__lesson b,
+.mx-player__lesson .mx-hint {
+  display: block;
+}
+
+.mx-player__lesson p {
+  margin: 2px 0;
+}
+
+/* Lesson number in the lesson's colour. */
+.mx-player__lesson-num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+
+  background: var(--mx-wc, var(--mx-accent));
+  color: #141414; /* lesson colours are light in both themes */
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 var(--mx-shadow-c);
+
+  font-family: var(--mx-font-display);
+  font-weight: 700;
+}
+
+.mx-player__start {
+  display: inline-flex;
+}
+
+/* ---------- a topic ---------- */
+
+.mx-player__blocks {
+  margin-top: 26px;
+}
+
+.mx-player__empty {
+  margin: 26px 0;
+}
+
+/* =========================================================
+   Layout: the course index sits on the far left of the screen
+   and stays in view while the topic scrolls. Students can hide
+   it (« Hide) and bring it back (☰ Course index).
+   ========================================================= */
+
+.mx-builder.mx-player {
+  max-width: none;
+  grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.mx-player .mx-builder__nav {
+  /* Leave room for the footer, so at the very bottom of a page the
+     index isn't pushed up under the site header (a long index
+     scrolls inside itself instead). */
+  max-height: calc(100vh - var(--mx-header-h) - 80px);
+  padding: 14px 14px 24px 16px;
+  border-right: 3px solid var(--mx-ink);
+}
+
+.mx-player .mx-builder__main {
+  width: 100%;
+  max-width: 1000px;
+  justify-self: center;
+}
+
+/* « Hide, at the top of the index. */
+.mx-player__index-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mx-player__index-head .mx-back-link {
+  margin-bottom: 0;
+}
+
+/* Hidden index: the topic gets the whole width. */
+.mx-builder.mx-player.is-index-hidden {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mx-player.is-index-hidden .mx-builder__nav {
+  display: none;
+}
+
+/* "☰ Course index" shows when the index is hidden (and on phones). */
+.mx-player.is-index-hidden .mx-builder__menu {
+  display: inline-flex;
+}
+
+@media (max-width: 860px) {
+  .mx-builder.mx-player {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Phones: the index is a drawer from the left; « Hide closes it. */
+  .mx-player.is-index-hidden .mx-builder__nav {
+    display: block;
+  }
+
+  .mx-player .mx-builder__nav {
+    max-height: none;
+    border-right: 3px solid var(--mx-ink);
+  }
+}

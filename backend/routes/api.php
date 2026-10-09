@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Teacher\LearningBlockController;
 use App\Http\Controllers\Api\Teacher\BlockTemplateController;
 use App\Http\Controllers\Api\Dev\BlockTemplateController as DevBlockTemplateController;
 use App\Http\Controllers\Api\Dev\BlockCategoryController as DevBlockCategoryController;
+use App\Http\Controllers\Api\Student\CourseController as StudentCourseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,6 +80,31 @@ Route::middleware('auth:sanctum')->group(function () {
         '/logout',
         [AuthController::class, 'logout']
     );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Student API: published courses only (read-only)
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('student')
+        ->middleware('role:student')
+        ->group(function () {
+            Route::get(
+                '/courses',
+                [StudentCourseController::class, 'index']
+            );
+
+            Route::get(
+                '/courses/{course}',
+                [StudentCourseController::class, 'show']
+            );
+
+            Route::get(
+                '/topics/{topic}',
+                [StudentCourseController::class, 'topic']
+            );
+        });
 
     /*
     |--------------------------------------------------------------------------

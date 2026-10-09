@@ -284,3 +284,31 @@ a.mx-progress-card:hover {
 .mx-dash-section > h2 {
   margin-bottom: 14px;
 }
+
+/* Explore cards open the course (student dashboard). */
+a.mx-explore-card {
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+a.mx-explore-card:hover {
+  transform: translate(-2px, -2px);
+}
+
+.mx-dash-section__see-all {
+  margin-left: 6px;
+  font-family: var(--mx-font-body, inherit);
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.mx-dash-section__see-all:hover {
+  text-decoration: underline;
+}
+
+/* One or two courses keep their size instead of stretching. */
+.mx-dash-section .mx-explore-grid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}

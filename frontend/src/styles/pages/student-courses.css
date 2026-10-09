@@ -1,0 +1,55 @@
+/* =========================================================
+   Student: Courses page (StudentCoursesPage.jsx)
+   Cards are the shared .mx-course-card (theme/components.css).
+   ========================================================= */
+
+.mx-student-courses {
+  max-width: var(--mx-max-width);
+  margin: 0 auto;
+  padding: 0 var(--mx-gutter) 60px;
+
+  color: var(--mx-text);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.mx-student-courses__head {
+  padding: 40px 0 6px;
+}
+
+.mx-student-courses__head h1 {
+  margin-bottom: 4px;
+  font-size: clamp(1.9rem, 4.6vw, 2.6rem);
+}
+
+/* Cards keep their size even when there are only one or two. */
+.mx-student-courses .mx-grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.mx-student-courses__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 6px;
+}
+
+.mx-student-courses .mx-search {
+  flex: 1;
+  min-width: 220px;
+  padding: 9px 14px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2.5px solid var(--mx-ink);
+  border-radius: 12px;
+
+  font: inherit;
+}
+
+.mx-student-courses__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

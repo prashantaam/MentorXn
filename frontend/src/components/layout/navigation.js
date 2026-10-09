@@ -10,7 +10,7 @@ export const NAV_LINKS = {
   ],
   student: [
     { to: "/student/dashboard", label: "Dashboard" },
-    { to: "/#courses", label: "Courses" },
+    { to: "/student/courses", label: "Courses" },
   ],
   teacher: [
     { to: "/teacher/dashboard", label: "Dashboard" },

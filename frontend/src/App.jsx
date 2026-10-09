@@ -20,6 +20,8 @@ import BlockCategoryListPage from "./pages/dev/BlockCategoryListPage";
 import StudentLoginPage from "./pages/student/auth/LoginPage";
 import StudentRegisterPage from "./pages/student/auth/RegisterPage";
 import StudentDashboard from "./pages/student/StudentDashboard";
+import StudentCoursesPage from "./pages/student/StudentCoursesPage";
+import CoursePlayerPage from "./pages/student/CoursePlayerPage";
 
 /* Teacher */
 import TeacherLoginPage from "./pages/teacher/auth/TeacherLoginPage";
@@ -62,6 +64,9 @@ function App() {
       <Route element={<ProtectedRoute requiredRole="student" />}>
         <Route element={<AppLayout area="student" />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/courses" element={<StudentCoursesPage />} />
+          <Route path="/student/courses/:courseId" element={<CoursePlayerPage />} />
+          <Route path="/student/courses/:courseId/topics/:topicId" element={<CoursePlayerPage />} />
         </Route>
       </Route>
 
