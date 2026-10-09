@@ -6,10 +6,10 @@
    on its row label, its word in the sentence and its badge.
    ========================================================= */
 
-.build-sentence-block__role--0 { --role: #ffd84d; } /* yellow */
+.build-sentence-block__role--0 { --role: #8fd9a8; } /* green — the first lesson colour */
 .build-sentence-block__role--1 { --role: #5ee0ff; } /* cyan */
 .build-sentence-block__role--2 { --role: #ff8fc7; } /* pink */
-.build-sentence-block__role--3 { --role: #8ef08e; } /* green */
+.build-sentence-block__role--3 { --role: #ffd84d; } /* yellow */
 .build-sentence-block__role--4 { --role: #ffb36b; } /* orange */
 .build-sentence-block__role--5 { --role: #c9a7ff; } /* violet */
 
@@ -149,10 +149,11 @@
   overflow-wrap: anywhere;
 }
 
+/* Words in the black box: just their part's colour — normal
+   weight, no underline. */
 .build-sentence-block__word {
   color: var(--role);
-  font-weight: 800;
-  border-bottom: 3px solid var(--role);
+  font-weight: inherit;
   animation: pop 0.25s ease;
 }
 

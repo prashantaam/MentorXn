@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 
 /*
  * Operators: math, comparison & logic (from Code Quest). Three small
@@ -167,7 +168,7 @@ function OperatorsBlock({ block }) {
             </label>
           </div>
           <CodeLine tokens={[["result = "], num(state.a), [` ${state.op} `], num(state.b), [lang.end]]} />
-          <div className="panel" aria-live="polite">
+          <InfoPanel aria-live="polite">
             result = <b>{arith.error || arith.text}</b>
             {state.op === "%" && !arith.error && (
               <span className="hint">
@@ -175,7 +176,7 @@ function OperatorsBlock({ block }) {
                 (the remainder after dividing {toNumber(state.a)} by {toNumber(state.b)})
               </span>
             )}
-          </div>
+          </InfoPanel>
         </section>
       )}
 
@@ -200,9 +201,9 @@ function OperatorsBlock({ block }) {
             </label>
           </div>
           <CodeLine tokens={[["is_it = "], num(state.ca), [` ${state.cop} `], num(state.cb), [lang.end]]} />
-          <div className="panel" aria-live="polite">
+          <InfoPanel aria-live="polite">
             is_it = <span className={`tag ${isEqual ? "good" : "bad"}`}>{lang.bool(isEqual)}</span>
-          </div>
+          </InfoPanel>
         </section>
       )}
 
@@ -234,7 +235,7 @@ function OperatorsBlock({ block }) {
                 : [["result = A "], [lang.logic[state.lop], "k"], [" B"], [lang.end]]
             }
           />
-          <div className="panel" aria-live="polite">
+          <InfoPanel aria-live="polite">
             A = <b>{lang.bool(state.A)}</b>
             {state.lop !== "not" && (
               <>
@@ -242,7 +243,7 @@ function OperatorsBlock({ block }) {
               </>
             )}{" "}
             → result = <span className={`tag ${logicResult ? "good" : "bad"}`}>{lang.bool(logicResult)}</span>
-          </div>
+          </InfoPanel>
         </section>
       )}
     </LearningBlockShell>

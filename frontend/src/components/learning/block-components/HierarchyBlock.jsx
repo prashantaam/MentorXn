@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -57,7 +58,7 @@ function HierarchyBlock({ block }) {
             ))}
           </ol>
 
-          <div id={panelId} className="panel hierarchy-block__panel" aria-live="polite">
+          <InfoPanel id={panelId} className="hierarchy-block__panel" aria-live="polite">
             {activeLevel ? (
               <>
                 <b>{activeLevel.label || `Level ${selected + 1}`}:</b>{" "}
@@ -66,7 +67,7 @@ function HierarchyBlock({ block }) {
             ) : (
               <span className="hint">{prompt}</span>
             )}
-          </div>
+          </InfoPanel>
         </>
       ) : (
         <p className="hint">Add levels in the settings panel.</p>

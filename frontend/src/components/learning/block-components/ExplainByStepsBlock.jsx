@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -81,9 +82,10 @@ function ExplainByStepsBlock({ block }) {
 
           <ol className="explain-by-steps-block__steps" aria-live="polite">
             {steps.slice(0, shown + 1).map((step, index) => (
-              <li
+              <InfoPanel
+                as="li"
                 key={index}
-                className={`panel explain-by-steps-block__step${index === shown ? " is-latest" : ""}`}
+                className={`explain-by-steps-block__step${index === shown ? " is-latest" : ""}`}
                 data-visual-index={index}
               >
                 <strong>Step {index + 1}:</strong>{" "}
@@ -96,7 +98,7 @@ function ExplainByStepsBlock({ block }) {
                     <code>{step.state}</code>
                   </>
                 )}
-              </li>
+              </InfoPanel>
             ))}
           </ol>
 

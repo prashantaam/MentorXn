@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -77,7 +78,7 @@ function SentenceBuilderBlock({ block }) {
         </div>
       )}
 
-      <div className="panel sentence-builder-block__output" aria-live="polite">
+      <InfoPanel className="sentence-builder-block__output" aria-live="polite">
         {parseTemplate(data.template).map((part, index) => {
           if (part.text !== undefined) {
             return <LearningText key={index} as="span" text={part.text} />;
@@ -103,7 +104,7 @@ function SentenceBuilderBlock({ block }) {
             </span>
           );
         })}
-      </div>
+      </InfoPanel>
     </LearningBlockShell>
   );
 }

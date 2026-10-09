@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -84,7 +85,7 @@ function ExpressionStepperBlock({ block }) {
         </span>
       </div>
 
-      <div className="panel expression-stepper-block__out" data-visual-index={activeIndex}>
+      <InfoPanel className="expression-stepper-block__out" data-visual-index={activeIndex}>
         <pre className="code" aria-live="polite">
           {expression.steps.slice(0, step + 1).map((item, index) => (
             <span key={index} className={`ln${index === step ? " hit" : ""}`}>
@@ -93,7 +94,7 @@ function ExpressionStepperBlock({ block }) {
           ))}
         </pre>
         {note && <LearningText as="p" text={note} className="hint expression-stepper-block__note" />}
-      </div>
+      </InfoPanel>
     </LearningBlockShell>
   );
 }

@@ -180,15 +180,16 @@
    Info Cards
    ========================================================= */
 
+/* Same grid as Word Quest's "The main parts of speech". */
 .big-ideas-block
   .big-ideas-items--info_cards {
   display: grid;
   grid-template-columns:
     repeat(
       auto-fit,
-      minmax(190px, 1fr)
+      minmax(150px, 1fr)
     );
-  gap: 14px;
+  gap: 12px;
 }
 
 .big-ideas-block
@@ -213,12 +214,12 @@
   .big-ideas-info-card {
   width: 100%;
   min-width: 0;
-  padding: 16px;
+  padding: 10px 12px;
   background: var(--surface2);
   color: var(--text);
   border: 2.5px solid
     var(--ink);
-  border-radius: 16px;
+  border-radius: 14px;
 }
 
 /*
@@ -229,8 +230,8 @@
   .big-ideas-info-card-heading {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
 .big-ideas-block
@@ -279,17 +280,7 @@
    Explanation Panel
    ========================================================= */
 
-.big-ideas-block
-  .big-ideas-panel {
-  margin-top: 12px;
-  padding: 12px 14px;
-  background: var(--surface2);
-  color: var(--text);
-  border: 2.5px dashed
-    var(--ink);
-  border-radius: 14px;
-  line-height: 1.5;
-}
+/* The box itself is the shared InfoPanel (styles/learning/info-panel.css). */
 
 
 /* =========================================================
@@ -330,6 +321,74 @@
 
 
 /* =========================================================
+   Text icons: a number or word in the icon field ("1", "N",
+   "if") shows as a badge in the lesson colour, not plain text.
+   ========================================================= */
+
+.big-ideas-block
+  .big-ideas-badge {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 1.9em;
+  height: 1.9em;
+  padding: 0 0.4em;
+
+  background: var(--w);
+  color: var(--on-w);
+  border: 2.5px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 var(--shadow-c);
+
+  font-family: Fredoka, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Words ("if", "for") are a little smaller than numbers. */
+.big-ideas-block
+  .big-ideas-badge.is-long {
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+/* Cards: a bigger badge in place of the 2rem emoji. */
+.big-ideas-block
+  .big-ideas-card-icon.big-ideas-badge {
+  font-size: 1.3rem;
+  margin-bottom: 2px;
+}
+
+.big-ideas-block
+  .big-ideas-card-icon.big-ideas-badge.is-long {
+  font-size: 1.05rem;
+}
+
+/* A selected card is already in the lesson colour. */
+.big-ideas-block
+  .big-ideas-card.on
+  .big-ideas-badge,
+.big-ideas-block
+  .big-ideas-button.on
+  .big-ideas-badge {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* Buttons: a small badge to fit the pill. */
+.big-ideas-block
+  .big-ideas-button-icon.big-ideas-badge {
+  min-width: 1.6em;
+  height: 1.6em;
+  border-width: 2px;
+  border-radius: 7px;
+  box-shadow: none;
+  font-size: 0.8rem;
+}
+
+/* =========================================================
    Responsive
    ========================================================= */
 
@@ -349,15 +408,6 @@
   }
 
   .big-ideas-block
-    .big-ideas-items--info_cards {
-    grid-template-columns:
-      repeat(
-        2,
-        minmax(0, 1fr)
-      );
-  }
-
-  .big-ideas-block
     .big-ideas-flow-arrow {
     font-size: 1.15rem;
   }
@@ -372,8 +422,4 @@
     flex-basis: 100%;
   }
 
-  .big-ideas-block
-    .big-ideas-items--info_cards {
-    grid-template-columns: 1fr;
-  }
 }

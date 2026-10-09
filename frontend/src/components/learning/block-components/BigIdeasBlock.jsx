@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -26,6 +27,28 @@ function ExampleBox({ text }) {
         )
       )}
     </pre>
+  );
+}
+
+/*
+ * An idea's icon. Emoji show as they are; a number or a word
+ * (e.g. "1", "N", "if") shows as a badge in the lesson colour.
+ */
+const PICTURE = /\p{Extended_Pictographic}|\p{Regional_Indicator}/u;
+
+function IdeaIcon({ icon, className }) {
+  const text = String(icon ?? "").trim();
+  if (!text) return null;
+
+  const isBadge = !PICTURE.test(text);
+
+  return (
+    <span
+      className={`${className}${isBadge ? " big-ideas-badge" : ""}${isBadge && text.length > 2 ? " is-long" : ""}`}
+      aria-hidden="true"
+    >
+      {text}
+    </span>
   );
 }
 
@@ -187,14 +210,10 @@ function BigIdeasBlock({
           className="big-ideas-info-card"
         >
           <div className="big-ideas-info-card-heading">
-            {item?.icon && (
-              <span
-                className="big-ideas-info-card-icon"
-                aria-hidden="true"
-              >
-                {item.icon}
-              </span>
-            )}
+            <IdeaIcon
+              icon={item?.icon}
+              className="big-ideas-info-card-icon"
+            />
 
             <LearningText
               text={title}
@@ -238,14 +257,10 @@ function BigIdeasBlock({
             handleSelect(index)
           }
         >
-          {item?.icon && (
-            <span
-              className="big-ideas-button-icon"
-              aria-hidden="true"
-            >
-              {item.icon}
-            </span>
-          )}
+          <IdeaIcon
+            icon={item?.icon}
+            className="big-ideas-button-icon"
+          />
 
           <LearningText
             text={title}
@@ -278,14 +293,10 @@ function BigIdeasBlock({
           handleSelect(index)
         }
       >
-        {item?.icon && (
-          <span
-            className="big-ideas-card-icon"
-            aria-hidden="true"
-          >
-            {item.icon}
-          </span>
-        )}
+        <IdeaIcon
+          icon={item?.icon}
+          className="big-ideas-card-icon"
+        />
 
         <LearningText
           text={title}
@@ -359,7 +370,7 @@ function BigIdeasBlock({
           =============================================== */}
 
           {!isInfoCards && (
-            <div
+            <InfoPanel
               className="big-ideas-panel"
               aria-live="polite"
             >
@@ -372,7 +383,7 @@ function BigIdeasBlock({
                   explanationClassName="big-ideas-panel-text"
                 />
               )}
-            </div>
+            </InfoPanel>
           )}
         </>
       ) : (

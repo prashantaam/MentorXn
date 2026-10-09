@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -286,7 +287,7 @@ function BuildSentenceBlock({ block }) {
           </div>
 
           {/* ---------- the sentence ---------- */}
-          <div className="panel build-sentence-block__output" aria-live="polite">
+          <InfoPanel className="build-sentence-block__output" aria-live="polite">
             {showPattern && chosen.length > 0 && (
               <div className="build-sentence-block__pattern" aria-label="Pattern">
                 {chosen.map((item, index) => (
@@ -340,7 +341,7 @@ function BuildSentenceBlock({ block }) {
             {data.hint && !isChallenge && (
               <LearningText as="p" className="hint build-sentence-block__hint" text={data.hint} />
             )}
-          </div>
+          </InfoPanel>
 
           {/* ---------- feedback (challenge) ---------- */}
           {challenge && view.result && (

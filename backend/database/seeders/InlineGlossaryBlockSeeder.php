@@ -73,10 +73,37 @@ class InlineGlossaryBlockSeeder extends Seeder
                             'required' => true,
                             'rows' => 5,
                             'placeholder' => 'The team checked for {{latency}} issues and {{race conditions|race condition}}.',
-                            'help' => 'Wrap a term in {{ }} to make it tappable. Use {{shown text|term}} when the words differ from the term, e.g. a plural. Supports **bold** and `code`.',
+                            'help' => 'Wrap a term in {{ }} to make it tappable — it is added to Terms below automatically, so you only write its description. Use {{shown text|term}} when the words differ from the term, e.g. a plural. Supports **bold** and `code`.',
                             'visual' => [
                                 'selector' => '.inline-glossary-block__text',
                             ],
+                        ],
+                        [
+                            'name' => 'dark_text',
+                            'label' => 'Show the paragraph in a dark box',
+                            'type' => 'boolean',
+                            'default' => true,
+                            'required' => false,
+                            'help' => 'Like Word Quest\'s "Tap each word".',
+                        ],
+                        [
+                            'name' => 'term_style',
+                            'label' => 'Tappable words',
+                            'type' => 'select',
+                            'required' => false,
+                            'default' => 'highlighted',
+                            'options' => [
+                                ['value' => 'highlighted', 'label' => 'Highlighted (bold, dotted underline)'],
+                                ['value' => 'plain', 'label' => 'Normal text (students explore to find them)'],
+                            ],
+                        ],
+                        [
+                            'name' => 'show_term',
+                            'label' => 'Start the description with the term',
+                            'type' => 'boolean',
+                            'default' => true,
+                            'required' => false,
+                            'help' => 'On: "latency: The delay…". Turn off when the description names the word itself, e.g. **"curious"** is a [[g:Adjective]] — …',
                         ],
                         [
                             'name' => 'terms',
@@ -85,6 +112,11 @@ class InlineGlossaryBlockSeeder extends Seeder
                             'required' => true,
                             'min_items' => 1,
                             'item_label' => 'Term',
+                            'help' => 'Filled in from the {{ }} words in the paragraph — add a description for each.',
+                            'auto_fill' => [
+                                'from' => 'text',
+                                'key' => 'term',
+                            ],
                             'visual' => [
                                 'selector' => '.inline-glossary-block .glossTerm',
                                 'selection_type' => 'repeater',
@@ -101,11 +133,12 @@ class InlineGlossaryBlockSeeder extends Seeder
                                 ],
                                 [
                                     'name' => 'definition',
-                                    'label' => 'Definition',
+                                    'label' => 'Description',
                                     'type' => 'textarea',
                                     'required' => true,
                                     'rows' => 3,
-                                    'placeholder' => 'Shown when the term is tapped. Supports **bold** and `code`.',
+                                    'placeholder' => 'Shown when the term is tapped.',
+                                    'help' => 'Supports **bold**, `code` and labels: [[g:Adjective]] green, [[r:…]] red, [[y:…]] yellow or [[b:…]] black.',
                                 ],
                             ],
                         ],
@@ -133,6 +166,9 @@ class InlineGlossaryBlockSeeder extends Seeder
                         ['term' => 'race condition', 'definition' => 'A bug where the outcome depends on the unpredictable **timing** of two things happening at once.'],
                     ],
                     'prompt' => '👆 Tap an underlined word.',
+                    'dark_text' => true,
+                    'show_term' => true,
+                    'term_style' => 'highlighted',
                 ],
             ]
         );

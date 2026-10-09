@@ -16,6 +16,11 @@ import React from "react";
  * [[true]]  -> learning-text-label--true
  * [[false]] -> learning-text-label--false
  *
+ * Coloured labels (Word Quest's tags, e.g. "is a [Adjective]"):
+ *
+ * [[g:Adjective]]  [[r:Wrong]]  [[y:Careful]]  [[b:Noun]]
+ * (or the full names: [[green:…]] [[red:…]] [[yellow:…]] [[black:…]])
+ *
  * Example:
  *
  * An **algorithm** is a set of instructions.
@@ -24,6 +29,20 @@ import React from "react";
  *
  * =========================================================
  */
+
+/*
+ * [[g:text]] -> ["g", "text"]. One letter is enough; the full
+ * colour names still work too.
+ */
+const LABEL_COLOUR =
+  /^\s*(green|red|yellow|black|g|r|y|b)\s*:\s*(.+?)\s*$/i;
+
+const COLOUR_NAMES = {
+  g: "green",
+  r: "red",
+  y: "yellow",
+  b: "black",
+};
 
 function parseInlineText(
   text,
@@ -98,8 +117,30 @@ function parseInlineText(
         part.startsWith("[[") &&
         part.endsWith("]]")
       ) {
-        const label =
+        const inner =
           part.slice(2, -2);
+
+        /*
+         * [[green:Adjective]] -> a coloured tag.
+         */
+        const coloured =
+          inner.match(LABEL_COLOUR);
+
+        if (coloured) {
+          const colour =
+            coloured[1].toLowerCase();
+
+          return (
+            <span
+              key={key}
+              className={`learning-text-label learning-text-label--tag learning-text-label--${COLOUR_NAMES[colour] || colour}`}
+            >
+              {coloured[2]}
+            </span>
+          );
+        }
+
+        const label = inner;
 
         const normalisedLabel =
           label

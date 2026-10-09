@@ -34,9 +34,47 @@
   --bad-bg: #ffd9d6;
 
   /*
-   * Blocks always use the light palette above, so they must also set
-   * their own text colour. Otherwise text inherits the page's colour,
-   * which is near-white in dark mode — unreadable on a white block.
+   * Blocks set their own text colour from the palette, so they read
+   * correctly whatever the page around them uses.
    */
   color: var(--text);
+}
+
+/* =========================================================
+   Dark mode: the same palette as Word Quest's dark theme.
+   Follows the site's theme toggle (<html data-theme>), or the
+   device setting when the toggle is on "auto".
+   --on-w stays dark: text on the bright lesson colour.
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .learning-block {
+    --surface: #1c1f18;
+    --surface2: #242821;
+    --text: #eef0ea;
+    --muted: #a7ab9f;
+    --ink: #8fd9a8;
+    --shadow-c: #000000;
+    --good: #7ef0bd;
+    --good-bg: #12382b;
+    --warn: #ffd873;
+    --warn-bg: #3d2f0c;
+    --bad: #ff9b9f;
+    --bad-bg: #45181b;
+  }
+}
+
+:root[data-theme="dark"] .learning-block {
+  --surface: #1c1f18;
+  --surface2: #242821;
+  --text: #eef0ea;
+  --muted: #a7ab9f;
+  --ink: #8fd9a8;
+  --shadow-c: #000000;
+  --good: #7ef0bd;
+  --good-bg: #12382b;
+  --warn: #ffd873;
+  --warn-bg: #3d2f0c;
+  --bad: #ff9b9f;
+  --bad-bg: #45181b;
 }

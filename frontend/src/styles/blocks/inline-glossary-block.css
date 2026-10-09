@@ -7,29 +7,42 @@
   line-height: 1.9;
 }
 
+/*
+ * Tappable words. The underline is a text underline, not a border,
+ * and the selected highlight is a box-shadow, not padding, so
+ * neither changes the word's size: hovering or tapping never
+ * makes the line (or the dark box) taller, or shifts other words.
+ */
 .inline-glossary-block .glossTerm {
+  display: inline;
   padding: 0;
+  vertical-align: baseline;
 
   background: none;
   color: var(--text);
   border: none;
-  border-bottom: 2.5px dotted var(--ink);
+  border-radius: 4px;
 
   font: inherit;
   font-weight: 800;
+  line-height: inherit;
+
+  text-decoration: underline dotted var(--ink);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+
   cursor: pointer;
 }
 
 .inline-glossary-block .glossTerm:hover {
-  border-bottom-style: solid;
+  text-decoration-style: solid;
 }
 
 .inline-glossary-block .glossTerm.on {
-  padding: 0 3px;
   background: var(--w);
   color: var(--on-w);
-  border-bottom-style: solid;
-  border-radius: 4px;
+  box-shadow: 0 0 0 3px var(--w);
+  text-decoration: none;
 }
 
 .inline-glossary-block .glossTerm:focus-visible {
@@ -42,12 +55,74 @@
   font-weight: 700;
 }
 
-/* {{term}} in the text with no definition. */
+/*
+ * A {{term}} with no description yet. Students just see normal
+ * text; in the block editor's preview a thin red dashed underline
+ * reminds the teacher to add the description.
+ */
 .inline-glossary-block__missing {
-  padding: 0 4px;
-  background: #ffe1e1;
-  color: #8a1010;
-  border: 2px dashed #c62828;
-  border-radius: 6px;
-  font-weight: 700;
+  color: inherit;
+  font: inherit;
+}
+
+.visual-block-canvas--editable .inline-glossary-block__missing {
+  text-decoration: underline dashed #e53935;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  cursor: help;
+}
+
+.visual-block-canvas--editable .inline-glossary-block__text--dark .inline-glossary-block__missing {
+  text-decoration-color: #ff8a80;
+}
+
+/* ---------- dark box (Word Quest's "Tap each word") ---------- */
+
+.inline-glossary-block .inline-glossary-block__text--dark {
+  padding: 12px 16px;
+
+  /* readable text, not code */
+  font: 17px/1.9 Nunito, "Segoe UI", system-ui, sans-serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.inline-glossary-block .inline-glossary-block__text--dark .glossTerm {
+  color: inherit;
+  text-decoration-color: #ffd84d;
+}
+
+/* Hover: a grey highlight instead of the yellow underline. */
+.inline-glossary-block .inline-glossary-block__text--dark .glossTerm:hover {
+  background: rgb(255 255 255 / 25%);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 25%);
+  text-decoration: none;
+}
+
+.inline-glossary-block .inline-glossary-block__text--dark .glossTerm.on,
+.inline-glossary-block .glossTerm.on:hover {
+  background: var(--w);
+  color: var(--on-w);
+  box-shadow: 0 0 0 3px var(--w);
+}
+
+/* ---------- plain words: look like the rest of the text ---------- */
+
+.inline-glossary-block--plain .glossTerm {
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+.inline-glossary-block--plain .glossTerm:not(.on):hover {
+  background: color-mix(in srgb, var(--w) 35%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--w) 35%, transparent);
+}
+
+.inline-glossary-block--plain .inline-glossary-block__text--dark .glossTerm:not(.on):hover {
+  background: rgb(255 255 255 / 25%);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 25%);
+}
+
+.inline-glossary-block--plain .glossTerm.on {
+  font-weight: 800;
 }

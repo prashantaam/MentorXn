@@ -90,9 +90,9 @@
   margin: 8px 0;
   padding: 6px 10px;
 
-  background: #ffe1e1;
-  color: #8a1010;
-  border: 2px dashed #c62828;
+  background: var(--bad-bg);
+  color: var(--bad);
+  border: 2px dashed var(--bad);
   border-radius: 10px;
 
   font-size: 0.88rem;

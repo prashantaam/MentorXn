@@ -27,6 +27,7 @@ import {
 } from "@dnd-kit/utilities";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 const toBoolean = (
@@ -525,7 +526,7 @@ function ArrangeTextBlock({
           </div>
 
           {!allCorrect && (
-            <section className="arrange-text-answer">
+            <InfoPanel as="section" className="arrange-text-answer">
               <h3 className="arrange-text-answer-title">
                 Correct answer
               </h3>
@@ -559,7 +560,7 @@ function ArrangeTextBlock({
                   }
                 )}
               </div>
-            </section>
+            </InfoPanel>
           )}
 
           <div className="arrange-text-score">

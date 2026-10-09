@@ -73,9 +73,9 @@
 /* A choice that points at a step key that doesn't exist. */
 .decision-tree-block__broken {
   padding: 3px 10px;
-  background: #ffe1e1;
-  color: #8a1010;
-  border: 2px dashed #c62828;
+  background: var(--bad-bg);
+  color: var(--bad);
+  border: 2px dashed var(--bad);
   border-radius: 99px;
   font-size: 0.85rem;
   font-weight: 700;

@@ -29,10 +29,11 @@
   margin: 0 2px;
   padding: 0 5px;
 
-  background: #eeede7;
-  color: #141414;
+  /* Theme colours, so it follows dark mode (light values as fallback). */
+  background: var(--surface2, #eeede7);
+  color: var(--text, #141414);
 
-  border: 1.5px solid #141414;
+  border: 1.5px solid var(--ink, #141414);
   border-radius: 6px;
 
   font-family:
@@ -63,10 +64,10 @@
   margin: 0 2px;
   padding: 2px 8px;
 
-  background: #eeede7;
-  color: #141414;
+  background: var(--surface2, #eeede7);
+  color: var(--text, #141414);
 
-  border: 2px solid #141414;
+  border: 2px solid var(--ink, #141414);
   border-radius: 999px;
 
   font-family:
@@ -82,14 +83,47 @@
 /* Boolean result labels */
 
 .learning-text-label--true {
-  background: #c9f4dc;
-  color: #17653a;
+  background: var(--good-bg, #c9f4dc);
+  color: var(--good, #17653a);
 }
 
 .learning-text-label--false {
-  background: #ffd8d8;
-  color: #9b2525;
+  background: var(--bad-bg, #ffd8d8);
+  color: var(--bad, #9b2525);
 }
+/* Coloured tags: [[green:Adjective]], [[red:…]], [[yellow:…]],
+   [[black:…]] — Word Quest's "is a [Adjective]" look. */
+
+.learning-text-label--tag {
+  padding: 1px 8px;
+  border-radius: 8px;
+  font-size: 0.85em;
+  font-weight: 800;
+}
+
+.learning-text-label--green {
+  background: var(--good-bg, #d7f5e3);
+  color: var(--good, #1d7a46);
+}
+
+.learning-text-label--red {
+  background: var(--bad-bg, #ffe0e0);
+  color: var(--bad, #b3261e);
+}
+
+.learning-text-label--yellow {
+  background: var(--warn-bg, #fff1c2);
+  color: var(--warn, #8a5a00);
+}
+
+/* Black in both modes; the border follows the theme so it still
+   stands out on a dark block. */
+.learning-text-label--black {
+  background: #141414;
+  color: #ffffff;
+  border-color: var(--ink, #141414);
+}
+
 /* =========================================================
    Responsive
    ========================================================= */

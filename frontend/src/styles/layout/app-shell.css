@@ -132,37 +132,25 @@
   gap: 12px;
 }
 
-/* Theme toggle + avatar: slightly smaller for the slimmer bar, and tilted
-   away from each other — the toggle leans left (like the logo), the avatar
-   leans right. Both straighten up when hovered. */
+/* Theme toggle + avatar: slightly smaller for the slimmer bar, and
+   straight. They lift a little on hover, like the nav links. */
 .mx-header .mx-icon-btn,
 .mx-header .mx-user-menu__button .mx-avatar {
   width: 38px;
   height: 38px;
+  transform: none;
   transition: transform 0.12s, box-shadow 0.12s;
-}
-
-.mx-header .mx-icon-btn {
-  transform: rotate(-6deg);
-}
-
-.mx-header .mx-user-menu__button .mx-avatar {
-  transform: rotate(6deg);
 }
 
 .mx-header .mx-icon-btn:hover,
 .mx-header .mx-user-menu__button:hover .mx-avatar {
-  transform: rotate(0deg);
+  transform: translate(-1px, -1px);
 }
 
-/* Pressed: keep each one's own tilt while sinking into its shadow. */
-.mx-header .mx-icon-btn:active {
-  transform: rotate(-6deg) translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--mx-shadow-c);
-}
-
+/* Pressed / menu open: sink into the shadow. */
+.mx-header .mx-icon-btn:active,
 .mx-header .mx-user-menu__button[aria-expanded="true"] .mx-avatar {
-  transform: rotate(6deg) translate(2px, 2px);
+  transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 var(--mx-shadow-c);
 }
 

@@ -1,6 +1,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -14,6 +15,8 @@ import { useAuth } from "../../../context/AuthContext";
 import VisualBlockCanvas from "../../../components/learning/visual-editor/VisualBlockCanvas";
 
 import VisualPropertiesPanel from "../../../components/learning/visual-editor/VisualPropertiesPanel";
+
+import { applyAutoFill } from "../../../components/learning/visual-editor/autoFillFields";
 
 import {
   UNCATEGORISED,
@@ -555,6 +558,19 @@ function VisualBlockEditorPage() {
       [selectedTemplate]
     );
 
+  /*
+   * Settings changed. Repeaters with an auto_fill rule follow
+   * their text, e.g. Inline glossary: each {{term}} in the
+   * paragraph gets a Terms row (see autoFillFields.js). Rows that
+   * drop out are stashed so a fixed typo gets its description back.
+   */
+  const autoFillStash = useRef(new Map());
+
+  const handleFormChange = (nextForm) =>
+    setTemplateForm((previousForm) =>
+      applyAutoFill(activeSchema, previousForm, nextForm, autoFillStash.current)
+    );
+
   const previewBlock =
     useMemo(() => {
       if (!selectedTemplate) {
@@ -1058,7 +1074,7 @@ function VisualBlockEditorPage() {
                 schema={activeSchema}
                 form={templateForm}
                 selection={visualSelection}
-                onChange={setTemplateForm}
+                onChange={handleFormChange}
                 onClearSelection={() => setVisualSelection(null)}
               />
             ) : (

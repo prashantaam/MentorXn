@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -61,9 +62,9 @@ function HintLadderBlock({ block }) {
 
           <ol className="hint-ladder-block__hints" aria-live="polite">
             {hints.slice(0, shown).map((hint, index) => (
-              <li key={index} className="panel hint-ladder-block__hint" data-visual-index={index}>
+              <InfoPanel as="li" key={index} className="hint-ladder-block__hint" data-visual-index={index}>
                 <b>Hint {index + 1}:</b> <LearningText as="span" text={hint.text} />
-              </li>
+              </InfoPanel>
             ))}
           </ol>
 

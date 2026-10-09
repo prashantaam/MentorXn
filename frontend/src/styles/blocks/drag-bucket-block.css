@@ -207,12 +207,9 @@
   color: var(--warn);
 }
 
+/* The box itself is the shared InfoPanel (styles/learning/info-panel.css). */
 .drag-bucket-block .drag-bucket-answers {
   margin-top: 16px;
-  padding: 14px;
-  background: var(--surface2);
-  border: 2.5px dashed var(--ink);
-  border-radius: 14px;
 }
 
 .drag-bucket-block .drag-bucket-answers-title {

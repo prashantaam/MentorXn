@@ -21,6 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 const AVAILABLE_ID = "available";
@@ -660,7 +661,7 @@ function DragBucketBlock({ block }) {
             />
           </div>
 
-          <section className="drag-bucket-answers">
+          <InfoPanel as="section" className="drag-bucket-answers">
             <h3 className="drag-bucket-answers-title">
               Correct answers
             </h3>
@@ -714,7 +715,7 @@ function DragBucketBlock({ block }) {
                 }
               )}
             </div>
-          </section>
+          </InfoPanel>
 
           <div className="drag-bucket-score">
             You placed{" "}

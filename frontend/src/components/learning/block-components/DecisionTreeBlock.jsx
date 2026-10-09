@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -54,6 +55,8 @@ function DecisionTreeBlock({ block }) {
     String(choice?.label ?? "").trim()
   );
   const isEnding = choices.length === 0;
+  // Steps sit in the shared dotted box; endings have their own coloured box.
+  const NodeBox = isEnding ? "div" : InfoPanel;
   const outcome = ["good", "bad", "neutral"].includes(current.outcome) ? current.outcome : "neutral";
 
   // The labels of the choices made so far, for the trail.
@@ -95,8 +98,8 @@ function DecisionTreeBlock({ block }) {
         </p>
       )}
 
-      <div
-        className={`decision-tree-block__node${isEnding ? ` is-ending is-${outcome}` : " panel"}`}
+      <NodeBox
+        className={`decision-tree-block__node${isEnding ? ` is-ending is-${outcome}` : ""}`}
         data-visual-index={currentIndex}
         aria-live="polite"
       >
@@ -106,7 +109,7 @@ function DecisionTreeBlock({ block }) {
           </span>
         )}
         <LearningText text={current.text} />
-      </div>
+      </NodeBox>
 
       {!isEnding && (
         <div className="chips decision-tree-block__choices" role="group" aria-label="Your choices">

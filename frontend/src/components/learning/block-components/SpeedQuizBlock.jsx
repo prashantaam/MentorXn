@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -142,7 +143,7 @@ function SpeedQuizBlock({ block }) {
   /* ---------- before Start ---------- */
   if (round.phase === "idle") {
     return shell(
-      <div className="panel speed-quiz-block__intro">
+      <InfoPanel className="speed-quiz-block__intro">
         <p>
           ⏱️ <b>{questions.length}</b> {questions.length === 1 ? "question" : "questions"},{" "}
           <b>{seconds} seconds</b> each. Answer before the timer runs out!
@@ -150,7 +151,7 @@ function SpeedQuizBlock({ block }) {
         <button type="button" className="btn" onClick={start}>
           ▶ Start
         </button>
-      </div>
+      </InfoPanel>
     );
   }
 
@@ -159,7 +160,7 @@ function SpeedQuizBlock({ block }) {
     const score = round.results.filter(Boolean).length;
 
     return shell(
-      <div className="panel speed-quiz-block__result" aria-live="polite">
+      <InfoPanel className="speed-quiz-block__result" aria-live="polite">
         <p className="speed-quiz-block__score">
           You got <b>{score} / {questions.length}</b>
         </p>
@@ -169,7 +170,7 @@ function SpeedQuizBlock({ block }) {
             🔁 Play again
           </button>
         </div>
-      </div>
+      </InfoPanel>
     );
   }
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -162,7 +163,7 @@ function QandABlock({ block }) {
                   )}
 
                   {state.revealed[itemIndex] && !isRight && (
-                    <div className="panel q-and-a-block__answer">
+                    <InfoPanel className="q-and-a-block__answer">
                       <b>Answer:</b> {accepted[itemIndex][0] || "—"}
                       {item.explanation && (
                         <>
@@ -170,7 +171,7 @@ function QandABlock({ block }) {
                           <LearningText as="span" text={item.explanation} />
                         </>
                       )}
-                    </div>
+                    </InfoPanel>
                   )}
                 </div>
               </div>

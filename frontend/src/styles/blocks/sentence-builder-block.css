@@ -49,9 +49,9 @@
 /* {{key}} in the template with no matching field. */
 .sentence-builder-block__missing {
   padding: 0 4px;
-  background: #ffe1e1;
-  color: #8a1010;
-  border: 2px dashed #c62828;
+  background: var(--bad-bg);
+  color: var(--bad);
+  border: 2px dashed var(--bad);
   border-radius: 6px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.9em;

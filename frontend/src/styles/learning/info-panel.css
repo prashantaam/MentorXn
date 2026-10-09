@@ -1,0 +1,23 @@
+/* =========================================================
+   InfoPanel (components/learning/shared/InfoPanel.jsx)
+
+   The dotted box every block uses for explanations, results,
+   hints and answers. Change it here and it changes everywhere.
+   ========================================================= */
+
+.info-panel {
+  margin-top: 12px;
+  padding: 12px 14px;
+
+  background: var(--surface2);
+  color: var(--text);
+  border: 2.5px dashed var(--ink);
+  border-radius: 14px;
+
+  line-height: 1.6;
+}
+
+/* Labels sit nicely on the panel's lines. */
+.info-panel .learning-text-label {
+  vertical-align: baseline;
+}

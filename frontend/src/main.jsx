@@ -9,6 +9,7 @@ import "./styles/theme/tokens.css";
 import "./styles/theme/components.css";
 
 import "./styles/learning/learning-text.css";
+import "./styles/learning/info-panel.css";
 
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";

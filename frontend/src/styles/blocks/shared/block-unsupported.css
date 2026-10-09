@@ -3,8 +3,9 @@
   margin: 12px 0;
   padding: 12px;
 
-  background: #fff4b8;
+  background: var(--warn-bg, #fff4b8);
+  color: var(--text, #141414);
 
-  border: 2px solid #1f1f1f;
+  border: 2px solid var(--ink, #1f1f1f);
   border-radius: 10px;
 }

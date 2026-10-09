@@ -78,6 +78,9 @@
 
 .block-button--white {
   background: var(--surface);
+  /* Text follows the theme: --on-w is for the bright lesson colour,
+     which would be unreadable on a dark surface. */
+  color: var(--text);
 }
 
 

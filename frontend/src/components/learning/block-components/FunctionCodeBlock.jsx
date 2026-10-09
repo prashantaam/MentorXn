@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 import {
   FormulaError,
@@ -417,7 +418,7 @@ function FunctionCodeBlock({ block }) {
           )}
 
           {!output.error && (output.result !== undefined || output.note) && (
-            <div className="panel function-code-block__result">
+            <InfoPanel className="function-code-block__result">
               {output.result !== undefined && (
                 <>
                   <b>{output.resultLabel}</b> <code className="function-code-block__value">{output.result}</code>
@@ -429,7 +430,7 @@ function FunctionCodeBlock({ block }) {
                   <LearningText as="span" text={output.note} className="hint" />
                 </>
               )}
-            </div>
+            </InfoPanel>
           )}
         </div>
       )}

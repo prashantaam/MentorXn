@@ -150,12 +150,9 @@
   color: var(--warn);
 }
 
+/* The box itself is the shared InfoPanel (styles/learning/info-panel.css). */
 .arrange-text-block .arrange-text-answer {
   margin-top: 16px;
-  padding: 14px;
-  background: var(--surface2);
-  border: 2.5px dashed var(--ink);
-  border-radius: 14px;
 }
 
 .arrange-text-block .arrange-text-answer-title {
