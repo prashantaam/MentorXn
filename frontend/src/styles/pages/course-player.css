@@ -111,10 +111,10 @@
 }
 
 .mx-player .mx-builder__nav {
-  /* Leave room for the footer, so at the very bottom of a page the
+  /* Leave a little room for the footer line, so at the very bottom of a page the
      index isn't pushed up under the site header (a long index
      scrolls inside itself instead). */
-  max-height: calc(100vh - var(--mx-header-h) - 80px);
+  max-height: calc(100vh - var(--mx-header-h) - 8px);
   padding: 14px 14px 24px 16px;
   border-right: 3px solid var(--mx-ink);
 }

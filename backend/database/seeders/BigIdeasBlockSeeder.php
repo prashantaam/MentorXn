@@ -133,6 +133,20 @@ class BigIdeasBlockSeeder extends Seeder
                 ],
 
                 /*
+                 * Show the instructions in a dark box (Word Quest
+                 * style), with **words** in bold yellow.
+                 */
+
+                [
+                    'name' => 'dark_instructions',
+                    'label' => 'Dark box',
+                    'checkbox_label' => 'Enabled Dark Box',
+                    'type' => 'boolean',
+                    'required' => false,
+                    'default' => false,
+                ],
+
+                /*
                  * Display style
                  *
                  * This is a setting rather than a visually
@@ -157,8 +171,60 @@ class BigIdeasBlockSeeder extends Seeder
                         ],
                         [
                             'value' => 'info_cards',
-                            'label' => 'Info Cards',
+                            'label' => 'Inline Cards',
                         ],
+                    ],
+                ],
+
+                /*
+                 * Static or dynamic.
+                 */
+
+                [
+                    'name' => 'mode',
+                    'label' => 'How the ideas are shown',
+                    'type' => 'select',
+                    'required' => false,
+                    'default' => 'click',
+                    'options' => [
+                        [
+                            'value' => 'click',
+                            'label' => 'On click — the clicked idea\'s More details show below',
+                        ],
+                        [
+                            'value' => 'play',
+                            'label' => 'Play — step through the ideas one by one',
+                        ],
+                        [
+                            'value' => 'all',
+                            'label' => 'Show all — More details inside the cards',
+                        ],
+                    ],
+                    'help' => 'Play works like a step-through: ▶ Next step lights up one idea at a time and shows its More details below.',
+                ],
+
+                [
+                    'name' => 'auto_play',
+                    'label' => 'Auto play',
+                    'checkbox_label' => 'Auto play (steps by itself)',
+                    'type' => 'boolean',
+                    'required' => false,
+                    'default' => false,
+                    'show_when' => [
+                        'field' => 'mode',
+                        'equals' => 'play',
+                    ],
+                ],
+
+                [
+                    'name' => 'play_seconds',
+                    'label' => 'Seconds per step (auto play)',
+                    'type' => 'number',
+                    'required' => false,
+                    'default' => 2,
+                    'show_when' => [
+                        'field' => 'mode',
+                        'equals' => 'play',
                     ],
                 ],
 
@@ -188,7 +254,7 @@ class BigIdeasBlockSeeder extends Seeder
                     'type' => 'boolean',
                     'required' => false,
                     'default' => false,
-                    'help' => 'Cards and Buttons: the first idea starts selected, so its example and explanation show straight away.',
+                    'help' => 'On click: the first idea starts selected, so its More details show straight away.',
                 ],
 
                 /*
@@ -227,28 +293,41 @@ class BigIdeasBlockSeeder extends Seeder
                             'required' => true,
                         ],
 
-                        /*
-                         * Optional example in a dark box (Word Quest
-                         * style). **word** is highlighted in bold
-                         * yellow; the explanation shows below it.
-                         */
                         [
-                            'name' => 'example',
-                            'label' => 'Example (optional)',
-                            'type' => 'textarea',
-                            'rows' => 2,
+                            'name' => 'subtitle',
+                            'label' => 'Subtitle',
+                            'type' => 'text',
                             'required' => false,
-                            'placeholder' => 'e.g. I **have visited** Paris three times.',
-                            'help' => 'Shown in a dark box above the explanation. Wrap words in **double stars** to make them bold and yellow.',
+                            'placeholder' => 'e.g. ongoing (past continuous)',
+                            'help' => 'A short line shown on the card under the title.',
                         ],
 
                         [
                             'name' => 'content',
-                            'label' => 'Explanation',
+                            'label' => 'More details',
                             'type' => 'textarea',
                             'rows' => 4,
-                            'required' => true,
+                            'required' => false,
+                            'help' => 'Shown in the dotted box. Supports **bold**, `code` and labels like [[g:Adjective]].',
                         ],
+                    ],
+                ],
+
+                /*
+                 * One shared dotted box, at the very end of the
+                 * block.
+                 */
+
+                [
+                    'name' => 'note',
+                    'label' => 'Note at the end (dotted box)',
+                    'type' => 'textarea',
+                    'rows' => 2,
+                    'required' => false,
+                    'placeholder' => 'e.g. The longer background action uses past continuous; the action that interrupts it uses past simple.',
+                    'help' => 'Shown after everything else in the block. Supports **bold**, `code` and labels like [[g:Adjective]].',
+                    'visual' => [
+                        'selector' => '.big-ideas-note',
                     ],
                 ],
             ],
@@ -268,6 +347,8 @@ class BigIdeasBlockSeeder extends Seeder
                 'Select an idea to explore it.',
 
             'display_style' => 'cards',
+            'mode' => 'click',
+            'dark_instructions' => false,
             'show_flow' => false,
 
             'items' => [

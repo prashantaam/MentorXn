@@ -1,273 +1,277 @@
 /* =========================================================
-   MentorXn - Big Ideas Block
-   ========================================================= */
+   MentorXn - Big Ideas Block (BigIdeasBlock.jsx)
 
-
-/* =========================================================
-   Block
+   Every idea has the same parts in every display style:
+   icon · title · subtitle · More details. The styles only
+   change the design:
+     --cards       big icon on top, centred
+     --info_cards  icon and title on one line, left-aligned
+     --buttons     pills
+   The dotted box is the shared InfoPanel (info-panel.css).
    ========================================================= */
 
 .big-ideas-block {
   width: 100%;
 }
 
-
-/* =========================================================
-   Ideas
-   ========================================================= */
-
-.big-ideas-block
-  .big-ideas-items {
+.big-ideas-block .big-ideas-items {
   margin: 10px 0;
 }
 
 
 /* =========================================================
-   Card Style
+   One idea (shared by all styles)
    ========================================================= */
 
-.big-ideas-block
-  .big-ideas-items--cards {
+.big-ideas-block .big-ideas-idea {
+  min-width: 0;
+
+  background: var(--surface2);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+
+  font-family: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+/* Clickable ideas (dynamic mode). */
+.big-ideas-block button.big-ideas-idea {
+  cursor: pointer;
+}
+
+.big-ideas-block button.big-ideas-idea:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 0 var(--shadow-c);
+}
+
+.big-ideas-block button.big-ideas-idea:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 3px;
+}
+
+/* Selected (dynamic) or every idea (static): the lesson colour. */
+.big-ideas-block .big-ideas-idea.on {
+  background: var(--w);
+  color: var(--on-w);
+  box-shadow: 3px 3px 0 var(--shadow-c);
+}
+
+.big-ideas-block .big-ideas-idea-icon {
+  flex: 0 0 auto;
+  line-height: 1.1;
+}
+
+.big-ideas-block .big-ideas-idea-title {
+  min-width: 0;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: break-word; /* break inside a word only if it can't fit */
+}
+
+.big-ideas-block .big-ideas-idea-subtitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.35;
+  opacity: 0.85;
+}
+
+/* More details inside a static card. */
+.big-ideas-block .big-ideas-idea .big-ideas-details-wrap {
+  width: 100%;
+  margin-top: 8px;
+  text-align: left;
+}
+
+.big-ideas-block .big-ideas-idea .info-panel {
+  margin-top: 0;
+  padding: 8px 10px;
+  font-size: 0.92rem;
+}
+
+
+/* =========================================================
+   Cards: big icon on top, centred
+   ========================================================= */
+
+.big-ideas-block .big-ideas-items--cards {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
   gap: 12px;
 }
 
-.big-ideas-block
-  .big-ideas-items--cards
-  .big-ideas-item-wrapper {
+.big-ideas-block .big-ideas-items--cards .big-ideas-item-wrapper {
   display: flex;
   align-items: center;
   flex: 1 1 130px;
   gap: 12px;
+  min-width: 0;
 }
 
-.big-ideas-block
-  .big-ideas-card {
+.big-ideas-block .big-ideas-idea--cards {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  min-width: 120px;
+  gap: 4px;
+  align-self: stretch;
   min-height: 110px;
   padding: 12px 8px;
-  gap: 4px;
-  background: var(--surface2);
-  color: var(--text);
-  border: 2.5px solid
-    var(--ink);
+
   border-radius: 16px;
-  font-family: inherit;
-  font-weight: 800;
   text-align: center;
-  cursor: pointer;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease;
 }
 
-.big-ideas-block
-  .big-ideas-card:hover {
-  transform:
-    translateY(-2px);
-  box-shadow:
-    3px 3px 0
-    var(--shadow-c);
-}
-
-.big-ideas-block
-  .big-ideas-card:focus-visible {
-  outline: 3px solid
-    var(--w);
-  outline-offset: 3px;
-}
-
-.big-ideas-block
-  .big-ideas-card.on {
-  background: var(--w);
-  color: var(--on-w);
-  box-shadow:
-    3px 3px 0
-    var(--shadow-c);
-}
-
-.big-ideas-block
-  .big-ideas-card-icon {
-  display: block;
+.big-ideas-block .big-ideas-idea--cards .big-ideas-idea-icon {
   font-size: 2rem;
-  line-height: 1;
-}
-
-.big-ideas-block
-  .big-ideas-card-title {
-  display: block;
-  font-weight: 800;
-  line-height: 1.25;
 }
 
 
 /* =========================================================
-   Button Style
+   Inline Cards (info_cards): icon + title on one line, left-aligned
+   (Word Quest's "The main parts of speech" grid)
    ========================================================= */
 
-.big-ideas-block
-  .big-ideas-items--buttons {
+.big-ideas-block .big-ideas-items--info_cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.big-ideas-block .big-ideas-items--info_cards .big-ideas-item-wrapper {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+}
+
+.big-ideas-block .big-ideas-idea--info_cards {
+  display: grid;
+  flex: 1;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: start;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 4px;
+  padding: 10px 12px;
+
+  border-radius: 14px;
+  text-align: left;
+}
+
+.big-ideas-block .big-ideas-idea--info_cards .big-ideas-idea-icon {
+  font-size: 1.5rem;
+}
+
+/* Without an icon the title takes the whole first line. */
+.big-ideas-block .big-ideas-idea--info_cards > .big-ideas-idea-title:first-child {
+  grid-column: 1 / -1;
+}
+
+.big-ideas-block .big-ideas-idea--info_cards .big-ideas-idea-subtitle,
+.big-ideas-block .big-ideas-idea--info_cards .big-ideas-details-wrap {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   Buttons: pills
+   ========================================================= */
+
+.big-ideas-block .big-ideas-items--buttons {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
 }
 
-.big-ideas-block
-  .big-ideas-items--buttons
-  .big-ideas-item-wrapper {
+.big-ideas-block .big-ideas-items--buttons .big-ideas-item-wrapper {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.big-ideas-block
-  .big-ideas-button {
+.big-ideas-block .big-ideas-idea--buttons {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  column-gap: 6px;
   padding: 3px 13px;
-  background: var(--surface);
-  color: var(--text);
-  border: 2.5px solid
-    var(--ink);
+
   border-radius: 999px;
-  font-family: inherit;
-  font-weight: 800;
-  cursor: pointer;
-  transition:
-    background 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
 }
 
-.big-ideas-block
-  .big-ideas-button:hover {
-  background: var(--surface2);
+.big-ideas-block button.big-ideas-idea--buttons:hover {
+  transform: none;
+  box-shadow: none;
+  background: var(--surface);
 }
 
-.big-ideas-block
-  .big-ideas-button:focus-visible {
-  outline: 3px solid
-    var(--w);
-  outline-offset: 3px;
-}
-
-.big-ideas-block
-  .big-ideas-button.on {
+.big-ideas-block button.big-ideas-idea--buttons.on:hover {
   background: var(--w);
-  color: var(--on-w);
-  box-shadow:
-    3px 3px 0
-    var(--shadow-c);
 }
 
-.big-ideas-block
-  .big-ideas-button-icon {
-  line-height: 1;
+/* The subtitle follows the title on the pill. */
+.big-ideas-block .big-ideas-idea--buttons .big-ideas-idea-subtitle::before {
+  content: "· ";
 }
 
 
 /* =========================================================
-   Info Cards
+   Static mode: nothing to click
    ========================================================= */
 
-/* Same grid as Word Quest's "The main parts of speech". */
-.big-ideas-block
-  .big-ideas-items--info_cards {
-  display: grid;
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(150px, 1fr)
-    );
-  gap: 12px;
-}
-
-.big-ideas-block
-  .big-ideas-items--info_cards
-  .big-ideas-item-wrapper {
-  display: flex;
-  align-items: stretch;
-  min-width: 0;
-}
-
-/*
- * Static information card.
- *
- * Unlike the interactive Card style:
- * - no button
- * - no hover state
- * - no selection state
- * - content is always visible
- */
-
-.big-ideas-block
-  .big-ideas-info-card {
-  width: 100%;
-  min-width: 0;
-  padding: 10px 12px;
-  background: var(--surface2);
-  color: var(--text);
-  border: 2.5px solid
-    var(--ink);
-  border-radius: 14px;
-}
-
-/*
- * Icon + title stay on the same line.
- */
-
-.big-ideas-block
-  .big-ideas-info-card-heading {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.big-ideas-block
-  .big-ideas-info-card-icon {
-  flex: 0 0 auto;
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-.big-ideas-block
-  .big-ideas-info-card-title {
-  min-width: 0;
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 900;
-  line-height: 1.25;
-}
-
-.big-ideas-block
-  .big-ideas-info-card-content {
-  margin: 0;
-  color: var(--text);
-  line-height: 1.5;
+.big-ideas-block .big-ideas-idea.is-static {
+  cursor: default;
 }
 
 
 /* =========================================================
-   Flow
+   Play: step through the ideas (Cloud Quest's "Step through
+   the flow"). Ideas still to come are dimmed; the current one
+   lifts in the lesson colour; passed ones stay clear.
    ========================================================= */
 
-.big-ideas-block
-  .big-ideas-flow-arrow {
+.big-ideas-block .big-ideas-play {
+  margin: 4px 0 12px;
+}
+
+.big-ideas-block .big-ideas-play .btn {
+  font: inherit;
+  font-weight: 800;
+}
+
+.big-ideas-block .big-ideas-idea.is-next {
+  opacity: 0.55;
+}
+
+.big-ideas-block .big-ideas-idea.is-past {
+  opacity: 1;
+}
+
+.big-ideas-block article.big-ideas-idea.on:not(.big-ideas-idea--buttons),
+.big-ideas-block .big-ideas-idea.is-play.on:not(.big-ideas-idea--buttons),
+.big-ideas-block .big-ideas-idea.is-play.on:not(.big-ideas-idea--buttons):hover {
+  transform: translateY(-4px);
+  box-shadow: 4px 4px 0 var(--shadow-c);
+}
+
+.big-ideas-block .big-ideas-idea {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+}
+
+
+/* =========================================================
+   Flow arrows
+   ========================================================= */
+
+.big-ideas-block .big-ideas-flow-arrow {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
   color: var(--ink);
   font-size: 1.4rem;
   font-weight: 900;
@@ -277,19 +281,29 @@
 
 
 /* =========================================================
-   Explanation Panel
+   More details (below the ideas in dynamic mode)
    ========================================================= */
 
-/* The box itself is the shared InfoPanel (styles/learning/info-panel.css). */
+.big-ideas-block .big-ideas-panel {
+  margin-top: 12px;
+}
+
+.big-ideas-block .big-ideas-panel .info-panel {
+  margin-top: 0;
+}
+
+/* The shared note, at the very end. */
+.big-ideas-block .big-ideas-note {
+  margin-top: 14px;
+}
 
 
 /* =========================================================
-   Example box (Word Quest style): a sentence in a dark box,
-   **highlighted** words in bold yellow; explanation below.
+   Black boxes with a sentence (instructions, older examples):
+   **highlighted** words in bold yellow, like Word Quest.
    ========================================================= */
 
-.big-ideas-block
-  .big-ideas-example {
+.big-ideas-block .big-ideas-example {
   margin: 0 0 8px;
   padding: 12px 14px;
 
@@ -299,24 +313,18 @@
   overflow-wrap: anywhere;
 }
 
-.big-ideas-block
-  .big-ideas-example
-  b.hlword {
+.big-ideas-block .big-ideas-example strong {
   color: #ffd84d; /* always yellow, like Word Quest */
   font-weight: 800;
 }
 
-/* The explanation under an example box. */
-.big-ideas-block
-  .big-ideas-explanation {
-  color: var(--muted);
-  font-size: 0.95rem;
+/* Instructions in a black box. */
+.big-ideas-block > .big-ideas-instructions {
+  margin: 0 0 12px;
 }
 
-.big-ideas-block
-  .big-ideas-info-card
-  .big-ideas-example {
-  margin-top: 8px;
+.big-ideas-block > .big-ideas-instructions .big-ideas-example {
+  margin: 0;
 }
 
 
@@ -325,8 +333,7 @@
    "if") shows as a badge in the lesson colour, not plain text.
    ========================================================= */
 
-.big-ideas-block
-  .big-ideas-badge {
+.big-ideas-block .big-ideas-badge {
   display: inline-grid;
   place-items: center;
   flex: 0 0 auto;
@@ -348,38 +355,38 @@
 }
 
 /* Words ("if", "for") are a little smaller than numbers. */
-.big-ideas-block
-  .big-ideas-badge.is-long {
+.big-ideas-block .big-ideas-badge.is-long {
   font-size: 0.85rem;
   border-radius: 8px;
 }
 
 /* Cards: a bigger badge in place of the 2rem emoji. */
-.big-ideas-block
-  .big-ideas-card-icon.big-ideas-badge {
-  font-size: 1.3rem;
+.big-ideas-block .big-ideas-idea--cards .big-ideas-badge {
   margin-bottom: 2px;
+  font-size: 1.3rem;
 }
 
-.big-ideas-block
-  .big-ideas-card-icon.big-ideas-badge.is-long {
+.big-ideas-block .big-ideas-idea--cards .big-ideas-badge.is-long {
   font-size: 1.05rem;
 }
 
-/* A selected card is already in the lesson colour. */
-.big-ideas-block
-  .big-ideas-card.on
-  .big-ideas-badge,
-.big-ideas-block
-  .big-ideas-button.on
-  .big-ideas-badge {
+/* An idea in the lesson colour: the badge turns white to stand out. */
+.big-ideas-block .big-ideas-idea.on .big-ideas-badge {
   background: var(--surface);
   color: var(--text);
 }
 
+/* Inline Cards: a badge the size of the title line. */
+.big-ideas-block .big-ideas-idea--info_cards .big-ideas-badge {
+  font-size: 0.95rem;
+}
+
+.big-ideas-block .big-ideas-idea--info_cards .big-ideas-badge.is-long {
+  font-size: 0.8rem;
+}
+
 /* Buttons: a small badge to fit the pill. */
-.big-ideas-block
-  .big-ideas-button-icon.big-ideas-badge {
+.big-ideas-block .big-ideas-idea--buttons .big-ideas-badge {
   min-width: 1.6em;
   height: 1.6em;
   border-width: 2px;
@@ -388,38 +395,37 @@
   font-size: 0.8rem;
 }
 
+
 /* =========================================================
    Responsive
    ========================================================= */
 
-@media (
-  max-width: 700px
-) {
-  .big-ideas-block
-    .big-ideas-items--cards
-    .big-ideas-item-wrapper {
-    flex-basis:
-      calc(50% - 6px);
+@media (max-width: 700px) {
+  .big-ideas-block .big-ideas-items--cards .big-ideas-item-wrapper {
+    flex-basis: calc(50% - 6px);
   }
 
-  .big-ideas-block
-    .big-ideas-card {
+  .big-ideas-block .big-ideas-idea--cards {
     min-height: 100px;
   }
 
-  .big-ideas-block
-    .big-ideas-flow-arrow {
+  .big-ideas-block .big-ideas-flow-arrow {
     font-size: 1.15rem;
   }
 }
 
-@media (
-  max-width: 440px
-) {
-  .big-ideas-block
-    .big-ideas-items--cards
-    .big-ideas-item-wrapper {
+@media (max-width: 440px) {
+  .big-ideas-block .big-ideas-items--cards .big-ideas-item-wrapper {
     flex-basis: 100%;
   }
+}
 
+@media (prefers-reduced-motion: reduce) {
+  .big-ideas-block .big-ideas-idea {
+    transition: none;
+  }
+
+  .big-ideas-block button.big-ideas-idea:hover {
+    transform: none;
+  }
 }

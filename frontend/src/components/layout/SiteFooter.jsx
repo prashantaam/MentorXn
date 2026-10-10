@@ -2,9 +2,16 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
 
-/* The one footer for the whole site — landing, student and teacher. */
-function SiteFooter() {
+/*
+ * The one footer for the whole site — landing, student and teacher.
+ * compact: just a thin line (course player pages).
+ */
+function SiteFooter({ compact = false }) {
   const { isAuthenticated } = useAuth();
+
+  if (compact) {
+    return <footer className="mx-footer mx-footer--line" aria-hidden="true" />;
+  }
 
   return (
     <footer className="mx-footer">

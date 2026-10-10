@@ -1412,7 +1412,8 @@ function BlockConfigField({
 
     <div className="course-playground-template-field">
 
-      {showLabel && (
+      {/* A tick-box with its own text (checkbox_label) needs no heading. */}
+      {showLabel && !(field.type === "boolean" && field.checkbox_label) && (
 
         <label
 
@@ -1606,7 +1607,7 @@ function BlockConfigField({
 
           <span>
 
-            Enabled
+            {field.checkbox_label || "Enabled"}
 
           </span>
 

@@ -4,6 +4,7 @@ import {
 } from "react";
 
 import BlockMessages from "./BlockMessages";
+import LearningText from "../shared/LearningText";
 
 
 /*
@@ -120,10 +121,13 @@ function LearningBlockShell({
       )}
 
 
+      {/* Instructions: **bold**, `code` and [[g:labels]] work here too. */}
       {subtitle && (
-        <p className="sub">
-          {subtitle}
-        </p>
+        <LearningText
+          as="p"
+          className="sub"
+          text={subtitle}
+        />
       )}
 
 

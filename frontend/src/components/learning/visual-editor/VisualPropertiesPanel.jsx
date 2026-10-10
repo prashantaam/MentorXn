@@ -493,17 +493,6 @@ function VisualPropertiesPanel({
       </div>
 
       <div className="visual-block-editor-properties-body">
-        <div className="visual-block-editor-tip">
-          <strong>
-            ✨ Visual editing
-          </strong>
-
-          <span>
-            Click highlighted content in the
-            preview to edit that part directly.
-          </span>
-        </div>
-
 
         {/* ===============================================
             Global Block Settings

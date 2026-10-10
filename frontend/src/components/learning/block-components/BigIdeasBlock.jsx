@@ -1,33 +1,46 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
 import InfoPanel from "../shared/InfoPanel";
 import LearningText from "../shared/LearningText";
 
 /*
- * Optional example for an idea, shown in a dark box like Word
- * Quest's sentences. Words wrapped in **double stars** are
- * highlighted in bold yellow; the explanation goes below the box.
+ * Big Ideas: a set of ideas, each with the same parts in every
+ * display style:
+ *
+ *   icon · title · subtitle (short text on the card) · More details
+ *
+ * Display styles only change the design:
+ *   cards       big icon on top, centred
+ *   info_cards  icon and title on one line, left-aligned
+ *   buttons     pills
+ *
+ * data.mode (how the ideas are shown):
+ *   "click"  click an idea to see its More details below the ideas
+ *   "play"   step through the ideas one at a time (▶ Next step /
+ *            ↺ Restart, like Cloud Quest's "Step through the flow");
+ *            the current idea's More details show below.
+ *            data.auto_play: ▶ Play steps by itself, every
+ *            data.play_seconds seconds (default 2)
+ *   "all"    every idea in the lesson colour, nothing to click; each
+ *            card shows its More details inside it
+ *   (older blocks: "dynamic" = click, "static" = all)
+ * More details always show in the shared dotted box.
+ * data.note          one shared dotted box at the very end
+ * data.dark_instructions  instructions in a black box
+ */
+
+const isOn = (value, fallback) =>
+  value === undefined || value === null || value === ""
+    ? fallback
+    : value === true || value === 1 || value === "1" || value === "true";
+
+/*
+ * A sentence in a black box. Same formatting as everywhere else
+ * (**bold**, `code`, [[g:labels]]); **bold** words show in yellow.
  */
 function ExampleBox({ text }) {
-  const parts = String(text ?? "").split(/(\*\*[^*]+\*\*)/g);
-
-  return (
-    <pre className="code big-ideas-example">
-      {parts.map((part, index) =>
-        part.startsWith("**") && part.endsWith("**") && part.length > 4 ? (
-          <b key={index} className="hlword">
-            {part.slice(2, -2)}
-          </b>
-        ) : (
-          <span key={index}>{part}</span>
-        )
-      )}
-    </pre>
-  );
+  return <LearningText as="div" text={text} className="code big-ideas-example" />;
 }
 
 /*
@@ -36,7 +49,7 @@ function ExampleBox({ text }) {
  */
 const PICTURE = /\p{Extended_Pictographic}|\p{Regional_Indicator}/u;
 
-function IdeaIcon({ icon, className }) {
+function IdeaIcon({ icon }) {
   const text = String(icon ?? "").trim();
   if (!text) return null;
 
@@ -44,7 +57,9 @@ function IdeaIcon({ icon, className }) {
 
   return (
     <span
-      className={`${className}${isBadge ? " big-ideas-badge" : ""}${isBadge && text.length > 2 ? " is-long" : ""}`}
+      className={`big-ideas-idea-icon${isBadge ? " big-ideas-badge" : ""}${
+        isBadge && text.length > 2 ? " is-long" : ""
+      }`}
       aria-hidden="true"
     >
       {text}
@@ -52,345 +67,272 @@ function IdeaIcon({ icon, className }) {
   );
 }
 
-/* Example box (if any) + explanation underneath. */
-function IdeaDetails({ item, explanationClassName }) {
-  const hasExample = Boolean(String(item?.example ?? "").trim());
+/*
+ * An idea's More details, in the dotted box. Older ideas may also
+ * have a separate example sentence; it shows in a black box above.
+ */
+function IdeaDetails({ item }) {
+  const details = String(item?.content ?? "").trim();
+  const legacyExample = String(item?.example ?? "").trim();
+
+  if (!details && !legacyExample) return null;
 
   return (
-    <>
-      {hasExample && <ExampleBox text={item.example} />}
-      {item?.content && (
-        <LearningText
-          text={item.content}
-          className={`${explanationClassName}${hasExample ? " big-ideas-explanation" : ""}`}
-        />
+    <div className="big-ideas-details-wrap">
+      {legacyExample && <ExampleBox text={legacyExample} />}
+
+      {details && (
+        <InfoPanel className="big-ideas-details">
+          <LearningText text={details} />
+        </InfoPanel>
       )}
-    </>
+    </div>
   );
 }
 
-function BigIdeasBlock({
-  block,
-}) {
-  const [
-    selected,
-    setSelected,
-  ] = useState(null);
+function BigIdeasBlock({ block }) {
+  const [selected, setSelected] = useState(null);
 
-  const data =
-    block?.data || {};
+  const data = block?.data || {};
+  const items = Array.isArray(data.items) ? data.items : [];
 
-  const items =
-    Array.isArray(data.items)
-      ? data.items
-      : [];
+  const rawStyle = data.display_style || data.displayStyle;
+  const displayStyle = ["cards", "buttons", "info_cards"].includes(rawStyle) ? rawStyle : "cards";
 
   /*
-   * Support both the new snake_case configuration
-   * and any earlier camelCase data.
+   * How the ideas are shown. Older values: "dynamic" = click,
+   * "static" = all. Inline Cards (info_cards) saved before the
+   * setting existed always showed their text, so they default to all.
    */
-  const displayStyle =
-    data.display_style ||
-    data.displayStyle ||
-    "cards";
+  const rawMode = data.mode;
+  const mode =
+    rawMode === "play"
+      ? "play"
+      : rawMode === "all" || rawMode === "static"
+        ? "all"
+        : rawMode === "click" || rawMode === "dynamic"
+          ? "click"
+          : displayStyle === "info_cards"
+            ? "all"
+            : "click";
 
-  const rawShowFlow =
-    data.show_flow ??
-    data.showFlow ??
-    false;
-
-  const showFlow =
-    rawShowFlow === true ||
-    rawShowFlow === 1 ||
-    rawShowFlow === "1" ||
-    rawShowFlow === "true";
-
-  const isInfoCards =
-    displayStyle ===
-    "info_cards";
+  const isStatic = mode === "all";
+  const isPlay = mode === "play";
+  const autoPlay = isPlay && isOn(data.auto_play, false);
+  const playSeconds = Math.min(30, Math.max(0.5, Number(data.play_seconds) || 2));
+  const lastIndex = items.length - 1;
 
   /*
-   * "Open the first idea by default": until the student picks
-   * one, the first idea counts as selected.
+   * Play: step = the lit idea (-1 before starting). Starts again
+   * when the ideas or the play settings change.
    */
-  const rawOpenFirst =
-    data.open_first ?? false;
+  const playSignature = JSON.stringify([items.length, mode, autoPlay]);
+  const [play, setPlay] = useState({ signature: playSignature, step: -1, running: false });
+  const playIsStale = play.signature !== playSignature;
 
-  const openFirst =
-    rawOpenFirst === true ||
-    rawOpenFirst === 1 ||
-    rawOpenFirst === "1" ||
-    rawOpenFirst === "true";
+  if (playIsStale) {
+    setPlay({ signature: playSignature, step: -1, running: false });
+  }
 
-  const activeIndex =
-    selected === null &&
-    openFirst &&
-    items.length > 0
-      ? 0
-      : selected;
+  const step = playIsStale ? -1 : play.step;
+  const running = !playIsStale && play.running;
 
-  /*
-   * If the items change and the currently selected
-   * item no longer exists, clear the selection.
-   */
+  // Auto play: move on every few seconds, and stop at the last idea.
   useEffect(() => {
-    if (
-      selected !== null &&
-      !items[selected]
-    ) {
-      setSelected(null);
-    }
-  }, [
-    items,
-    selected,
-  ]);
+    if (!running) return undefined;
 
-  /*
-   * Info Cards do not use selection.
-   *
-   * This also clears an old selection when switching
-   * from Cards/Buttons to Info Cards.
-   */
-  useEffect(() => {
-    if (
-      isInfoCards &&
-      selected !== null
-    ) {
-      setSelected(null);
-    }
-  }, [
-    isInfoCards,
-    selected,
-  ]);
-
-  const getItemTitle = (
-    item,
-    index
-  ) => {
-    return (
-      item?.title ||
-      item?.label ||
-      `Idea ${index + 1}`
-    );
-  };
-
-  const handleSelect = (
-    index
-  ) => {
-    setSelected(index);
-  };
-
-  const renderIdea = (
-    item,
-    index
-  ) => {
-    const title =
-      getItemTitle(
-        item,
-        index
+    const timer = setInterval(() => {
+      setPlay((current) =>
+        current.step >= lastIndex
+          ? { ...current, running: false }
+          : { ...current, step: current.step + 1, running: current.step + 1 < lastIndex }
       );
+    }, playSeconds * 1000);
 
-    const isSelected =
-      activeIndex === index;
+    return () => clearInterval(timer);
+  }, [running, lastIndex, playSeconds]);
 
-    /*
-     * =====================================================
-     * Info Card Display
-     *
-     * Static card:
-     * icon + title on one line
-     * explanation always visible
-     * =====================================================
-     */
+  const nextStep = () =>
+    setPlay((current) => ({ ...current, step: Math.min(lastIndex, current.step + 1) }));
 
-    if (isInfoCards) {
+  const restart = () => setPlay((current) => ({ ...current, step: -1, running: false }));
+
+  const startAuto = () =>
+    setPlay((current) => {
+      const from = current.step >= lastIndex ? -1 : current.step; // finished: start over
+      return { ...current, step: from + 1, running: from + 1 < lastIndex };
+    });
+
+  const pauseAuto = () => setPlay((current) => ({ ...current, running: false }));
+
+  // Clicking a card jumps to it (and pauses auto play).
+  const goToStep = (index) => setPlay((current) => ({ ...current, step: index, running: false }));
+
+  const showFlow = isOn(data.show_flow ?? data.showFlow, false);
+  const openFirst = isOn(data.open_first, false);
+  const note = String(data.note ?? "").trim();
+
+  /*
+   * Instructions, optionally in a black box. Older blocks kept a
+   * separate black-box sentence in data.example; with no
+   * instructions it is used as black-box instructions.
+   */
+  const legacySentence = !String(data.subtitle ?? "").trim() ? String(data.example ?? "").trim() : "";
+  const instructions = String(data.subtitle ?? "").trim() || legacySentence;
+  const darkInstructions = Boolean(instructions) && isOn(data.dark_instructions, Boolean(legacySentence));
+
+  /*
+   * The idea whose More details show below: the clicked one (click),
+   * or the current step (play). A removed idea means none.
+   */
+  const chosen = selected !== null && items[selected] ? selected : null;
+  const activeIndex = isStatic
+    ? null
+    : isPlay
+      ? step >= 0 && items[step]
+        ? step
+        : null
+      : chosen ?? (openFirst && items.length > 0 ? 0 : null);
+
+  const renderIdea = (item, index) => {
+    const title = item?.title || item?.label || `Idea ${index + 1}`;
+    const subtitle = String(item?.subtitle ?? "").trim();
+    const isLit = isStatic || activeIndex === index;
+    // Play: ideas already passed stay clear; ones still to come are dimmed.
+    const playState = isPlay ? (index < step ? " is-past" : index > step ? " is-next" : "") : "";
+    const className = `big-ideas-idea big-ideas-idea--${displayStyle}${isLit ? " on" : ""}${
+      isStatic ? " is-static" : isPlay ? " is-play" : ""
+    }${playState}`;
+
+    const face = (
+      <>
+        <IdeaIcon icon={item?.icon} />
+        <LearningText as="span" text={title} className="big-ideas-idea-title" />
+        {subtitle && <LearningText as="small" text={subtitle} className="big-ideas-idea-subtitle" />}
+      </>
+    );
+
+    if (isStatic) {
       return (
-        <article
-          key={`idea-${index}`}
-          className="big-ideas-info-card"
-        >
-          <div className="big-ideas-info-card-heading">
-            <IdeaIcon
-              icon={item?.icon}
-              className="big-ideas-info-card-icon"
-            />
-
-            <LearningText
-              text={title}
-              className="big-ideas-info-card-title"
-            />
-          </div>
-
-          <IdeaDetails
-            item={item}
-            explanationClassName="big-ideas-info-card-content"
-          />
+        <article className={className}>
+          {face}
+          {displayStyle !== "buttons" && <IdeaDetails item={item} />}
         </article>
       );
     }
 
-    /*
-     * =====================================================
-     * Button Display
-     * =====================================================
-     */
-
-    if (
-      displayStyle ===
-      "buttons"
-    ) {
+    // Play: the buttons step through the ideas, or click a card to jump to it.
+    if (isPlay) {
       return (
         <button
-          key={`idea-${index}`}
           type="button"
-          className={
-            `big-ideas-button${
-              isSelected
-                ? " on"
-                : ""
-            }`
-          }
-          aria-pressed={
-            isSelected
-          }
-          onClick={() =>
-            handleSelect(index)
-          }
+          className={className}
+          aria-current={activeIndex === index ? "step" : undefined}
+          onClick={() => goToStep(index)}
         >
-          <IdeaIcon
-            icon={item?.icon}
-            className="big-ideas-button-icon"
-          />
-
-          <LearningText
-            text={title}
-          />
+          {face}
         </button>
       );
     }
 
-    /*
-     * =====================================================
-     * Card Display
-     * =====================================================
-     */
-
     return (
       <button
-        key={`idea-${index}`}
         type="button"
-        className={
-          `big-ideas-card${
-            isSelected
-              ? " on"
-              : ""
-          }`
-        }
-        aria-pressed={
-          isSelected
-        }
-        onClick={() =>
-          handleSelect(index)
-        }
+        className={className}
+        aria-pressed={activeIndex === index}
+        onClick={() => setSelected(index)}
       >
-        <IdeaIcon
-          icon={item?.icon}
-          className="big-ideas-card-icon"
-        />
-
-        <LearningText
-          text={title}
-          className="big-ideas-card-title"
-        />
+        {face}
       </button>
     );
   };
+
+  const activeItem = activeIndex !== null ? items[activeIndex] : null;
+  const activeHasDetails =
+    activeItem && (String(activeItem.content ?? "").trim() || String(activeItem.example ?? "").trim());
 
   return (
     <LearningBlockShell
       title={block?.title}
       icon={block?.icon}
-      subtitle={data.subtitle}
+      subtitle={darkInstructions ? undefined : instructions}
       className="big-ideas-block"
     >
+      {/* Instructions in a black box. Class "sub" keeps visual editing working. */}
+      {darkInstructions && (
+        <div className="sub big-ideas-instructions">
+          <ExampleBox text={instructions} />
+        </div>
+      )}
+
       {items.length > 0 ? (
         <>
-          {/* ===============================================
-              Ideas
-          =============================================== */}
+          {/* Play controls (above the ideas, like Cloud Quest). */}
+          {isPlay && (
+            <div className="row big-ideas-play">
+              {autoPlay ? (
+                running ? (
+                  <button type="button" className="btn" onClick={pauseAuto}>
+                    ⏸ Pause
+                  </button>
+                ) : (
+                  <button type="button" className="btn" onClick={startAuto}>
+                    ▶ {step >= lastIndex ? "Play again" : step >= 0 ? "Continue" : "Play"}
+                  </button>
+                )
+              ) : (
+                <button type="button" className="btn" onClick={nextStep} disabled={step >= lastIndex}>
+                  ▶ Next step
+                </button>
+              )}
 
-          <div
-            className={
-              `big-ideas-items ` +
-              `big-ideas-items--${displayStyle}` +
-              `${
-                showFlow
-                  ? " has-flow"
-                  : ""
-              }`
-            }
-          >
-            {items.map(
-              (
-                item,
-                index
-              ) => (
-                <div
-                  key={`idea-wrapper-${index}`}
-                  className="big-ideas-item-wrapper"
-                >
-                  {renderIdea(
-                    item,
-                    index
-                  )}
+              <button type="button" className="btn ghost" onClick={restart} disabled={step < 0}>
+                ↺ Restart
+              </button>
+            </div>
+          )}
 
-                  {showFlow &&
-                    index <
-                      items.length -
-                        1 && (
-                      <span
-                        className="big-ideas-flow-arrow"
-                        aria-hidden="true"
-                      >
-                        ➜
-                      </span>
-                    )}
-                </div>
-              )
-            )}
+          <div className={`big-ideas-items big-ideas-items--${displayStyle}${showFlow ? " has-flow" : ""}`}>
+            {items.map((item, index) => (
+              <div key={`idea-${index}`} className="big-ideas-item-wrapper">
+                {renderIdea(item, index)}
+
+                {showFlow && index < items.length - 1 && (
+                  <span className="big-ideas-flow-arrow" aria-hidden="true">
+                    ➜
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
 
-          {/* ===============================================
-              Explanation
-
-              Cards and Buttons reveal content here.
-
-              Info Cards already show their content directly,
-              so they do not need this panel.
-          =============================================== */}
-
-          {!isInfoCards && (
-            <InfoPanel
-              className="big-ideas-panel"
-              aria-live="polite"
-            >
-              {activeIndex === null ||
-              !items[activeIndex] ? (
-                "👆 Select an idea to explore it."
+          {/* On click / Play: the active idea's More details. */}
+          {!isStatic && (
+            <div className="big-ideas-panel" aria-live="polite">
+              {activeItem && activeHasDetails ? (
+                <IdeaDetails item={activeItem} />
               ) : (
-                <IdeaDetails
-                  item={items[activeIndex]}
-                  explanationClassName="big-ideas-panel-text"
-                />
+                <InfoPanel className="big-ideas-details">
+                  <span className="hint">
+                    {activeItem
+                      ? "No more details for this one."
+                      : isPlay
+                        ? autoPlay
+                          ? "Press ▶ Play to begin."
+                          : "Press ▶ Next step to begin."
+                        : "👆 Select an idea to explore it."}
+                  </span>
+                </InfoPanel>
               )}
-            </InfoPanel>
+            </div>
           )}
         </>
       ) : (
-        <div className="block-empty">
-          No ideas have been configured yet.
-        </div>
+        <div className="block-empty">No ideas have been configured yet.</div>
       )}
+
+      {/* One shared note, at the very end. */}
+      {note && <InfoPanel className="big-ideas-note" text={note} />}
     </LearningBlockShell>
   );
 }
