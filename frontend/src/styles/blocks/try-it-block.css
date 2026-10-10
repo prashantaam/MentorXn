@@ -1,0 +1,142 @@
+/* =========================================================
+   Try it yourself block (TryItYourselfBlock.jsx)
+   Word Quest's "✍️ Try it yourself": a sentence with answer
+   controls in it. .row, .btn, .code and .hint come from
+   adventure-land.css; the dotted box is the shared InfoPanel.
+   ========================================================= */
+
+.try-it-block__sentence {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 8px 0 4px;
+
+  font-size: 1.05rem;
+  line-height: 1.9;
+}
+
+/* One part: text, control, text — kept together on a line. */
+.try-it-block__part {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+/* The sentence in a black box: readable text, not code. */
+.try-it-block .try-it-block__sentence--dark {
+  padding: 12px 16px;
+  font: 17px/1.9 Nunito, "Segoe UI", system-ui, sans-serif;
+  white-space: normal;
+}
+
+.try-it-block .try-it-block__sentence--dark strong {
+  color: #ffd84d;
+}
+
+/* ---------- controls ---------- */
+
+.try-it-block .try-it-block__select,
+.try-it-block .try-it-block__input {
+  max-width: 100%;
+  padding: 4px 10px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+  border-radius: 10px;
+
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.try-it-block .try-it-block__select {
+  cursor: pointer;
+}
+
+.try-it-block .try-it-block__choices {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 2px;
+  border-radius: 12px;
+}
+
+.try-it-block .try-it-block__choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 12px 2px 8px;
+
+  background: var(--surface);
+  color: var(--text);
+  border: 2.5px solid var(--ink);
+  border-radius: 99px;
+
+  font-weight: 800;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.try-it-block .try-it-block__choice input {
+  margin: 0;
+  accent-color: #2f8f5b;
+}
+
+.try-it-block .try-it-block__choice.is-checked {
+  background: var(--w);
+  color: var(--on-w);
+  box-shadow: 2px 2px 0 var(--shadow-c);
+}
+
+.try-it-block .try-it-block__select:focus-visible,
+.try-it-block .try-it-block__input:focus-visible,
+.try-it-block .try-it-block__choice:focus-within {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+}
+
+/* ---------- right / wrong ---------- */
+
+.try-it-block .try-it-block__select.is-right,
+.try-it-block .try-it-block__input.is-right,
+.try-it-block .try-it-block__choices.is-right .try-it-block__choice.is-checked {
+  background: var(--good-bg);
+  color: var(--good);
+  border-color: var(--good);
+}
+
+.try-it-block .try-it-block__select.is-wrong,
+.try-it-block .try-it-block__input.is-wrong,
+.try-it-block .try-it-block__choices.is-wrong .try-it-block__choice.is-checked {
+  background: var(--bad-bg);
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.try-it-block .try-it-block__choices.is-wrong {
+  outline: 2.5px dashed var(--bad);
+  outline-offset: 2px;
+}
+
+/* ---------- result, buttons ---------- */
+
+.try-it-block .try-it-block__result.is-right {
+  border-color: var(--good);
+}
+
+.try-it-block .try-it-block__result.is-wrong {
+  border-color: var(--warn);
+}
+
+.try-it-block .try-it-block__actions {
+  margin-top: 12px;
+}
+
+.try-it-block .try-it-block__actions .btn {
+  font: inherit;
+  font-weight: 800;
+}

@@ -85,6 +85,16 @@ function BlockConfigField({
 
   }
 
+  // show_when.not_equals: hide while the other field has that value.
+  if (
+    condition?.field &&
+    Object.prototype.hasOwnProperty.call(condition, "not_equals") &&
+    siblingValues?.[condition.field] === condition.not_equals
+  ) {
+    return null;
+  }
+
+
 
 
 
@@ -300,6 +310,10 @@ function BlockConfigField({
 
       );
 
+    }
+
+    if (Object.prototype.hasOwnProperty.call(condition, "not_equals")) {
+      return currentValue !== condition.not_equals;
     }
 
 

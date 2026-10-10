@@ -17,6 +17,7 @@ import HierarchyBlock from "../block-components/HierarchyBlock";
 import FillTheBlankBlock from "../block-components/FillTheBlankBlock";
 import TrueFalseBlock from "../block-components/TrueFalseBlock";
 import QandABlock from "../block-components/QandABlock";
+import TryItYourselfBlock from "../block-components/TryItYourselfBlock";
 import SpeedQuizBlock from "../block-components/SpeedQuizBlock";
 import HintLadderBlock from "../block-components/HintLadderBlock";
 import DecisionTreeBlock from "../block-components/DecisionTreeBlock";
@@ -85,6 +86,10 @@ const blockRegistry = {
 
   QandABlock: {
     component: QandABlock,
+  },
+
+  TryItYourselfBlock: {
+    component: TryItYourselfBlock,
   },
 
   SpeedQuizBlock: {
