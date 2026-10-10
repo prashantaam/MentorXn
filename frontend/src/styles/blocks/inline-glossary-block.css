@@ -89,7 +89,7 @@
 
 .inline-glossary-block .inline-glossary-block__text--dark .glossTerm {
   color: inherit;
-  text-decoration-color: #ffd84d;
+  text-decoration-color: var(--w); /* the lesson colour */
 }
 
 /* Hover: a grey highlight instead of the yellow underline. */

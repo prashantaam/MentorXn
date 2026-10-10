@@ -78,9 +78,9 @@
   overflow-wrap: anywhere;
 }
 
-/* **bold** words in yellow, like Word Quest */
+/* **bold** words in the lesson colour */
 .fill-the-blank-block .fill-the-blank-block__sentence--dark strong {
-  color: #ffd84d;
+  color: var(--w); /* the lesson colour */
   font-weight: 800;
 }
 

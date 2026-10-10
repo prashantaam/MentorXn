@@ -33,7 +33,7 @@
 }
 
 .try-it-block .try-it-block__sentence--dark strong {
-  color: #ffd84d;
+  color: var(--w); /* the lesson colour */
 }
 
 /* ---------- controls ---------- */

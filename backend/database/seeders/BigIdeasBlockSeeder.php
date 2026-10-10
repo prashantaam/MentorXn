@@ -303,12 +303,22 @@ class BigIdeasBlockSeeder extends Seeder
                         ],
 
                         [
+                            'name' => 'example',
+                            'label' => 'Example (black box)',
+                            'type' => 'textarea',
+                            'rows' => 2,
+                            'required' => false,
+                            'placeholder' => 'e.g. I **visited** Paris in 2019.',
+                            'help' => 'Shown first, in a black box, with More details under it. Wrap words in **double stars** to show them in the lesson colour.',
+                        ],
+
+                        [
                             'name' => 'content',
                             'label' => 'More details',
                             'type' => 'textarea',
                             'rows' => 4,
                             'required' => false,
-                            'help' => 'Shown in the dotted box. Supports **bold**, `code` and labels like [[g:Adjective]].',
+                            'help' => 'Shown in the dotted box, under the example. Supports **bold**, `code` and labels like [[g:Adjective]].',
                         ],
                     ],
                 ],

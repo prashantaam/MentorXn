@@ -292,6 +292,15 @@
   margin-top: 0;
 }
 
+/* An idea's example (black box) first, its More details text under it. */
+.big-ideas-block .big-ideas-details .big-ideas-example {
+  margin: 0 0 10px;
+}
+
+.big-ideas-block .big-ideas-details .big-ideas-example:last-child {
+  margin-bottom: 0;
+}
+
 /* The shared note, at the very end. */
 .big-ideas-block .big-ideas-note {
   margin-top: 14px;
@@ -300,7 +309,7 @@
 
 /* =========================================================
    Black boxes with a sentence (instructions, older examples):
-   **highlighted** words in bold yellow, like Word Quest.
+   **highlighted** words in the lesson colour.
    ========================================================= */
 
 .big-ideas-block .big-ideas-example {
@@ -314,7 +323,7 @@
 }
 
 .big-ideas-block .big-ideas-example strong {
-  color: #ffd84d; /* always yellow, like Word Quest */
+  color: var(--w); /* the lesson colour */
   font-weight: 800;
 }
 

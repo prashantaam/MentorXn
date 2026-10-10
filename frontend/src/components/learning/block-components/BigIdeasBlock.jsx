@@ -37,7 +37,7 @@ const isOn = (value, fallback) =>
 
 /*
  * A sentence in a black box. Same formatting as everywhere else
- * (**bold**, `code`, [[g:labels]]); **bold** words show in yellow.
+ * (**bold**, `code`, [[g:labels]]); **bold** words show in the lesson colour.
  */
 function ExampleBox({ text }) {
   return <LearningText as="div" text={text} className="code big-ideas-example" />;
@@ -68,24 +68,24 @@ function IdeaIcon({ icon }) {
 }
 
 /*
- * An idea's More details, in the dotted box. Older ideas may also
- * have a separate example sentence; it shows in a black box above.
+ * An idea's example (item.example) in a black box, where **bold**
+ * words show in the lesson colour, followed by its More details —
+ * both inside the dotted box (Word Quest's sentence + explanation).
  */
 function IdeaDetails({ item }) {
-  const details = String(item?.content ?? "").trim();
-  const legacyExample = String(item?.example ?? "").trim();
+  // <lbox> tags were briefly supported; any left in saved text are dropped.
+  const details = String(item?.content ?? "").replace(/<\/?lbox>/gi, "").trim();
+  const example = String(item?.example ?? "").trim();
 
-  if (!details && !legacyExample) return null;
+  if (!details && !example) return null;
 
   return (
     <div className="big-ideas-details-wrap">
-      {legacyExample && <ExampleBox text={legacyExample} />}
+      <InfoPanel className="big-ideas-details">
+        {example && <ExampleBox text={example} />}
 
-      {details && (
-        <InfoPanel className="big-ideas-details">
-          <LearningText text={details} />
-        </InfoPanel>
-      )}
+        {details && <LearningText text={details} />}
+      </InfoPanel>
     </div>
   );
 }
