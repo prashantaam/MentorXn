@@ -213,6 +213,19 @@ class BigIdeasBlockSeeder extends Seeder
                 ],
 
                 [
+                    'name' => 'default_colour',
+                    'label' => 'Card colour',
+                    'checkbox_label' => 'Default card colour (untick to use the lesson colour)',
+                    'type' => 'boolean',
+                    'required' => false,
+                    'default' => true,
+                    'show_when' => [
+                        'field' => 'mode',
+                        'equals' => 'all',
+                    ],
+                ],
+
+                [
                     'name' => 'auto_play',
                     'label' => 'Auto play',
                     'checkbox_label' => 'Auto play (steps by itself)',

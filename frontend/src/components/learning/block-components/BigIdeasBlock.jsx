@@ -75,20 +75,25 @@ function IdeaIcon({ icon }) {
  * words show in the lesson colour, followed by its More details —
  * both inside the dotted box (Word Quest's sentence + explanation).
  */
-function IdeaDetails({ item }) {
+function IdeaDetails({ item, plain = false }) {
   // <lbox> tags were briefly supported; any left in saved text are dropped.
   const details = String(item?.content ?? "").replace(/<\/?lbox>/gi, "").trim();
   const example = String(item?.example ?? "").trim();
 
   if (!details && !example) return null;
 
+  const body = (
+    <>
+      {example && <ExampleBox text={example} />}
+
+      {details && <LearningText text={details} />}
+    </>
+  );
+
+  // plain: straight inside a card (Show all), without the dotted box.
   return (
     <div className="big-ideas-details-wrap">
-      <InfoPanel className="big-ideas-details">
-        {example && <ExampleBox text={example} />}
-
-        {details && <LearningText text={details} />}
-      </InfoPanel>
+      {plain ? <div className="big-ideas-card-details">{body}</div> : <InfoPanel className="big-ideas-details">{body}</InfoPanel>}
     </div>
   );
 }
@@ -132,6 +137,7 @@ function BigIdeasBlock({ block }) {
 
   const isStatic = mode === "all";
   const isPlay = mode === "play";
+  const useDefaultColour = isOn(data.default_colour, true);
   const autoPlay = isPlay && isOn(data.auto_play, false);
   const playSeconds = Math.min(30, Math.max(0.5, Number(data.play_seconds) || 2));
   const lastIndex = items.length - 1;
@@ -211,12 +217,14 @@ function BigIdeasBlock({ block }) {
   const renderIdea = (item, index) => {
     const title = item?.title || item?.label || `Idea ${index + 1}`;
     const subtitle = String(item?.subtitle ?? "").trim();
-    const isLit = isStatic || activeIndex === index;
+    // Show all: the default card colour unless the teacher unticks it.
+    const isDefaultColour = isStatic && useDefaultColour;
+    const isLit = (isStatic && !isDefaultColour) || activeIndex === index;
     // Play: ideas already passed stay clear; ones still to come are dimmed.
     const playState = isPlay ? (index < step ? " is-past" : index > step ? " is-next" : "") : "";
     const className = `big-ideas-idea big-ideas-idea--${displayStyle}${isLit ? " on" : ""}${
       isStatic ? " is-static" : isPlay ? " is-play" : ""
-    }${playState}`;
+    }${isDefaultColour ? " is-default-colour" : ""}${playState}`;
 
     const face = (
       <>
@@ -230,7 +238,7 @@ function BigIdeasBlock({ block }) {
       return (
         <article className={className}>
           {face}
-          {displayStyle !== "buttons" && <IdeaDetails item={item} />}
+          {displayStyle !== "buttons" && <IdeaDetails item={item} plain />}
         </article>
       );
     }
