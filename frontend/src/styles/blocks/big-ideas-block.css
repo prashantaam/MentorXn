@@ -438,3 +438,46 @@
     transform: none;
   }
 }
+
+
+/* =========================================================
+   Next card (Word Quest's "Mixed tense review"): one idea at a
+   time with ◀ Previous / Next ▶ — no cards.
+   ========================================================= */
+
+.big-ideas-block .big-ideas-next {
+  margin: 10px 0 0;
+}
+
+.big-ideas-block .big-ideas-next__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-bottom: 8px;
+}
+
+.big-ideas-block .big-ideas-next__head .big-ideas-idea-icon {
+  font-size: 1.4rem;
+}
+
+.big-ideas-block .big-ideas-next__head .big-ideas-badge {
+  font-size: 0.95rem;
+}
+
+.big-ideas-block .big-ideas-next .info-panel {
+  margin-top: 0;
+}
+
+.big-ideas-block .big-ideas-next__nav {
+  margin-top: 12px;
+}
+
+.big-ideas-block .big-ideas-next__nav .btn {
+  font: inherit;
+  font-weight: 800;
+}
+
+.big-ideas-block .big-ideas-next__count {
+  font-weight: 800;
+}

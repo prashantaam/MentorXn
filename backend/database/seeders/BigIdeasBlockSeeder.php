@@ -173,7 +173,12 @@ class BigIdeasBlockSeeder extends Seeder
                             'value' => 'info_cards',
                             'label' => 'Inline Cards',
                         ],
+                        [
+                            'value' => 'next',
+                            'label' => 'Next card — one at a time, with Previous / Next',
+                        ],
                     ],
+                    'help' => 'Next card shows no cards: just one idea at a time (its example and More details) with ◀ Previous / Next ▶, like Word Quest\'s "Mixed tense review".',
                 ],
 
                 /*
@@ -184,6 +189,10 @@ class BigIdeasBlockSeeder extends Seeder
                     'name' => 'mode',
                     'label' => 'How the ideas are shown',
                     'type' => 'select',
+                    'show_when' => [
+                        'field' => 'display_style',
+                        'not_equals' => 'next',
+                    ],
                     'required' => false,
                     'default' => 'click',
                     'options' => [
@@ -275,6 +284,7 @@ class BigIdeasBlockSeeder extends Seeder
                     'visual' => [
                         'selector' => '.big-ideas-item-wrapper',
                         'selection_type' => 'repeater',
+                        'index_attribute' => 'data-visual-index',
                     ],
 
                     'fields' => [

@@ -97,7 +97,18 @@ function BigIdeasBlock({ block }) {
   const items = Array.isArray(data.items) ? data.items : [];
 
   const rawStyle = data.display_style || data.displayStyle;
-  const displayStyle = ["cards", "buttons", "info_cards"].includes(rawStyle) ? rawStyle : "cards";
+  const displayStyle = ["cards", "buttons", "info_cards", "next"].includes(rawStyle) ? rawStyle : "cards";
+
+  /*
+   * Next card (Word Quest's "Mixed tense review"): no cards, just
+   * one idea at a time in the dotted box, with ◀ Previous / Next ▶
+   * (looping round). Mode settings don't apply.
+   */
+  const isNextCard = displayStyle === "next";
+  const [cardIndex, setCardIndex] = useState(0);
+  const currentCard = items.length > 0 ? Math.min(cardIndex, items.length - 1) : 0;
+  const goCard = (delta) =>
+    setCardIndex((current) => (Math.min(current, items.length - 1) + delta + items.length) % items.length);
 
   /*
    * How the ideas are shown. Older values: "dynamic" = click,
@@ -265,7 +276,57 @@ function BigIdeasBlock({ block }) {
         </div>
       )}
 
-      {items.length > 0 ? (
+      {items.length > 0 && isNextCard ? (
+        /* Next card: one idea at a time, ◀ Previous / Next ▶. */
+        <>
+          <div
+            className="big-ideas-item-wrapper big-ideas-next"
+            data-visual-index={currentCard}
+            aria-live="polite"
+          >
+            {(() => {
+              const item = items[currentCard];
+              const title = item?.title || item?.label || "";
+              const subtitle = String(item?.subtitle ?? "").trim();
+              const hasDetails = String(item?.content ?? "").trim() || String(item?.example ?? "").trim();
+
+              return (
+                <>
+                  {(item?.icon || title || subtitle) && (
+                    <div className="big-ideas-next__head">
+                      <IdeaIcon icon={item?.icon} />
+                      {title && <LearningText as="b" text={title} className="big-ideas-idea-title" />}
+                      {subtitle && <LearningText as="small" text={subtitle} className="big-ideas-idea-subtitle" />}
+                    </div>
+                  )}
+
+                  {hasDetails ? (
+                    <IdeaDetails item={item} />
+                  ) : (
+                    <InfoPanel className="big-ideas-details">
+                      <span className="hint">No more details for this one.</span>
+                    </InfoPanel>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+
+          {items.length > 1 && (
+            <div className="row big-ideas-next__nav">
+              <button type="button" className="btn sm ghost" onClick={() => goCard(-1)}>
+                ◀ Previous
+              </button>
+              <span className="hint big-ideas-next__count">
+                {currentCard + 1} / {items.length}
+              </span>
+              <button type="button" className="btn sm" onClick={() => goCard(1)}>
+                Next ▶
+              </button>
+            </div>
+          )}
+        </>
+      ) : items.length > 0 ? (
         <>
           {/* Play controls (above the ideas, like Cloud Quest). */}
           {isPlay && (
@@ -294,7 +355,7 @@ function BigIdeasBlock({ block }) {
 
           <div className={`big-ideas-items big-ideas-items--${displayStyle}${showFlow ? " has-flow" : ""}`}>
             {items.map((item, index) => (
-              <div key={`idea-${index}`} className="big-ideas-item-wrapper">
+              <div key={`idea-${index}`} className="big-ideas-item-wrapper" data-visual-index={index}>
                 {renderIdea(item, index)}
 
                 {showFlow && index < items.length - 1 && (
