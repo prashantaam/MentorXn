@@ -334,6 +334,24 @@ class BigIdeasBlockSeeder extends Seeder
                 ],
 
                 /*
+                 * Extra information after the ideas, as rich text
+                 * (same editor as the Rich text block, with tables) —
+                 * e.g. Word Quest's "Direct → Reported" table.
+                 */
+
+                [
+                    'name' => 'extra_info',
+                    'label' => 'Extra information',
+                    'type' => 'richtext',
+                    'required' => false,
+                    'placeholder' => 'Optional — headings, lists, tables… shown after the ideas.',
+                    'help' => 'Shown after the ideas, before the note at the end. Use ▦ Table in the toolbar for a table.',
+                    'visual' => [
+                        'selector' => '.big-ideas-extra',
+                    ],
+                ],
+
+                /*
                  * One shared dotted box, at the very end of the
                  * block.
                  */

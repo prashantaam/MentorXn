@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 
 import LearningBlockShell from "../block-component-settings/LearningBlockShell";
+import ExtraInfo from "../shared/ExtraInfo";
 import InfoPanel from "../shared/InfoPanel";
+import RichTextContent from "../shared/RichTextContent";
+import { isDoc, isEmptyDoc } from "../../../lib/richText";
 import LearningText from "../shared/LearningText";
 
 /*
@@ -390,6 +393,23 @@ function BigIdeasBlock({ block }) {
         </>
       ) : (
         <div className="block-empty">No ideas have been configured yet.</div>
+      )}
+
+      {/*
+        Extra information: rich text (headings, lists, tables…), like
+        the Rich text block. Blocks saved before this used plain
+        lines (extra_style / extra_content); those still show until
+        the rich text is filled in.
+      */}
+      {isDoc(data.extra_info) && !isEmptyDoc(data.extra_info) ? (
+        <RichTextContent doc={data.extra_info} className="big-ideas-extra" />
+      ) : (
+        <ExtraInfo
+          style={data.extra_style}
+          title={data.extra_title}
+          content={data.extra_content}
+          className="big-ideas-extra"
+        />
       )}
 
       {/* One shared note, at the very end. */}

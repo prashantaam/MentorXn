@@ -481,3 +481,9 @@
 .big-ideas-block .big-ideas-next__count {
   font-weight: 800;
 }
+
+
+/* Extra information (rich text) after the ideas. */
+.big-ideas-block .rich-text.big-ideas-extra {
+  margin-top: 14px;
+}

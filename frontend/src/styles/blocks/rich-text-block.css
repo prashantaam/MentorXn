@@ -117,3 +117,55 @@
   color: var(--muted);
   font-style: italic;
 }
+
+/* =========================================================
+   Tables (Word Quest's look): bordered cells, shaded header row.
+   Also used inside the teacher's rich text editor.
+   ========================================================= */
+
+.rich-text .tableWrapper {
+  margin: 0.4em 0 0.9em;
+  overflow-x: auto;
+}
+
+.rich-text table {
+  width: 100%;
+  margin: 0.4em 0 0.9em;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-size: 0.94rem;
+}
+
+.rich-text .tableWrapper table {
+  margin: 0;
+}
+
+.rich-text th,
+.rich-text td {
+  min-width: 3em;
+  padding: 5px 8px;
+  border: 2px solid var(--ink, #141414);
+  text-align: left;
+  vertical-align: top;
+}
+
+.rich-text th {
+  background: var(--surface2, #eeede7);
+  font-weight: 800;
+}
+
+.rich-text th > p,
+.rich-text td > p {
+  margin: 0;
+}
+
+/* Editor only: the cells selected for a row/column action. */
+.rich-text .selectedCell {
+  background: color-mix(in srgb, var(--w, #8fd9a8) 35%, transparent);
+}
+
+/* An empty cell still has the height of one line of text. */
+.rich-text th > p:empty::before,
+.rich-text td > p:empty::before {
+  content: "\00a0";
+}

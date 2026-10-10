@@ -1,4 +1,5 @@
 import StarterKit from "@tiptap/starter-kit";
+import { TableKit } from "@tiptap/extension-table";
 
 /*
  * Rich text shared by the teacher's editor and the student view, so
@@ -21,6 +22,10 @@ export const richTextExtensions = [
       isAllowedUri: (url) => SAFE_LINK.test(url),
       HTMLAttributes: { rel: "noopener noreferrer nofollow", target: "_blank" },
     },
+  }),
+  // Tables (header row + cells), e.g. Word Quest's "Direct → Reported".
+  TableKit.configure({
+    table: { resizable: false, HTMLAttributes: { class: "rich-text__table" } },
   }),
 ];
 

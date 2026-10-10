@@ -27,6 +27,15 @@ const TOOL_GROUPS = [
   ],
 ];
 
+/* Shown while the cursor is in a table: [label, title, run(editor)]. */
+const TABLE_TOOLS = [
+  ["+ Row", "Add a row below", (e) => e.chain().focus().addRowAfter().run()],
+  ["+ Col", "Add a column to the right", (e) => e.chain().focus().addColumnAfter().run()],
+  ["− Row", "Delete this row", (e) => e.chain().focus().deleteRow().run()],
+  ["− Col", "Delete this column", (e) => e.chain().focus().deleteColumn().run()],
+  ["✕ Table", "Delete the table", (e) => e.chain().focus().deleteTable().run()],
+];
+
 // Where each group starts in the flattened tool list (for the active-state array).
 const GROUP_OFFSETS = TOOL_GROUPS.map((_, groupIndex) =>
   TOOL_GROUPS.slice(0, groupIndex).reduce((count, group) => count + group.length, 0)
@@ -73,6 +82,7 @@ function RichTextEditor({ id, value, onChange, placeholder = "Start writing…",
         ? {
             active: TOOL_GROUPS.flat().map(([, , isActive]) => isActive(current)),
             link: current.isActive("link"),
+            inTable: current.isActive("table"),
             canUndo: current.can().undo(),
             canRedo: current.can().redo(),
           }
@@ -114,6 +124,36 @@ function RichTextEditor({ id, value, onChange, placeholder = "Start writing…",
             })}
           </div>
         ))}
+
+        {/* Tables: insert one; inside a table, add/remove rows and columns. */}
+        <div className="mx-rte__group">
+          <button
+            type="button"
+            className={`mx-rte__tool${state.inTable ? " is-on" : ""}`}
+            title="Insert a table (3 × 3, with a header row)"
+            aria-label="Insert a table"
+            disabled={state.inTable}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          >
+            ▦ Table
+          </button>
+
+          {state.inTable &&
+            TABLE_TOOLS.map(([label, title, run]) => (
+              <button
+                key={title}
+                type="button"
+                className="mx-rte__tool"
+                title={title}
+                aria-label={title}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => run(editor)}
+              >
+                {label}
+              </button>
+            ))}
+        </div>
 
         <div className="mx-rte__group">
           <button

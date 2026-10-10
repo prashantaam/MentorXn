@@ -21,3 +21,58 @@
 .info-panel .learning-text-label {
   vertical-align: baseline;
 }
+
+/* =========================================================
+   ExtraInfo (components/learning/shared/ExtraInfo.jsx)
+   Bullet points, a numbered list or a table — e.g. Word Quest's
+   "Direct → Reported" table.
+   ========================================================= */
+
+.extra-info {
+  margin-top: 14px;
+}
+
+.extra-info__title {
+  margin: 0 0 8px;
+  font-family: Fredoka, "Trebuchet MS", system-ui, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+/* Lists */
+.extra-info__list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 1.4em;
+  line-height: 1.5;
+}
+
+.extra-info__list li::marker {
+  color: var(--ink, #141414);
+  font-weight: 800;
+}
+
+/* Table (Word Quest's look) */
+.extra-info__table-wrap {
+  overflow-x: auto;
+}
+
+.extra-info__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+}
+
+.extra-info__table th,
+.extra-info__table td {
+  padding: 5px 8px;
+  border: 2px solid var(--ink, #141414);
+  text-align: left;
+  vertical-align: top;
+}
+
+.extra-info__table th {
+  background: var(--surface2, #eeede7);
+  font-weight: 800;
+}

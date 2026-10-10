@@ -29,6 +29,7 @@
 
 .mx-rte__group {
   display: flex;
+  flex-wrap: wrap; /* a long group (table tools) wraps in narrow panels */
   gap: 2px;
 }
 
@@ -51,6 +52,7 @@
   font-size: 0.82rem;
   font-weight: 800;
   line-height: 1;
+  white-space: nowrap; /* "+ Row", "▦ Table" stay on one line */
   cursor: pointer;
 }
 
