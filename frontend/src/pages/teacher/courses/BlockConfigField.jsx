@@ -1051,6 +1051,16 @@ function BlockConfigField({
 
 
 
+    // Swap an item with its neighbour (step: -1 up, 1 down).
+    const handleMoveItem = (itemIndex, step) => {
+      const target = itemIndex + step;
+      if (target < 0 || target >= items.length) return;
+
+      const moved = [...items];
+      [moved[itemIndex], moved[target]] = [moved[target], moved[itemIndex]];
+      onChange(moved);
+    };
+
     const handleRemoveItem = (
 
       itemIndex
@@ -1252,6 +1262,31 @@ function BlockConfigField({
 
 
 
+
+                  {items.length > 1 && (
+                    <span className="course-playground-question-move">
+                      <button
+                        type="button"
+                        className="course-playground-question-move-btn"
+                        disabled={itemIndex === 0}
+                        onClick={() => handleMoveItem(itemIndex, -1)}
+                        aria-label={`Move ${field.item_label || "item"} ${itemIndex + 1} up`}
+                        title="Move up"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        className="course-playground-question-move-btn"
+                        disabled={itemIndex === items.length - 1}
+                        onClick={() => handleMoveItem(itemIndex, 1)}
+                        aria-label={`Move ${field.item_label || "item"} ${itemIndex + 1} down`}
+                        title="Move down"
+                      >
+                        ↓
+                      </button>
+                    </span>
+                  )}
 
                   {canRemoveItem && (
 

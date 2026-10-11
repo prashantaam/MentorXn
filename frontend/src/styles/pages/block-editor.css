@@ -421,3 +421,44 @@
     transition: none;
   }
 }
+
+/* Selected item (from the preview): badge + Move up / Move down. */
+.mx-editor .visual-block-editor-item-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mx-editor .visual-block-editor-item-bar .visual-block-editor-selection-badge {
+  margin-bottom: 0;
+}
+
+.mx-editor .visual-block-editor-move {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.mx-editor .visual-block-editor-move__btn {
+  padding: 3px 10px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+  border: 2px solid var(--mx-ink);
+  border-radius: 99px;
+
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mx-editor .visual-block-editor-move__btn:hover:not(:disabled) {
+  background: var(--mx-surface2);
+}
+
+.mx-editor .visual-block-editor-move__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}

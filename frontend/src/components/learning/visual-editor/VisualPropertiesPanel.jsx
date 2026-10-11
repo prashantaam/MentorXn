@@ -204,6 +204,7 @@ function VisualPropertiesPanel({
   selection,
   onChange,
   onClearSelection,
+  onSelectionChange,
 }) {
   const allFields =
     getSchemaFields(schema);
@@ -358,8 +359,40 @@ function VisualPropertiesPanel({
         </div>
 
         <div className="visual-block-editor-properties-body">
-          <div className="visual-block-editor-selection-badge">
-            Editing {title}
+          <div className="visual-block-editor-item-bar">
+            <div className="visual-block-editor-selection-badge">
+              Editing {title}
+            </div>
+
+            {/* Move the selected item up or down the list; the panel follows it. */}
+            {items.length > 1 && (
+              <div className="visual-block-editor-move" role="group" aria-label="Move this item">
+                {[
+                  ["↑ Move up", -1],
+                  ["↓ Move down", 1],
+                ].map(([label, step]) => {
+                  const target = selection.index + step;
+                  const canMove = target >= 0 && target < items.length;
+
+                  return (
+                    <button
+                      key={label}
+                      type="button"
+                      className="visual-block-editor-move__btn"
+                      disabled={!canMove}
+                      onClick={() => {
+                        const moved = [...items];
+                        [moved[selection.index], moved[target]] = [moved[target], moved[selection.index]];
+                        onChange({ ...form, [selection.fieldName]: moved });
+                        onSelectionChange?.({ ...selection, index: target });
+                      }}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {selectedFields.map(

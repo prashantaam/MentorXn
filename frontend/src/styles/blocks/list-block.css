@@ -1,0 +1,187 @@
+/* =========================================================
+   List block (ListBlock.jsx)
+   Lines of text, one per row, thin lines between them, and an
+   optional "See:" footer. The rows sit straight in the block
+   card, with lines and footer reaching the card's outline.
+   Theme tokens only, so light and dark mode both work.
+   ========================================================= */
+
+/* The card's inner padding (adventure-land .card): the list cancels
+   it so lines and the footer reach the card's outline. */
+.list-block {
+  --lb-x: 20px;
+  --lb-bottom: 20px;
+}
+
+.list-block__list {
+  margin: 4px calc(-1 * var(--lb-x)) 0;
+}
+
+.list-block__rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list-block__row {
+  color: var(--text);
+  line-height: 1.45;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.list-block__row + .list-block__row {
+  border-top: 1.5px solid color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+/* ---------- a row: [number] title / subtitle [arrow] ---------- */
+
+.list-block__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 10px var(--lb-x);
+
+  background: none;
+  color: inherit;
+  border: 0;
+
+  font: inherit;
+  text-align: left;
+}
+
+.list-block__head--toggle {
+  cursor: pointer;
+}
+
+.list-block__head--toggle:hover {
+  background: color-mix(in srgb, var(--w) 14%, transparent);
+}
+
+.list-block__head--toggle:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: -3px;
+}
+
+/* Marker before the title: a number or an icon. */
+.list-block__marker {
+  flex: none;
+  min-width: 1.6em;
+}
+
+/* Same colour as the title text. */
+.list-block__number {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.list-block__icon {
+  font-size: 1.1rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.list-block__head-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Title: like a list heading. */
+.list-block__title {
+  font-weight: 800;
+}
+
+/* Subtitle: smaller, under the title. */
+.list-block__subtitle {
+  margin-top: 1px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+/* Arrow: › closed, pointing down when open (rotated). */
+.list-block__arrow {
+  flex: none;
+  align-self: center;
+  display: inline-grid;
+  place-items: center;
+  width: 1.6em;
+  height: 1.6em;
+
+  color: var(--text);
+  border: 2px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  border-radius: 50%;
+
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+  padding-bottom: 2px; /* centre the › glyph */
+  transition: transform 0.15s ease;
+}
+
+.list-block__row.is-open .list-block__arrow {
+  transform: rotate(90deg);
+}
+
+/* Details, shown when the row is expanded. */
+.list-block__details {
+  padding: 0 var(--lb-x) 12px calc(var(--lb-x) + var(--lb-indent, 0px));
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.list-block__list:has(.list-block__marker) .list-block__details {
+  --lb-indent: calc(1.6em + 10px);
+}
+
+/* ---------- footer: See: <link> ---------- */
+
+.list-block__footer {
+  padding: 12px var(--lb-x);
+
+  background: var(--surface2);
+  border-top: 1.5px solid color-mix(in srgb, var(--ink) 18%, transparent);
+
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* When the list (with a footer) is the last thing in the card, the
+   footer reaches the bottom too, rounded like the card
+   (20px corner − 3px outline). */
+.list-block > .list-block__list:last-child:has(.list-block__footer) {
+  margin-bottom: calc(-1 * var(--lb-bottom));
+}
+
+.list-block > .list-block__list:last-child .list-block__footer {
+  border-radius: 0 0 17px 17px;
+}
+
+.list-block__footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.list-block__footer a:hover {
+  text-decoration-style: solid;
+}
+
+.list-block__footer a:focus-visible {
+  outline: 3px solid #ff4fa3;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Phones/tablets: the card's padding is smaller there. */
+@media (max-width: 860px) {
+  .list-block {
+    --lb-x: 14px;
+    --lb-bottom: 16px;
+  }
+}

@@ -1076,6 +1076,7 @@ function VisualBlockEditorPage() {
                 selection={visualSelection}
                 onChange={handleFormChange}
                 onClearSelection={() => setVisualSelection(null)}
+                onSelectionChange={setVisualSelection}
               />
             ) : (
               <div className="mx-editor__props-empty">

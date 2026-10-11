@@ -296,3 +296,37 @@
     min-width: 42px;
   }
 }
+
+/* ↑ ↓ — move an item up or down the list (sits before Remove). */
+.course-playground-question-move {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.course-playground-question-move-btn {
+  min-width: 28px;
+  padding: 4px 6px;
+
+  background: var(--mx-surface);
+  color: var(--mx-text);
+
+  border: 1.5px solid var(--mx-ink);
+  border-radius: 7px;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.course-playground-question-move-btn:hover:not(:disabled) {
+  background: var(--mx-surface2);
+}
+
+.course-playground-question-move-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
