@@ -48,7 +48,7 @@ class BlockTemplateController extends Controller
         $validated = $request->validate($this->rules());
 
         $template = BlockTemplate::create(
-            $this->attributes($validated)
+            $this->attributes($validated, $request)
         );
 
         return response()->json([
@@ -64,7 +64,7 @@ class BlockTemplateController extends Controller
         $validated = $request->validate($this->rules());
 
         $blockTemplate->update(
-            $this->attributes($validated)
+            $this->attributes($validated, $request)
         );
 
         return response()->json([
@@ -150,7 +150,14 @@ class BlockTemplateController extends Controller
         ];
     }
 
-    private function attributes(array $validated): array
+    /**
+     * The schema is taken from the request as a whole, not from
+     * $validated: validated() keeps only keys that have rules (here
+     * fields.*.name and fields.*.type), which silently dropped every
+     * label, help text, option, visual setting and repeater sub-field
+     * on save. The rules above still guarantee its basic shape.
+     */
+    private function attributes(array $validated, Request $request): array
     {
         return [
             'name' => trim($validated['name']),
@@ -159,7 +166,7 @@ class BlockTemplateController extends Controller
             'component' => $validated['component'],
             'block_category_id' => $validated['block_category_id'],
             'tags' => $this->normaliseTags($validated['tags'] ?? []),
-            'configuration_schema' => $validated['configuration_schema'],
+            'configuration_schema' => $request->input('configuration_schema'),
             'example_data' => $validated['example_data'] ?? null,
             'status' => $validated['status'],
             'position' => $validated['position'] ?? 0,
